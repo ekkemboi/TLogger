@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}TradeLogger - Favorites{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Favorite Products</h1>
+        <button onclick="showAddModal()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-medium">+ Add Symbol</button>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-gray-900">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Symbol</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Point Value</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Fees</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Added</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="favorites-table" class="divide-y divide-gray-700">
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-400">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="empty-state" class="hidden text-center text-gray-400 py-8">
+        <p class="text-lg">No favorite products yet</p>
+        <p class="text-sm">Add symbols you trade frequently</p>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div id="favorite-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
+        <h2 id="modal-title" class="text-xl font-bold mb-4">Add Favorite</h2>
+        <form id="favorite-form" onsubmit="saveFavorite(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Symbol</label>
+                    <input type="text" id="favorite-symbol" required 
+                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                           placeholder="e.g., BTCUSDT, MNQ, ES">
+                    <p class="text-xs text-gray-500 mt-1">Symbol will be converted to uppercase</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Point Value ($)</label>
+                    <input type="number" id="favorite-point-value" step="0.01" 
+                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                           placeholder="e.g., MNQ=$2, ES=$50, BTC=$1">
+                    <p class="text-xs text-gray-500 mt-1">Dollar value per point move</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Default Fees ($)</label>
+                    <input type="number" id="favorite-fees" step="0.01" 
+                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                           placeholder="e.g., 2.50">
+                    <p class="text-xs text-gray-500 mt-1">Default fees per trade</p>
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="button" onclick="closeModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Cancel</button>
+                <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-medium">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let editingId = null;
+
+async function loadFavorites() {
+    try {
+        const response = await fetch('/api/favorites');
+        const data = await response.json();
+        const tbody = document.getElementById('favorites-table');
+        const emptyState = document.getElementById('empty-state');
+
+        if (data.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        tbody.innerHTML = data.map(item => `
+            <tr class="hover:bg-gray-700">
+                <td class="px-6 py-4 whitespace-nowrap font-medium">${item.symbol}</td>
+                <td class="px-6 py-4 whitespace-nowrap">$${item.point_value.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">$${item.fees.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 rounded-full text-xs ${item.is_active ? 'bg-green-600' : 'bg-gray-600'}">
+                        ${item.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">${new Date(item.created_at).toLocaleDateString()}</td>
+                <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                    <button onclick="deleteFavorite('${item.id}')" class="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load favorites:', error);
+    }
+}
+
+function showAddModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = 'Add Favorite';
+    document.getElementById('favorite-symbol').value = '';
+    document.getElementById('favorite-point-value').value = '1';
+    document.getElementById('favorite-fees').value = '0';
+    document.getElementById('favorite-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('favorite-modal').classList.add('hidden');
+    editingId = null;
+}
+
+async function saveFavorite(event) {
+    event.preventDefault();
+    const symbol = document.getElementById('favorite-symbol').value.trim().toUpperCase();
+    const pointValue = parseFloat(document.getElementById('favorite-point-value').value) || 1;
+    const fees = parseFloat(document.getElementById('favorite-fees').value) || 0;
+
+    try {
+        const response = await fetch('/api/favorites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbol, point_value: pointValue, fees })
+        });
+
+        if (response.ok) {
+            closeModal();
+            loadFavorites();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Failed to save');
+        }
+    } catch (error) {
+        console.error('Failed to save:', error);
+        alert('Failed to save favorite');
+    }
+}
+
+async function deleteFavorite(id) {
+    if (!confirm('Delete this favorite?')) return;
+    try {
+        await fetch(`/api/favorites/${id}`, { method: 'DELETE' });
+        loadFavorites();
+    } catch (error) {
+        console.error('Failed to delete:', error);
+    }
+}
+
+loadFavorites();
+</script>
+{% endblock %}

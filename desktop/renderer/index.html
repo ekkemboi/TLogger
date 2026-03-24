@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeLogger Journal</title>
+    <link rel="stylesheet" href="widget.css">
+</head>
+<body>
+    <div class="widget">
+        <!-- Header -->
+        <div class="header">
+            <span class="title">TradeLogger Journal</span>
+            <div class="controls">
+                <button id="minimize-btn" class="control-btn">—</button>
+                <button id="close-btn" class="control-btn close">×</button>
+            </div>
+        </div>
+
+        <!-- Trade Form -->
+        <div class="form-container">
+            <h3>Log Trade</h3>
+            
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="trade-date">
+            </div>
+
+            <div class="form-group">
+                <label>Symbol</label>
+                <select id="symbol-select">
+                    <option value="">-- Select Symbol --</option>
+                </select>
+                <input type="text" id="symbol-custom" placeholder="Or type symbol" style="margin-top: 4px;">
+            </div>
+
+            <div class="form-group">
+                <label>Direction</label>
+                <select id="direction">
+                    <option value="long">Long</option>
+                    <option value="short">Short</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Entry Price</label>
+                    <input type="number" id="entry-price" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Position Size</label>
+                    <input type="number" id="position-size" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Stop Loss</label>
+                    <input type="number" id="stop-loss" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Take Profit</label>
+                    <input type="number" id="take-profit" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+
+            <!-- Partial Exits Section -->
+            <div class="partial-exits-section">
+                <div class="section-header">
+                    <label>Partial Exits</label>
+                    <button type="button" id="add-partial-btn" class="btn-small">+ Add</button>
+                </div>
+                <div id="partial-exits-list"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="notes" rows="2" placeholder="Trade notes..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Screenshot</label>
+                <input type="file" id="screenshot" accept="image/*" class="file-input">
+            </div>
+
+            <div class="form-actions">
+                <button id="confirm-btn" class="btn btn-success">✓ Save Trade</button>
+                <button id="clear-btn" class="btn btn-secondary">Clear</button>
+            </div>
+
+            <div id="status-message" class="status-message hidden"></div>
+        </div>
+
+        <!-- Recent Trades -->
+        <div class="recent-trades">
+            <h4>Recent Trades</h4>
+            <div id="recent-list"></div>
+        </div>
+    </div>
+
+    <script src="widget.js"></script>
+</body>
+</html>

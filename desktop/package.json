@@ -1,0 +1,16 @@
+{
+  "name": "tradelogger-widget",
+  "version": "1.0.0",
+  "description": "TradeLogger Desktop Widget",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "dependencies": {
+    "chrome-remote-interface": "^0.33.2"
+  },
+  "devDependencies": {
+    "electron": "33.2.0"
+  }
+}

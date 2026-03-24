@@ -1,0 +1,404 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    overflow: hidden;
+}
+
+.widget {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    -webkit-app-region: drag;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #4ecca3;
+}
+
+.controls {
+    -webkit-app-region: no-drag;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 6px;
+    margin-left: 4px;
+}
+
+.control-btn:hover {
+    color: #fff;
+}
+
+.control-btn.close:hover {
+    color: #e74c3c;
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: #0f3460;
+    font-size: 12px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e74c3c;
+}
+
+.status.connected::before {
+    background: #4ecca3;
+}
+
+.btn-small {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    background: #3db892;
+}
+
+/* Form */
+.form-container {
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.form-container h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #4ecca3;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 6px 8px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    color: #eee;
+    font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4ecca3;
+}
+
+.form-row {
+    display: flex;
+    gap: 8px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-success {
+    background: #4ecca3;
+    color: #1a1a2e;
+}
+
+.btn-success:hover {
+    background: #3db892;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 20px 12px;
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
+
+.empty-state p {
+    margin-bottom: 12px;
+}
+
+/* Recent Trades */
+.recent-trades {
+    padding: 12px;
+    border-top: 1px solid #0f3460;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.recent-trades h4 {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background: #16213e;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.recent-item .symbol {
+    font-weight: bold;
+}
+
+.recent-item .direction {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.recent-item .direction.long {
+    background: rgba(78, 204, 163, 0.2);
+    color: #4ecca3;
+}
+
+.recent-item .direction.short {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Partial Exits Section */
+.partial-exits-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #0f3460;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.section-header label {
+    font-size: 11px;
+    color: #888;
+}
+
+.partial-exit-item {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.partial-exit-item input {
+    flex: 1;
+    padding: 4px 6px;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    color: #eee;
+    font-size: 12px;
+}
+
+.partial-qty {
+    flex: 0.5 !important;
+    width: 60px;
+}
+
+.partial-exit-price {
+    flex: 1 !important;
+}
+
+.partial-fees {
+    flex: 0.5 !important;
+    width: 60px;
+}
+
+.btn-remove {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-remove:hover {
+    background: #c0392b;
+}
+
+/* File Input */
+.file-input {
+    font-size: 12px;
+}
+
+.file-input::file-selector-button {
+    background: #4ecca3;
+    color: #1a1a2e;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.file-input::file-selector-button:hover {
+    background: #3db892;
+}
+
+/* Status Message */
+.status-message {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 12px;
+    text-align: center;
+}
+
+.status-success {
+    background: rgba(78, 204, 163, 0.2);
+    color: #4ecca3;
+    border: 1px solid #4ecca3;
+}
+
+.status-error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: #0f3460;
+    color: #888;
+}
+
+.btn-secondary:hover {
+    background: #16213e;
+    color: #eee;
+}
+
+/* Recent Item Header */
+.recent-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.recent-item-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* PnL Colors */
+.pnl-positive {
+    color: #4ecca3;
+}
+
+.pnl-negative {
+    color: #e74c3c;
+}
+
+/* No Trades */
+.no-trades {
+    color: #888;
+    font-size: 12px;
+    text-align: center;
+    padding: 8px;
+}

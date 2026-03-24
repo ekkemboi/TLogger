@@ -1,0 +1,29 @@
+[project]
+name = "tradelogger"
+version = "0.1.0"
+description = "Trade logging system with Electron widget and web dashboard"
+requires-python = ">=3.12"
+dependencies = [
+    "flasgger>=0.9.7.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"

@@ -1,0 +1,207 @@
+"""Trade service for business logic."""
+
+from datetime import date, datetime
+from decimal import Decimal
+
+from src.models import FavoriteProduct, Trade, TradeDirection, TradeStatus, db
+
+
+class TradeService:
+    """Service for trade operations."""
+
+    @staticmethod
+    def get_point_value(symbol):
+        """Get point value from favorite product."""
+        favorite = FavoriteProduct.query.filter_by(
+            symbol=symbol.upper(), is_active=True
+        ).first()
+        if favorite and favorite.point_value:
+            return Decimal(str(favorite.point_value))
+        return Decimal("1")
+
+    @staticmethod
+    def get_default_fees(symbol):
+        """Get default fees from favorite product."""
+        favorite = FavoriteProduct.query.filter_by(
+            symbol=symbol.upper(), is_active=True
+        ).first()
+        if favorite and favorite.fees:
+            return Decimal(str(favorite.fees))
+        return Decimal("0")
+
+    @staticmethod
+    def calculate_pnl(trade):
+        """Calculate P&L for a trade with partial exits support."""
+        entry = Decimal(str(trade.entry_price))
+        size = Decimal(str(trade.position_size or 1))
+        fees = Decimal(str(trade.fees or 0))
+        point_value = TradeService.get_point_value(trade.symbol)
+
+        is_long = trade.direction == TradeDirection.LONG
+
+        if trade.exit_transactions:
+            total_pnl = Decimal("0")
+            for exit_tx in trade.exit_transactions:
+                qty = Decimal(str(exit_tx["qty"]))
+                exit_price = Decimal(str(exit_tx["exit_price"]))
+                exit_fees = Decimal(str(exit_tx.get("fees", 0)))
+                if is_long:
+                    total_pnl += (exit_price - entry) * qty * point_value - exit_fees
+                else:
+                    total_pnl += (entry - exit_price) * qty * point_value - exit_fees
+            return total_pnl
+        elif trade.take_profit:
+            tp = Decimal(str(trade.take_profit))
+            if is_long:
+                return (tp - entry) * size * point_value - fees
+            else:
+                return (entry - tp) * size * point_value - fees
+        return None
+
+    @staticmethod
+    def create_trade(data, screenshot_file=None):
+        """Create a new trade journal entry."""
+        exit_transactions = data.get("exit_transactions", [])
+        take_profit = data.get("take_profit")
+        symbol = data.get("symbol").upper()
+
+        trade_date = None
+        if data.get("trade_date"):
+            trade_date = date.fromisoformat(data["trade_date"])
+
+        # Get fees from favorite if not provided
+        fees = data.get("fees")
+        if fees is None:
+            fees = TradeService.get_default_fees(symbol)
+        else:
+            fees = Decimal(str(fees))
+
+        trade = Trade(
+            symbol=symbol,
+            direction=TradeDirection(data.get("direction")),
+            entry_price=Decimal(str(data.get("entry_price"))),
+            take_profit=(
+                Decimal(str(data.get("take_profit")))
+                if data.get("take_profit")
+                else None
+            ),
+            stop_loss=(
+                Decimal(str(data.get("stop_loss"))) if data.get("stop_loss") else None
+            ),
+            position_size=(
+                Decimal(str(data.get("position_size")))
+                if data.get("position_size")
+                else None
+            ),
+            status=TradeStatus.CLOSED
+            if take_profit or exit_transactions
+            else TradeStatus.CONFIRMED,
+            fees=fees,
+            notes=data.get("notes"),
+            tags=data.get("tags"),
+            exit_transactions=exit_transactions if exit_transactions else None,
+            trade_date=trade_date,
+            confirmed_at=datetime.utcnow(),
+            exited_at=datetime.utcnow() if take_profit or exit_transactions else None,
+        )
+
+        trade.pnl = TradeService.calculate_pnl(trade)
+
+        if screenshot_file:
+            from flask import current_app
+
+            filename = f"{trade.id}.png"
+            filepath = current_app.config["SCREENSHOT_DIR"] / filename
+            screenshot_file.save(str(filepath))
+            trade.screenshot_path = str(filepath)
+
+        db.session.add(trade)
+        db.session.commit()
+        return trade
+
+    @staticmethod
+    def get_trades(filters=None, page=1, per_page=50):
+        """Get trades with optional filters."""
+        query = Trade.query
+
+        if filters:
+            if filters.get("symbol"):
+                query = query.filter(Trade.symbol == filters["symbol"].upper())
+            if filters.get("direction"):
+                query = query.filter(
+                    Trade.direction == TradeDirection(filters["direction"])
+                )
+            if filters.get("status"):
+                query = query.filter(Trade.status == TradeStatus(filters["status"]))
+            if filters.get("start_date"):
+                query = query.filter(Trade.trade_date >= filters["start_date"])
+            if filters.get("end_date"):
+                query = query.filter(Trade.trade_date <= filters["end_date"])
+
+        query = query.order_by(
+            Trade.trade_date.desc().nullslast(), Trade.created_at.desc()
+        )
+        return query.paginate(page=page, per_page=per_page, error_out=False)
+
+    @staticmethod
+    def get_trade(trade_id):
+        """Get a single trade by ID."""
+        return Trade.query.get(trade_id)
+
+    @staticmethod
+    def update_trade(trade_id, data):
+        """Update a trade."""
+        trade = Trade.query.get(trade_id)
+        if not trade:
+            return None
+
+        if "take_profit" in data:
+            trade.take_profit = (
+                Decimal(str(data["take_profit"])) if data["take_profit"] else None
+            )
+            if data["take_profit"]:
+                trade.exited_at = datetime.utcnow()
+                trade.status = TradeStatus.CLOSED
+
+        if "exit_transactions" in data:
+            trade.exit_transactions = data["exit_transactions"]
+            if data["exit_transactions"]:
+                trade.status = TradeStatus.CLOSED
+                trade.exited_at = datetime.utcnow()
+
+        if "notes" in data:
+            trade.notes = data["notes"]
+        if "tags" in data:
+            trade.tags = data["tags"]
+        if "fees" in data:
+            trade.fees = Decimal(str(data["fees"]))
+        if "trade_date" in data:
+            trade.trade_date = date.fromisoformat(data["trade_date"])
+
+        trade.pnl = TradeService.calculate_pnl(trade)
+        trade.updated_at = datetime.utcnow()
+        db.session.commit()
+        return trade
+
+    @staticmethod
+    def delete_trade(trade_id):
+        """Delete a trade."""
+        trade = Trade.query.get(trade_id)
+        if not trade:
+            return False
+
+        if trade.screenshot_path:
+            from pathlib import Path
+
+            Path(trade.screenshot_path).unlink(missing_ok=True)
+
+        db.session.delete(trade)
+        db.session.commit()
+        return True
+
+    @staticmethod
+    def get_pending_trades():
+        """Get trades without exit price (open positions)."""
+        return Trade.query.filter(
+            Trade.status == TradeStatus.CONFIRMED, Trade.take_profit.is_(None)
+        ).all()

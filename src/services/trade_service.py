@@ -171,6 +171,25 @@ class TradeService:
                 trade.status = TradeStatus.CLOSED
                 trade.exited_at = datetime.utcnow()
 
+        if "symbol" in data:
+            trade.symbol = data["symbol"].upper()
+
+        if "direction" in data:
+            trade.direction = TradeDirection(data["direction"])
+
+        if "entry_price" in data:
+            trade.entry_price = Decimal(str(data["entry_price"]))
+
+        if "stop_loss" in data:
+            trade.stop_loss = (
+                Decimal(str(data["stop_loss"])) if data["stop_loss"] else None
+            )
+
+        if "position_size" in data:
+            trade.position_size = (
+                Decimal(str(data["position_size"])) if data["position_size"] else None
+            )
+
         if "notes" in data:
             trade.notes = data["notes"]
         if "tags" in data:

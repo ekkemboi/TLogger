@@ -107,16 +107,18 @@ class TradeService:
 
         trade.pnl = TradeService.calculate_pnl(trade)
 
+        db.session.add(trade)
+        db.session.commit()
+
         if screenshot_file:
             from flask import current_app
 
             filename = f"{trade.id}.png"
             filepath = current_app.config["SCREENSHOT_DIR"] / filename
             screenshot_file.save(str(filepath))
-            trade.screenshot_path = str(filepath)
+            trade.screenshot_path = f"/api/screenshots/{filename}"
+            db.session.commit()
 
-        db.session.add(trade)
-        db.session.commit()
         return trade
 
     @staticmethod
@@ -193,7 +195,12 @@ class TradeService:
         if trade.screenshot_path:
             from pathlib import Path
 
-            Path(trade.screenshot_path).unlink(missing_ok=True)
+            from flask import current_app
+
+            # screenshot_path is like /api/screenshots/{id}.png
+            filename = trade.screenshot_path.split("/")[-1]
+            filepath = current_app.config["SCREENSHOT_DIR"] / filename
+            Path(filepath).unlink(missing_ok=True)
 
         db.session.delete(trade)
         db.session.commit()

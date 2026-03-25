@@ -1,11 +1,20 @@
 """Trade routes for TradeLogger API."""
 
 from flasgger import swag_from
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 
 from src.services.trade_service import TradeService
 
 trades_bp = Blueprint("trades", __name__)
+
+
+@trades_bp.route("/screenshots/<filename>")
+def get_screenshot(filename):
+    """Serve a screenshot file."""
+    from flask import current_app
+
+    screenshot_dir = current_app.config["SCREENSHOT_DIR"]
+    return send_from_directory(screenshot_dir, filename)
 
 
 @trades_bp.route("/trades", methods=["POST"])

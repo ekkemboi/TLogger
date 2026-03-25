@@ -81,6 +81,17 @@ def create_trade():
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
 
+    if "outcome" in data and data["outcome"].lower() not in (
+        "win",
+        "loss",
+        "break_even",
+    ):
+        return jsonify({"error": "Outcome must be 'win', 'loss', or 'break_even'"}), 400
+
+    # Normalize outcome to lowercase if provided
+    if "outcome" in data:
+        data["outcome"] = data["outcome"].lower()
+
     screenshot_file = request.files.get("screenshot")
 
     if "tags" in data and isinstance(data["tags"], str):

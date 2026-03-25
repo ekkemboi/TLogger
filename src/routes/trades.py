@@ -234,6 +234,41 @@ def update_trade(trade_id):
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
+    if "symbol" in data and (not data["symbol"] or not data["symbol"].strip()):
+        return jsonify({"error": "Symbol must be a non-empty string"}), 400
+
+    if "direction" in data and data["direction"] not in ("long", "short"):
+        return jsonify({"error": "Direction must be 'long' or 'short'"}), 400
+
+    if "entry_price" in data and (
+        data["entry_price"] is None or float(data["entry_price"]) <= 0
+    ):
+        return jsonify({"error": "Entry price must be positive"}), 400
+
+    if (
+        "stop_loss" in data
+        and data["stop_loss"] is not None
+        and float(data["stop_loss"]) <= 0
+    ):
+        return jsonify({"error": "Stop loss must be positive"}), 400
+
+    if (
+        "take_profit" in data
+        and data["take_profit"] is not None
+        and float(data["take_profit"]) <= 0
+    ):
+        return jsonify({"error": "Take profit must be positive"}), 400
+
+    if (
+        "position_size" in data
+        and data["position_size"] is not None
+        and float(data["position_size"]) <= 0
+    ):
+        return jsonify({"error": "Position size must be positive"}), 400
+
+    if "fees" in data and data["fees"] is not None and float(data["fees"]) < 0:
+        return jsonify({"error": "Fees must be non-negative"}), 400
+
     trade = TradeService.update_trade(trade_id, data)
     if not trade:
         return jsonify({"error": "Trade not found"}), 404

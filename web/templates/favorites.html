@@ -112,6 +112,7 @@ async function loadFavorites() {
                 </td>
                 <td class="table-cell px-4 py-2 text-text-secondary text-xs">${new Date(item.created_at).toLocaleDateString()}</td>
                 <td class="table-cell px-4 py-2">
+                    <button onclick="editFavorite('${item.id}')" class="text-primary hover:text-blue-300 text-[10px] font-semibold mr-3">EDIT</button>
                     <button onclick="deleteFavorite('${item.id}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
                 </td>
             </tr>
@@ -142,8 +143,11 @@ async function saveFavorite(event) {
     const fees = parseFloat(document.getElementById('favorite-fees').value) || 0;
 
     try {
-        const response = await fetch('/api/favorites', {
-            method: 'POST',
+        const url = editingId ? `/api/favorites/${editingId}` : '/api/favorites';
+        const method = editingId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ symbol, point_value: pointValue, fees })
         });
@@ -159,6 +163,28 @@ async function saveFavorite(event) {
         console.error('Failed to save:', error);
         alert('Failed to save favorite');
     }
+}
+
+function editFavorite(id) {
+    // Find the favorite data from the table
+    const favorites = document.querySelectorAll('#favorites-table tr');
+    let favoriteData = null;
+    
+    // Get the data from the API directly
+    fetch(`/api/favorites/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            editingId = id;
+            document.getElementById('modal-title').textContent = 'Edit Favorite';
+            document.getElementById('favorite-symbol').value = data.symbol;
+            document.getElementById('favorite-point-value').value = data.point_value;
+            document.getElementById('favorite-fees').value = data.fees;
+            document.getElementById('favorite-modal').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Failed to load favorite:', error);
+            alert('Failed to load favorite');
+        });
 }
 
 async function deleteFavorite(id) {

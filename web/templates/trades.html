@@ -58,8 +58,8 @@
     </div>
 
     <!-- Table -->
-    <div class="flex-1 min-h-0 bg-bg-secondary border border-border-default flex flex-col">
-        <table class="min-w-full flex-1">
+    <div class="bg-bg-secondary border border-border-default flex flex-col" style="max-height: 60vh;">
+        <table class="min-w-full">
             <thead class="flex-shrink-0">
                 <tr class="border-b border-border-default">
                     <th class="table-header px-3 py-2 text-left text-[10px]">SYMBOL</th>
@@ -72,7 +72,7 @@
                     <th class="table-header px-3 py-2 text-left text-[10px]">ACTIONS</th>
                 </tr>
             </thead>
-            <tbody id="trades-table" class="overflow-y-auto">
+            <tbody id="trades-table" class="overflow-y-auto" style="max-height: calc(60vh - 40px);">
                 <tr>
                     <td colspan="8" class="px-6 py-8 text-center text-text-secondary text-xs">Loading...</td>
                 </tr>

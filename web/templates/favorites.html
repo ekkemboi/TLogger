@@ -3,69 +3,79 @@
 {% block title %}TradeLogger - Favorites{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Favorite Products</h1>
-        <button onclick="showAddModal()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-medium">+ Add Symbol</button>
+<div class="h-full flex flex-col gap-4">
+    <div class="flex justify-between items-center flex-shrink-0">
+        <div>
+            <h1 class="text-3xl font-display font-bold tracking-tight">Favorite Products</h1>
+            <p class="text-text-light text-xs mt-1">Manage your favorite trading symbols</p>
+        </div>
+        <button onclick="showAddModal()" class="btn-primary text-xs py-2 px-4">+ ADD SYMBOL</button>
     </div>
 
-    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-700">
-            <thead class="bg-gray-900">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Symbol</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Point Value</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Fees</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Added</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+    <!-- Table -->
+    <div class="bg-bg-secondary border border-border-default flex flex-col" style="max-height: 60vh;">
+        <table class="min-w-full">
+            <thead class="flex-shrink-0">
+                <tr class="border-b border-border-default">
+                    <th class="table-header px-4 py-2 text-left text-[10px]">SYMBOL</th>
+                    <th class="table-header px-4 py-2 text-left text-[10px]">POINT VALUE</th>
+                    <th class="table-header px-4 py-2 text-left text-[10px]">FEES</th>
+                    <th class="table-header px-4 py-2 text-left text-[10px]">STATUS</th>
+                    <th class="table-header px-4 py-2 text-left text-[10px]">ADDED</th>
+                    <th class="table-header px-4 py-2 text-left text-[10px]">ACTIONS</th>
                 </tr>
             </thead>
-            <tbody id="favorites-table" class="divide-y divide-gray-700">
+            <tbody id="favorites-table" class="overflow-y-auto" style="max-height: calc(60vh - 40px);">
                 <tr>
-                    <td colspan="6" class="px-6 py-4 text-center text-gray-400">Loading...</td>
+                    <td colspan="6" class="px-6 py-8 text-center text-text-secondary text-xs">Loading...</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div id="empty-state" class="hidden text-center text-gray-400 py-8">
-        <p class="text-lg">No favorite products yet</p>
-        <p class="text-sm">Add symbols you trade frequently</p>
+    <div id="empty-state" class="hidden flex-1 flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-2 border-text-tertiary mb-4 flex items-center justify-center">
+            <span class="text-text-tertiary text-xl">+</span>
+        </div>
+        <p class="text-sm font-display text-text-secondary">No favorites yet</p>
+        <p class="text-xs text-text-tertiary mt-1">Add symbols you trade frequently</p>
     </div>
 </div>
 
 <!-- Add/Edit Modal -->
-<div id="favorite-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
-        <h2 id="modal-title" class="text-xl font-bold mb-4">Add Favorite</h2>
+<div id="favorite-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="modal-title" class="text-xl font-display font-bold">Add Favorite</h2>
+            <button onclick="closeModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
+        </div>
         <form id="favorite-form" onsubmit="saveFavorite(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Symbol</label>
-                    <input type="text" id="favorite-symbol" required 
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    <label class="label text-[10px]">SYMBOL</label>
+                    <input type="text" id="favorite-symbol" required
+                           class="input mt-2 text-xs"
                            placeholder="e.g., BTCUSDT, MNQ, ES">
-                    <p class="text-xs text-gray-500 mt-1">Symbol will be converted to uppercase</p>
+                    <p class="text-[10px] text-text-tertiary mt-1">Symbol will be converted to uppercase</p>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Point Value ($)</label>
-                    <input type="number" id="favorite-point-value" step="0.01" 
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    <label class="label text-[10px]">POINT VALUE ($)</label>
+                    <input type="number" id="favorite-point-value" step="0.01"
+                           class="input mt-2 text-xs"
                            placeholder="e.g., MNQ=$2, ES=$50, BTC=$1">
-                    <p class="text-xs text-gray-500 mt-1">Dollar value per point move</p>
+                    <p class="text-[10px] text-text-tertiary mt-1">Dollar value per point move</p>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Default Fees ($)</label>
-                    <input type="number" id="favorite-fees" step="0.01" 
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    <label class="label text-[10px]">DEFAULT FEES ($)</label>
+                    <input type="number" id="favorite-fees" step="0.01"
+                           class="input mt-2 text-xs"
                            placeholder="e.g., 2.50">
-                    <p class="text-xs text-gray-500 mt-1">Default fees per trade</p>
+                    <p class="text-[10px] text-text-tertiary mt-1">Default fees per trade</p>
                 </div>
             </div>
-            <div class="mt-6 flex space-x-3">
-                <button type="button" onclick="closeModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Cancel</button>
-                <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-medium">Save</button>
+            <div class="mt-6 flex gap-3">
+                <button type="button" onclick="closeModal()" class="btn-secondary flex-1 text-xs py-2">CANCEL</button>
+                <button type="submit" class="btn-primary flex-1 text-xs py-2">SAVE</button>
             </div>
         </form>
     </div>
@@ -90,19 +100,19 @@ async function loadFavorites() {
         }
 
         emptyState.classList.add('hidden');
-        tbody.innerHTML = data.map(item => `
-            <tr class="hover:bg-gray-700">
-                <td class="px-6 py-4 whitespace-nowrap font-medium">${item.symbol}</td>
-                <td class="px-6 py-4 whitespace-nowrap">$${item.point_value.toFixed(2)}</td>
-                <td class="px-6 py-4 whitespace-nowrap">$${item.fees.toFixed(2)}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 rounded-full text-xs ${item.is_active ? 'bg-green-600' : 'bg-gray-600'}">
-                        ${item.is_active ? 'Active' : 'Inactive'}
+        tbody.innerHTML = data.map((item, i) => `
+            <tr class="border-b border-border-default ${i % 2 === 0 ? 'bg-bg-secondary' : 'bg-bg-surface'}">
+                <td class="table-cell px-4 py-2 text-xs font-semibold">${item.symbol}</td>
+                <td class="table-cell px-4 py-2 text-xs">$${item.point_value.toFixed(2)}</td>
+                <td class="table-cell px-4 py-2 text-xs">$${item.fees.toFixed(2)}</td>
+                <td class="table-cell px-4 py-2">
+                    <span class="${item.is_active ? 'badge-success' : 'badge-warning'} text-[9px]">
+                        ${item.is_active ? 'ACTIVE' : 'INACTIVE'}
                     </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">${new Date(item.created_at).toLocaleDateString()}</td>
-                <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                    <button onclick="deleteFavorite('${item.id}')" class="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                <td class="table-cell px-4 py-2 text-text-secondary text-xs">${new Date(item.created_at).toLocaleDateString()}</td>
+                <td class="table-cell px-4 py-2">
+                    <button onclick="deleteFavorite('${item.id}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
                 </td>
             </tr>
         `).join('');

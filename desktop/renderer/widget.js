@@ -5,6 +5,7 @@ const API_URL = 'http://localhost:5000/api';
 const symbolSelect = document.getElementById('symbol-select');
 const symbolCustom = document.getElementById('symbol-custom');
 const directionSelect = document.getElementById('direction');
+const outcomeSelect = document.getElementById('outcome');
 const entryPriceInput = document.getElementById('entry-price');
 const positionSizeInput = document.getElementById('position-size');
 const stopLossInput = document.getElementById('stop-loss');
@@ -18,10 +19,12 @@ const recentList = document.getElementById('recent-list');
 const statusMessage = document.getElementById('status-message');
 const partialExitsList = document.getElementById('partial-exits-list');
 const addPartialBtn = document.getElementById('add-partial-btn');
+const floatBtn = document.getElementById('float-btn');
 
 // State
 let partialExits = [];
 let favoritesCache = {};
+let isCollapsed = false;
 
 // Initialize
 function init() {
@@ -131,6 +134,7 @@ function clearForm() {
     symbolSelect.value = '';
     symbolCustom.value = '';
     directionSelect.value = 'long';
+    outcomeSelect.value = 'win';
     entryPriceInput.value = '';
     positionSizeInput.value = '';
     stopLossInput.value = '';
@@ -197,7 +201,8 @@ async function confirmTrade() {
         stop_loss: parseFloat(stopLossInput.value) || null,
         notes: notesInput.value || null,
         trade_date: tradeDateInput.value,
-        exit_transactions: exitTransactions.length > 0 ? exitTransactions : null
+        exit_transactions: exitTransactions.length > 0 ? exitTransactions : null,
+        outcome: outcomeSelect.value,
     };
 
     try {
@@ -237,12 +242,43 @@ async function confirmTrade() {
     }
 }
 
+// Toggle floating/collapsed mode
+async function toggleFloat() {
+    const widget = document.querySelector('.widget');
+    isCollapsed = !isCollapsed;
+
+    if (isCollapsed) {
+        widget.classList.add('collapsed');
+        floatBtn.textContent = '▲';
+        floatBtn.title = 'Expand widget';
+        // Resize window to header-only height
+        try {
+            const { ipcRenderer } = window.require('electron');
+            await ipcRenderer.invoke('resize-window', { height: 48 });
+        } catch (e) {
+            console.log('Not in Electron context');
+        }
+    } else {
+        widget.classList.remove('collapsed');
+        floatBtn.textContent = '▼';
+        floatBtn.title = 'Minimize';
+        // Restore full height
+        try {
+            const { ipcRenderer } = window.require('electron');
+            await ipcRenderer.invoke('resize-window', { height: 700 });
+        } catch (e) {
+            console.log('Not in Electron context');
+        }
+    }
+}
+
 // Event listeners
 function setupEventListeners() {
     confirmBtn.addEventListener('click', confirmTrade);
     clearBtn.addEventListener('click', clearForm);
     addPartialBtn.addEventListener('click', addPartialExit);
-    
+    floatBtn.addEventListener('click', toggleFloat);
+
     // Symbol selection
     symbolSelect.addEventListener('change', () => {
         if (symbolSelect.value) {

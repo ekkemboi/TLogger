@@ -24,6 +24,14 @@ class TradeStatus(str, Enum):
     CLOSED = "closed"
 
 
+class TradeOutcome(str, Enum):
+    """Trade outcome enum."""
+
+    WIN = "win"
+    LOSS = "loss"
+    BREAK_EVEN = "break_even"
+
+
 class FavoriteProduct(db.Model):
     """Favorite product model for frequently traded symbols."""
 
@@ -69,6 +77,7 @@ class Trade(db.Model):
     status = db.Column(
         db.Enum(TradeStatus), nullable=False, default=TradeStatus.CONFIRMED
     )
+    outcome = db.Column(db.Enum(TradeOutcome), nullable=True, default=TradeOutcome.WIN)
     pnl = db.Column(db.Numeric(18, 8), nullable=True)
     fees = db.Column(db.Numeric(18, 8), nullable=True, default=0)
     trade_duration = db.Column(db.Interval, nullable=True)
@@ -101,6 +110,7 @@ class Trade(db.Model):
             "take_profit": float(self.take_profit) if self.take_profit else None,
             "position_size": float(self.position_size) if self.position_size else None,
             "status": self.status.value if self.status else None,
+            "outcome": self.outcome.value if self.outcome else "win",
             "pnl": float(self.pnl) if self.pnl else None,
             "fees": float(self.fees) if self.fees else None,
             "trade_duration": str(self.trade_duration) if self.trade_duration else None,

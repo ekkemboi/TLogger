@@ -3,7 +3,14 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from src.models import FavoriteProduct, Trade, TradeDirection, TradeStatus, db
+from src.models import (
+    FavoriteProduct,
+    Trade,
+    TradeDirection,
+    TradeOutcome,
+    TradeStatus,
+    db,
+)
 
 
 class TradeService:
@@ -50,7 +57,23 @@ class TradeService:
                 else:
                     total_pnl += (entry - exit_price) * qty * point_value - exit_fees
             return total_pnl
-        elif trade.take_profit:
+
+        outcome = trade.outcome
+
+        if outcome == TradeOutcome.BREAK_EVEN:
+            return -fees
+
+        if outcome == TradeOutcome.LOSS:
+            if trade.stop_loss:
+                sl = Decimal(str(trade.stop_loss))
+                if is_long:
+                    return (sl - entry) * size * point_value - fees
+                else:
+                    return (entry - sl) * size * point_value - fees
+            return -fees
+
+        # Default: WIN - use take_profit
+        if trade.take_profit:
             tp = Decimal(str(trade.take_profit))
             if is_long:
                 return (tp - entry) * size * point_value - fees
@@ -64,6 +87,7 @@ class TradeService:
         exit_transactions = data.get("exit_transactions", [])
         take_profit = data.get("take_profit")
         symbol = data.get("symbol").upper()
+        outcome = data.get("outcome", "win")
 
         trade_date = None
         if data.get("trade_date"):
@@ -96,6 +120,7 @@ class TradeService:
             status=TradeStatus.CLOSED
             if take_profit or exit_transactions
             else TradeStatus.CONFIRMED,
+            outcome=TradeOutcome(outcome) if outcome else TradeOutcome.WIN,
             fees=fees,
             notes=data.get("notes"),
             tags=data.get("tags"),

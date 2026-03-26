@@ -88,6 +88,9 @@ class TradeService:
         take_profit = data.get("take_profit")
         symbol = data.get("symbol").upper()
         outcome = data.get("outcome", "win")
+        # Convert to uppercase to match enum values
+        if outcome:
+            outcome = outcome.upper()
 
         trade_date = None
         if data.get("trade_date"):

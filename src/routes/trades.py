@@ -81,16 +81,16 @@ def create_trade():
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
 
-    if "outcome" in data and data["outcome"].lower() not in (
-        "win",
-        "loss",
-        "break_even",
+    if "outcome" in data and data["outcome"].upper() not in (
+        "WIN",
+        "LOSS",
+        "BREAK_EVEN",
     ):
         return jsonify({"error": "Outcome must be 'win', 'loss', or 'break_even'"}), 400
 
-    # Normalize outcome to lowercase if provided
+    # Normalize outcome to uppercase to match enum
     if "outcome" in data:
-        data["outcome"] = data["outcome"].lower()
+        data["outcome"] = data["outcome"].upper()
 
     screenshot_file = request.files.get("screenshot")
 

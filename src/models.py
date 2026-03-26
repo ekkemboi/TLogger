@@ -27,9 +27,9 @@ class TradeStatus(str, Enum):
 class TradeOutcome(str, Enum):
     """Trade outcome enum."""
 
-    WIN = "win"
-    LOSS = "loss"
-    BREAK_EVEN = "break_even"
+    WIN = "WIN"
+    LOSS = "LOSS"
+    BREAK_EVEN = "BREAK_EVEN"
 
 
 class FavoriteProduct(db.Model):
@@ -110,7 +110,7 @@ class Trade(db.Model):
             "take_profit": float(self.take_profit) if self.take_profit else None,
             "position_size": float(self.position_size) if self.position_size else None,
             "status": self.status.value if self.status else None,
-            "outcome": self.outcome.value if self.outcome else "win",
+            "outcome": self.outcome.value.lower() if self.outcome else "win",
             "pnl": float(self.pnl) if self.pnl else None,
             "fees": float(self.fees) if self.fees else None,
             "trade_duration": str(self.trade_duration) if self.trade_duration else None,

@@ -104,6 +104,7 @@ class TradeService:
             fees = Decimal(str(fees))
 
         trade = Trade(
+            account_id=data.get("account_id"),
             symbol=symbol,
             direction=TradeDirection(data.get("direction")),
             entry_price=Decimal(str(data.get("entry_price"))),

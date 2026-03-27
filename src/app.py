@@ -8,7 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from src.config import config
-from src.models import db
+from src.models import Account, db
 
 
 def create_app(config_name=None):
@@ -56,15 +56,23 @@ def create_app(config_name=None):
     from src.routes.trades import trades_bp
     from src.routes.metrics import metrics_bp
     from src.routes.favorites import favorites_bp
+    from src.routes.accounts import accounts_bp
     from web.routes import web_bp
 
     app.register_blueprint(trades_bp, url_prefix="/api")
     app.register_blueprint(metrics_bp, url_prefix="/api")
     app.register_blueprint(favorites_bp, url_prefix="/api")
+    app.register_blueprint(accounts_bp, url_prefix="/api")
     app.register_blueprint(web_bp)
 
     with app.app_context():
         db.create_all()
+
+        # Auto-create Default account if none exists (skip in testing mode)
+        if not app.config.get("TESTING") and not Account.query.first():
+            default_account = Account(name="Default")
+            db.session.add(default_account)
+            db.session.commit()
 
     return app
 

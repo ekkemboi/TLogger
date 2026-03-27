@@ -32,6 +32,33 @@ class TradeOutcome(str, Enum):
     BREAK_EVEN = "BREAK_EVEN"
 
 
+class Account(db.Model):
+    """Account model for multiple trading accounts."""
+
+    __tablename__ = "accounts"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = db.Column(db.String(100), nullable=False)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+
+    trades = db.relationship("Trade", backref="account", lazy=True)
+
+    def to_dict(self):
+        """Convert account to dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f"<Account {self.name} active={self.is_active}>"
+
+
 class FavoriteProduct(db.Model):
     """Favorite product model for frequently traded symbols."""
 
@@ -67,6 +94,7 @@ class Trade(db.Model):
     __tablename__ = "trades"
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=True)
     symbol = db.Column(db.String(50), nullable=False)
     direction = db.Column(db.Enum(TradeDirection), nullable=False)
     entry_price = db.Column(db.Numeric(18, 8), nullable=False)
@@ -102,6 +130,7 @@ class Trade(db.Model):
         """Convert trade to dictionary."""
         return {
             "id": self.id,
+            "account_id": self.account_id,
             "symbol": self.symbol,
             "direction": self.direction.value if self.direction else None,
             "entry_price": float(self.entry_price) if self.entry_price else None,

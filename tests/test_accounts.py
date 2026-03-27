@@ -184,9 +184,11 @@ class TestTradeAccountRequired:
 
     def test_create_trade_requires_account_id(self, client, sample_trade_data):
         """Test creating trade without account_id fails."""
+        # Remove account_id from sample data
+        trade_data = {k: v for k, v in sample_trade_data.items() if k != "account_id"}
         response = client.post(
             "/api/trades",
-            data=json.dumps(sample_trade_data),
+            data=json.dumps(trade_data),
             content_type="application/json",
         )
         assert response.status_code == 400

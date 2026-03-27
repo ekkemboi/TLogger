@@ -3,6 +3,7 @@
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request, send_from_directory
 
+from src.models import Account
 from src.services.trade_service import TradeService
 
 trades_bp = Blueprint("trades", __name__)
@@ -80,6 +81,14 @@ def create_trade():
     for field in required:
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    if "account_id" not in data or not data["account_id"]:
+        return jsonify({"error": "Missing account_id"}), 400
+
+    # Verify account exists
+    account = Account.query.get(data["account_id"])
+    if not account:
+        return jsonify({"error": "Invalid account_id"}), 400
 
     if "outcome" in data and data["outcome"].upper() not in (
         "WIN",

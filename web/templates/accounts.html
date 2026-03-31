@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}TradeLogger - Accounts{% endblock %}
+
+{% block content %}
+<div class="h-full flex flex-col gap-4">
+    <div class="flex justify-between items-center flex-shrink-0">
+        <div>
+            <h1 class="text-3xl font-display font-bold tracking-tight">Accounts</h1>
+            <p class="text-text-light text-xs mt-1">Manage your trading accounts</p>
+        </div>
+        <button onclick="showAddModal()" class="btn-primary text-xs py-2 px-4">+ ADD ACCOUNT</button>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-bg-secondary border border-border-default overflow-auto" style="max-height: 60vh;">
+        <table class="min-w-full table-auto">
+            <thead class="flex-shrink-0">
+                <tr class="border-b border-border-default">
+                    <th class="table-header px-3 py-2 text-left text-[11px]">ACCOUNT</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">OPENING BALANCE</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">TRADES</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">TOTAL P&L</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">PROFIT %</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">STATUS</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="accounts-table">
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-text-secondary text-xs">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div id="add-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-display font-bold">New Account</h2>
+            <button onclick="closeAddModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
+        </div>
+        <form id="add-form" class="space-y-4">
+            <div>
+                <label class="label text-[10px]">ACCOUNT NAME</label>
+                <input type="text" id="add-name" class="input text-xs" placeholder="e.g., Personal, IRA, Business" required>
+            </div>
+            <div>
+                <label class="label text-[10px]">OPENING BALANCE</label>
+                <input type="number" id="add-opening-balance" class="input text-xs" placeholder="0.00" step="0.01" min="0">
+            </div>
+        </form>
+        <div class="mt-6 flex gap-3">
+            <button onclick="closeAddModal()" class="btn-secondary flex-1">CANCEL</button>
+            <button onclick="createAccount()" class="btn-primary flex-1">CREATE</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Account Modal -->
+<div id="edit-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-display font-bold">Edit Account</h2>
+            <button onclick="closeEditModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
+        </div>
+        <form id="edit-form" class="space-y-4">
+            <input type="hidden" id="edit-id">
+            <div>
+                <label class="label text-[10px]">ACCOUNT NAME</label>
+                <input type="text" id="edit-name" class="input text-xs" required>
+            </div>
+            <div>
+                <label class="label text-[10px]">OPENING BALANCE</label>
+                <input type="number" id="edit-opening-balance" class="input text-xs" step="0.01" min="0">
+            </div>
+        </form>
+        <div class="mt-6 flex gap-3">
+            <button onclick="closeEditModal()" class="btn-secondary flex-1">CANCEL</button>
+            <button onclick="saveAccount()" class="btn-primary flex-1">SAVE</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadAccounts() {
+    try {
+        const response = await fetch('/api/accounts');
+        const data = await response.json();
+        const accounts = data.accounts || [];
+
+        const tbody = document.getElementById('accounts-table');
+        if (accounts.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-text-secondary text-xs">No accounts yet. Create one to get started.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = accounts.map((account, i) => `
+            <tr class="border-b border-border-default ${i % 2 === 0 ? 'bg-bg-surface' : 'bg-bg-primary'}">
+                <td class="table-cell px-3 py-2 text-xs">${account.name}</td>
+                <td class="table-cell px-3 py-2 text-xs">$${account.opening_balance.toFixed(2)}</td>
+                <td class="table-cell px-3 py-2 text-xs">${account.trade_count}</td>
+                <td class="table-cell px-3 py-2 text-xs ${account.total_pnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">
+                    ${account.total_pnl >= 0 ? '+' : ''}$${account.total_pnl.toFixed(2)}
+                </td>
+                <td class="table-cell px-3 py-2 text-xs ${account.profit_percent >= 0 ? 'pnl-positive' : 'pnl-negative'}">
+                    ${account.profit_percent >= 0 ? '+' : ''}${account.profit_percent.toFixed(1)}%
+                </td>
+                <td class="table-cell px-3 py-2">
+                    <span class="${account.is_active ? 'badge-success' : 'badge-error'} text-[9px]">
+                        ${account.is_active ? 'ACTIVE' : 'INACTIVE'}
+                    </span>
+                </td>
+                <td class="table-cell px-3 py-2">
+                    <button onclick="editAccount('${account.id}', '${account.name}', '${account.opening_balance}')" class="text-accent hover:text-blue-300 text-[10px] font-semibold mr-2">EDIT</button>
+                    <button onclick="deleteAccount('${account.id}', '${account.name}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error('Failed to load accounts:', error);
+    }
+}
+
+function showAddModal() {
+    document.getElementById('add-name').value = '';
+    document.getElementById('add-modal').classList.remove('hidden');
+}
+
+function closeAddModal() {
+    document.getElementById('add-modal').classList.add('hidden');
+}
+
+async function createAccount() {
+    const name = document.getElementById('add-name').value.trim();
+    const openingBalance = document.getElementById('add-opening-balance').value;
+    
+    if (!name) {
+        alert('Please enter an account name');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/accounts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name,
+                opening_balance: openingBalance ? parseFloat(openingBalance) : 0
+            })
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            alert(err.error || 'Failed to create account');
+            return;
+        }
+
+        closeAddModal();
+        loadAccounts();
+    } catch (error) {
+        console.error('Failed to create account:', error);
+        alert('Failed to create account');
+    }
+}
+
+function editAccount(id, name, openingBalance) {
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-opening-balance').value = openingBalance || '';
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+}
+
+async function saveAccount() {
+    const id = document.getElementById('edit-id').value;
+    const name = document.getElementById('edit-name').value.trim();
+    const openingBalance = document.getElementById('edit-opening-balance').value;
+
+    if (!name) {
+        alert('Please enter an account name');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/accounts/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name,
+                opening_balance: openingBalance ? parseFloat(openingBalance) : 0
+            })
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            alert(err.error || 'Failed to save account');
+            return;
+        }
+
+        closeEditModal();
+        loadAccounts();
+    } catch (error) {
+        console.error('Failed to save account:', error);
+        alert('Failed to save account');
+    }
+}
+
+async function deleteAccount(id, name) {
+    if (!confirm(`Delete account "${name}"? This cannot be undone.`)) return;
+
+    try {
+        await fetch(`/api/accounts/${id}`, { method: 'DELETE' });
+        loadAccounts();
+    } catch (error) {
+        console.error('Failed to delete account:', error);
+    }
+}
+
+loadAccounts();
+</script>
+{% endblock %}

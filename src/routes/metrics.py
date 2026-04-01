@@ -3,7 +3,7 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import func
 
-from src.models import Trade, TradeDirection, TradeStatus, TradeOutcome, db
+from src.models import Trade, TradeDirection, TradeOutcome, db
 
 metrics_bp = Blueprint("metrics", __name__)
 
@@ -94,9 +94,8 @@ def get_metrics():
         query = query.filter(Trade.trade_date <= end_date)
 
     total_trades = query.count()
-    confirmed_trades = query.filter(Trade.status == TradeStatus.CONFIRMED).count()
-    closed_trades = query.filter(Trade.status == TradeStatus.CLOSED).count()
 
+    # Use outcome field instead of status for filtering
     trades_with_pnl = query.filter(Trade.outcome.isnot(None)).all()
 
     winning_trades = [
@@ -175,8 +174,6 @@ def get_metrics():
     return jsonify(
         {
             "total_trades": total_trades,
-            "confirmed_trades": confirmed_trades,
-            "closed_trades": closed_trades,
             "winning_trades": len(winning_trades),
             "losing_trades": len(losing_trades),
             "win_rate": round(win_rate, 4),

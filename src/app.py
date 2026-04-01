@@ -21,10 +21,23 @@ def create_app(config_name=None):
     )
     app.config.from_object(config[config_name])
 
+    # Session secret for OAuth state
+    app.secret_key = app.config["SECRET_KEY"]
+
     Path(app.config["SCREENSHOT_DIR"]).mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+    # Configure CORS with credentials support
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": ["http://localhost:5000", "http://localhost:3000"],
+                "supports_credentials": True,
+            }
+        },
+    )
 
     swagger_config = {
         "headers": [],
@@ -53,12 +66,18 @@ def create_app(config_name=None):
 
     Swagger(app, config=swagger_config, template=swagger_template)
 
+    from src.routes.auth import auth_bp, oauth
     from src.routes.trades import trades_bp
     from src.routes.metrics import metrics_bp
     from src.routes.favorites import favorites_bp
     from src.routes.accounts import accounts_bp
     from web.routes import web_bp
 
+    # Initialize OAuth
+    oauth.init_app(app)
+
+    # Register blueprints
+    app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(trades_bp, url_prefix="/api")
     app.register_blueprint(metrics_bp, url_prefix="/api")
     app.register_blueprint(favorites_bp, url_prefix="/api")

@@ -8,7 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from src.config import config
-from src.models import Account, db
+from src.models import Account, User, db
 
 
 def create_app(config_name=None):
@@ -66,13 +66,13 @@ def create_app(config_name=None):
     app.register_blueprint(web_bp)
 
     with app.app_context():
-        db.create_all()
+        # Note: Database schema is managed by Alembic migrations
+        # Run `alembic upgrade head` to create/update schema
+        # db.create_all() is no longer used in production/development
 
-        # Auto-create Default account if none exists (skip in testing mode)
-        if not app.config.get("TESTING") and not Account.query.first():
-            default_account = Account(name="Default")
-            db.session.add(default_account)
-            db.session.commit()
+        # For testing mode, create tables and seed data
+        if app.config.get("TESTING"):
+            db.create_all()
 
     return app
 

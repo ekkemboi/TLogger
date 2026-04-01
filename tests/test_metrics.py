@@ -16,13 +16,14 @@ class TestMetrics:
         assert data["win_rate"] == 0
         assert data["total_pnl"] == 0
 
-    def test_metrics_with_trades(self, client, default_account):
+    def test_metrics_with_trades(self, client, default_account, default_user):
         """Test metrics with some trades."""
         # Create winning trade
         client.post(
             "/api/trades",
             data=json.dumps(
                 {
+                    "user_id": default_user,
                     "account_id": default_account,
                     "symbol": "BTCUSDT",
                     "direction": "long",
@@ -37,6 +38,7 @@ class TestMetrics:
             "/api/trades",
             data=json.dumps(
                 {
+                    "user_id": default_user,
                     "account_id": default_account,
                     "symbol": "ETHUSDT",
                     "direction": "short",

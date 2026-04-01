@@ -72,6 +72,7 @@ def create_account():
         opening_balance = Decimal(str(opening_balance))
 
     account = Account(
+        user_id=data.get("user_id"),
         name=data["name"],
         opening_balance=opening_balance if opening_balance else Decimal("0"),
     )

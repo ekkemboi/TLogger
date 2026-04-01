@@ -7,11 +7,12 @@ import pytest
 class TestTradeOutcomeWin:
     """Tests for trades with outcome=WIN (P&L uses take_profit)."""
 
-    def test_outcome_win_long(self, client, default_account):
+    def test_outcome_win_long(self, client, default_account, default_user):
         """LONG trade with outcome=WIN uses take_profit as exit price for P&L."""
         # Entry: 100, TP: 120, SL: 90, Size: 1, Fees: 5
         # P&L = (120 - 100) * 1 * 1 - 5 = 15
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "long",
@@ -32,11 +33,12 @@ class TestTradeOutcomeWin:
         assert data["outcome"] == "win"
         assert data["pnl"] == 15.00
 
-    def test_outcome_win_short(self, client, default_account):
+    def test_outcome_win_short(self, client, default_account, default_user):
         """SHORT trade with outcome=WIN uses take_profit as exit price for P&L."""
         # Entry: 100, TP: 80, SL: 110, Size: 1, Fees: 5
         # P&L = (100 - 80) * 1 * 1 - 5 = 15
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "short",
@@ -61,11 +63,12 @@ class TestTradeOutcomeWin:
 class TestTradeOutcomeLoss:
     """Tests for trades with outcome=LOSS (P&L uses stop_loss)."""
 
-    def test_outcome_loss_long(self, client, default_account):
+    def test_outcome_loss_long(self, client, default_account, default_user):
         """LONG trade with outcome=LOSS uses stop_loss as exit price for P&L."""
         # Entry: 100, TP: 120, SL: 90, Size: 1, Fees: 5
         # P&L = (90 - 100) * 1 * 1 - 5 = -15
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "long",
@@ -86,11 +89,12 @@ class TestTradeOutcomeLoss:
         assert data["outcome"] == "loss"
         assert data["pnl"] == -15.00
 
-    def test_outcome_loss_short(self, client, default_account):
+    def test_outcome_loss_short(self, client, default_account, default_user):
         """SHORT trade with outcome=LOSS uses stop_loss as exit price for P&L."""
         # Entry: 100, TP: 80, SL: 110, Size: 1, Fees: 5
         # P&L = (100 - 110) * 1 * 1 - 5 = -15
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "short",
@@ -115,11 +119,12 @@ class TestTradeOutcomeLoss:
 class TestTradeOutcomeBreakEven:
     """Tests for trades with outcome=BREAK_EVEN (P&L = -fees only)."""
 
-    def test_outcome_break_even_long(self, client, default_account):
+    def test_outcome_break_even_long(self, client, default_account, default_user):
         """LONG trade with outcome=BREAK_EVEN has P&L = -fees only."""
         # Entry: 100, TP: 120, SL: 90, Size: 1, Fees: 5
         # P&L = -5 (only fees, no price movement counted)
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "long",
@@ -140,11 +145,12 @@ class TestTradeOutcomeBreakEven:
         assert data["outcome"] == "break_even"
         assert data["pnl"] == -5.00
 
-    def test_outcome_break_even_short(self, client, default_account):
+    def test_outcome_break_even_short(self, client, default_account, default_user):
         """SHORT trade with outcome=BREAK_EVEN has P&L = -fees only."""
         # Entry: 100, TP: 80, SL: 110, Size: 1, Fees: 5
         # P&L = -5 (only fees, no price movement counted)
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "short",
@@ -169,9 +175,10 @@ class TestTradeOutcomeBreakEven:
 class TestTradeOutcomeDefault:
     """Tests for default outcome behavior."""
 
-    def test_default_outcome_is_win(self, client, default_account):
+    def test_default_outcome_is_win(self, client, default_account, default_user):
         """Trade created without outcome field defaults to WIN."""
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "long",
@@ -196,9 +203,10 @@ class TestTradeOutcomeDefault:
 class TestTradeOutcomeValidation:
     """Tests for outcome field validation."""
 
-    def test_invalid_outcome(self, client, default_account):
+    def test_invalid_outcome(self, client, default_account, default_user):
         """Invalid outcome value returns 400."""
         trade_data = {
+            "user_id": default_user,
             "account_id": default_account,
             "symbol": "BTCUSDT",
             "direction": "long",

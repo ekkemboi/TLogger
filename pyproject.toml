@@ -5,6 +5,7 @@ description = "Trade logging system with Electron widget and web dashboard"
 requires-python = ">=3.12"
 dependencies = [
     "flasgger>=0.9.7.1",
+    "alembic>=1.18.0",
 ]
 
 [build-system]

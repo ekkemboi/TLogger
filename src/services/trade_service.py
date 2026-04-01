@@ -109,10 +109,10 @@ class TradeService:
             if trade.stop_loss:
                 sl = Decimal(str(trade.stop_loss))
                 if is_long:
-                    return abs((sl - entry) * size * point_value)
+                    return -abs((sl - entry) * size * point_value) - fees
                 else:
-                    return abs((entry - sl) * size * point_value)
-            return Decimal("0")
+                    return -abs((entry - sl) * size * point_value) - fees
+            return -fees
 
         # Default: WIN - use take_profit
         if trade.take_profit:
@@ -150,6 +150,7 @@ class TradeService:
             fees = Decimal(str(fees))
 
         trade = Trade(
+            user_id=data.get("user_id"),
             account_id=data.get("account_id"),
             symbol=symbol,
             direction=TradeDirection(data.get("direction")),

@@ -32,12 +32,61 @@ class TradeOutcome(str, Enum):
     BREAK_EVEN = "BREAK_EVEN"
 
 
+class User(db.Model):
+    """User model for authentication."""
+
+    __tablename__ = "users"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False)
+    profile_picture = db.Column(db.String(500), nullable=True)
+
+    # Auth fields
+    auth_provider = db.Column(db.String(20), nullable=False, default="email")
+    google_id = db.Column(db.String(100), nullable=True, unique=True)
+    password_hash = db.Column(db.String(255), nullable=True)
+
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        nullable=False,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+    )
+
+    # Relationships
+    trades = db.relationship("Trade", backref="user", lazy=True)
+    favorites = db.relationship("FavoriteProduct", backref="user", lazy=True)
+    accounts = db.relationship("Account", backref="user", lazy=True)
+
+    def to_dict(self):
+        """Convert user to dictionary (no sensitive fields)."""
+        return {
+            "id": self.id,
+            "email": self.email,
+            "name": self.name,
+            "profile_picture": self.profile_picture,
+            "auth_provider": self.auth_provider,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+    def __repr__(self):
+        return f"<User {self.email} active={self.is_active}>"
+
+
 class Account(db.Model):
     """Account model for multiple trading accounts."""
 
     __tablename__ = "accounts"
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     opening_balance = db.Column(db.Numeric(18, 2), nullable=True, default=0)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
@@ -51,6 +100,7 @@ class Account(db.Model):
         """Convert account to dictionary."""
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "name": self.name,
             "opening_balance": float(self.opening_balance)
             if self.opening_balance
@@ -69,7 +119,8 @@ class FavoriteProduct(db.Model):
     __tablename__ = "favorite_products"
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    symbol = db.Column(db.String(50), nullable=False, unique=True)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    symbol = db.Column(db.String(50), nullable=False)
     point_value = db.Column(db.Numeric(18, 8), nullable=True, default=1)
     fees = db.Column(db.Numeric(18, 8), nullable=True, default=0)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
@@ -81,6 +132,7 @@ class FavoriteProduct(db.Model):
         """Convert favorite product to dictionary."""
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "symbol": self.symbol,
             "point_value": float(self.point_value) if self.point_value else 1,
             "fees": float(self.fees) if self.fees else 0,
@@ -98,6 +150,7 @@ class Trade(db.Model):
     __tablename__ = "trades"
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=False)
     symbol = db.Column(db.String(50), nullable=False)
     direction = db.Column(db.Enum(TradeDirection), nullable=False)
@@ -138,6 +191,7 @@ class Trade(db.Model):
         """Convert trade to dictionary."""
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "account_id": self.account_id,
             "account_name": self.account.name if self.account else None,
             "symbol": self.symbol,

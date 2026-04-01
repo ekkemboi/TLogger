@@ -5,3 +5,4 @@ flasgger>=0.9.7
 psycopg2-binary>=2.9.10
 gunicorn>=23.0.0
 python-dotenv>=1.0.0
+alembic>=1.18.0

@@ -7,11 +7,11 @@ import pytest
 class TestAccountCRUD:
     """Tests for account CRUD operations."""
 
-    def test_create_account_success(self, client):
+    def test_create_account_success(self, client, default_user):
         """Test creating an account successfully."""
         response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Main Trading Account"}),
+            data=json.dumps({"name": "Main Trading Account", "user_id": default_user}),
             content_type="application/json",
         )
         assert response.status_code == 201
@@ -40,16 +40,16 @@ class TestAccountCRUD:
         assert data["accounts"] == []
         assert data["total"] == 0
 
-    def test_get_accounts_with_data(self, client):
+    def test_get_accounts_with_data(self, client, default_user):
         """Test getting accounts after creating one."""
         client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Account 1"}),
+            data=json.dumps({"name": "Account 1", "user_id": default_user}),
             content_type="application/json",
         )
         client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Account 2"}),
+            data=json.dumps({"name": "Account 2", "user_id": default_user}),
             content_type="application/json",
         )
         response = client.get("/api/accounts")
@@ -58,11 +58,11 @@ class TestAccountCRUD:
         assert len(data["accounts"]) == 2
         assert data["total"] == 2
 
-    def test_get_account_success(self, client):
+    def test_get_account_success(self, client, default_user):
         """Test getting a single account."""
         create_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Test Account"}),
+            data=json.dumps({"name": "Test Account", "user_id": default_user}),
             content_type="application/json",
         )
         account_id = create_response.get_json()["id"]
@@ -80,11 +80,11 @@ class TestAccountCRUD:
         data = response.get_json()
         assert "error" in data
 
-    def test_update_account_success(self, client):
+    def test_update_account_success(self, client, default_user):
         """Test updating an account."""
         create_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Original Name"}),
+            data=json.dumps({"name": "Original Name", "user_id": default_user}),
             content_type="application/json",
         )
         account_id = create_response.get_json()["id"]
@@ -107,11 +107,11 @@ class TestAccountCRUD:
         )
         assert response.status_code == 404
 
-    def test_delete_account_success(self, client):
+    def test_delete_account_success(self, client, default_user):
         """Test soft deleting an account."""
         create_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "To Delete"}),
+            data=json.dumps({"name": "To Delete", "user_id": default_user}),
             content_type="application/json",
         )
         account_id = create_response.get_json()["id"]
@@ -134,11 +134,11 @@ class TestAccountCRUD:
 class TestAccountTrades:
     """Tests for nested account trades routes."""
 
-    def test_get_trades_for_account_empty(self, client):
+    def test_get_trades_for_account_empty(self, client, default_user):
         """Test getting trades for account with no trades."""
         create_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Empty Account"}),
+            data=json.dumps({"name": "Empty Account", "user_id": default_user}),
             content_type="application/json",
         )
         account_id = create_response.get_json()["id"]
@@ -151,10 +151,13 @@ class TestAccountTrades:
 
     def test_get_trades_for_account_with_data(self, client, sample_trade_data):
         """Test getting trades for account with trades."""
+        # Get user_id from sample_trade_data
+        user_id = sample_trade_data["user_id"]
+
         # Create account
         account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Trading Account"}),
+            data=json.dumps({"name": "Trading Account", "user_id": user_id}),
             content_type="application/json",
         )
         account_id = account_response.get_json()["id"]
@@ -198,10 +201,13 @@ class TestTradeAccountRequired:
 
     def test_create_trade_with_account_success(self, client, sample_trade_data):
         """Test creating trade with valid account_id succeeds."""
+        # Get user_id from sample_trade_data
+        user_id = sample_trade_data["user_id"]
+
         # Create account first
         account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Test Account"}),
+            data=json.dumps({"name": "Test Account", "user_id": user_id}),
             content_type="application/json",
         )
         account_id = account_response.get_json()["id"]
@@ -235,10 +241,13 @@ class TestBulkAssign:
 
     def test_bulk_assign_success(self, client, sample_trade_data):
         """Test bulk assigning trades to account."""
+        # Get user_id from sample_trade_data
+        user_id = sample_trade_data["user_id"]
+
         # Create account
         account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Bulk Account"}),
+            data=json.dumps({"name": "Bulk Account", "user_id": user_id}),
             content_type="application/json",
         )
         account_id = account_response.get_json()["id"]
@@ -246,9 +255,11 @@ class TestBulkAssign:
         # Create trades without account (assuming trades can exist without account temporarily)
         trade_ids = []
         for i in range(3):
-            trade_data = {**sample_trade_data, "symbol": f"TEST{i}USDT"}
-            # Temporarily create trades with account_id to get them created
-            trade_data["account_id"] = account_id
+            trade_data = {
+                **sample_trade_data,
+                "symbol": f"TEST{i}USDT",
+                "account_id": account_id,
+            }
             trade_response = client.post(
                 "/api/trades",
                 data=json.dumps(trade_data),
@@ -259,7 +270,7 @@ class TestBulkAssign:
         # Create a new account to reassign to
         new_account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "New Account"}),
+            data=json.dumps({"name": "New Account", "user_id": user_id}),
             content_type="application/json",
         )
         new_account_id = new_account_response.get_json()["id"]
@@ -281,10 +292,13 @@ class TestBulkAssign:
 
     def test_bulk_assign_partial_success(self, client, sample_trade_data):
         """Test bulk assigning with some invalid trade IDs."""
+        # Get user_id from sample_trade_data
+        user_id = sample_trade_data["user_id"]
+
         # Create account
         account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Partial Account"}),
+            data=json.dumps({"name": "Partial Account", "user_id": user_id}),
             content_type="application/json",
         )
         account_id = account_response.get_json()["id"]
@@ -316,10 +330,13 @@ class TestBulkAssign:
 
     def test_bulk_assign_invalid_account(self, client, sample_trade_data):
         """Test bulk assigning to non-existent account."""
+        # Get user_id from sample_trade_data
+        user_id = sample_trade_data["user_id"]
+
         # Create a trade first
         account_response = client.post(
             "/api/accounts",
-            data=json.dumps({"name": "Temp Account"}),
+            data=json.dumps({"name": "Temp Account", "user_id": user_id}),
             content_type="application/json",
         )
         account_id = account_response.get_json()["id"]

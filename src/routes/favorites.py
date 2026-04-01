@@ -38,6 +38,7 @@ def create_favorite():
         return jsonify({"error": "Symbol already exists"}), 409
 
     product = FavoriteProduct(
+        user_id=data.get("user_id"),
         symbol=symbol,
         point_value=Decimal(str(data.get("point_value", 1))),
         fees=Decimal(str(data.get("fees", 0))),

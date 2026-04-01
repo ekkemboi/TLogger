@@ -55,10 +55,15 @@ class TestEditTradeDirection:
 
     def test_edit_direction_success(self, client, sample_trade_data):
         """Test changing direction from long to short."""
-        # Create a long trade
+        # Create a long trade without TP/SL to avoid validation conflicts
+        trade_data = {
+            k: v
+            for k, v in sample_trade_data.items()
+            if k not in ["stop_loss", "take_profit"]
+        }
         create_response = client.post(
             "/api/trades",
-            data=json.dumps(sample_trade_data),
+            data=json.dumps(trade_data),
             content_type="application/json",
         )
         trade_id = create_response.get_json()["id"]
@@ -370,10 +375,15 @@ class TestEditTradePnlRecalculation:
         self, client, sample_closed_trade_data
     ):
         """Test that P&L updates when symbol changes (different point_value)."""
+        # Get user_id from sample data
+        user_id = sample_closed_trade_data["user_id"]
+
         # Create a FavoriteProduct with custom point_value for ETHUSDT
         client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "ETHUSDT", "point_value": 0.1}),
+            data=json.dumps(
+                {"symbol": "ETHUSDT", "point_value": 0.1, "user_id": user_id}
+            ),
             content_type="application/json",
         )
 

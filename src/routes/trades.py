@@ -4,10 +4,11 @@ import json
 from decimal import Decimal
 
 from flasgger import swag_from
-from flask import Blueprint, jsonify, request, send_from_directory
+from flask import Blueprint, g, jsonify, request, send_from_directory
 
-from src.models import Account, db
+from src.models import Account, Trade, db
 from src.services.trade_service import TradeService
+from src.utils.jwt_utils import jwt_required
 
 trades_bp = Blueprint("trades", __name__)
 
@@ -22,6 +23,7 @@ def get_screenshot(filename):
 
 
 @trades_bp.route("/trades", methods=["POST"])
+@jwt_required
 def create_trade():
     """
     Create a new trade
@@ -74,6 +76,8 @@ def create_trade():
         description: Trade created successfully
       400:
         description: Missing required fields
+      401:
+        description: Authentication required
     """
     data = request.form.to_dict() if request.form else request.get_json()
 
@@ -95,8 +99,10 @@ def create_trade():
     if "account_id" not in data or not data["account_id"]:
         return jsonify({"error": "Missing account_id"}), 400
 
-    # Verify account exists
-    account = Account.query.get(data["account_id"])
+    # Verify account exists and belongs to current user
+    account = Account.query.filter_by(
+        id=data["account_id"], user_id=g.current_user_id
+    ).first()
     if not account:
         return jsonify({"error": "Invalid account_id"}), 400
 
@@ -152,11 +158,15 @@ def create_trade():
     if "tags" in data and isinstance(data["tags"], str):
         data["tags"] = [t.strip() for t in data["tags"].split(",") if t.strip()]
 
+    # Force user_id to current user
+    data["user_id"] = g.current_user_id
+
     trade = TradeService.create_trade(data, screenshot_file)
     return jsonify(trade.to_dict()), 201
 
 
 @trades_bp.route("/trades", methods=["GET"])
+@jwt_required
 def get_trades():
     """
     Get all trades with optional filters
@@ -197,6 +207,8 @@ def get_trades():
     responses:
       200:
         description: List of trades with pagination
+      401:
+        description: Authentication required
     """
     filters = {
         "symbol": request.args.get("symbol"),
@@ -205,6 +217,7 @@ def get_trades():
         "account_id": request.args.get("account_id"),
         "start_date": request.args.get("start_date"),
         "end_date": request.args.get("end_date"),
+        "user_id": g.current_user_id,  # Enforce user isolation
     }
     filters = {k: v for k, v in filters.items() if v is not None}
 
@@ -225,6 +238,7 @@ def get_trades():
 
 
 @trades_bp.route("/trades/pending", methods=["GET"])
+@jwt_required
 def get_pending_trades():
     """
     Get open positions (trades without exit price)
@@ -234,12 +248,15 @@ def get_pending_trades():
     responses:
       200:
         description: List of open positions
+      401:
+        description: Authentication required
     """
-    trades = TradeService.get_pending_trades()
+    trades = TradeService.get_pending_trades(g.current_user_id)
     return jsonify([t.to_dict() for t in trades])
 
 
 @trades_bp.route("/trades/<trade_id>", methods=["GET"])
+@jwt_required
 def get_trade(trade_id):
     """
     Get a single trade by ID
@@ -256,14 +273,24 @@ def get_trade(trade_id):
         description: Trade details
       404:
         description: Trade not found
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
     trade = TradeService.get_trade(trade_id)
     if not trade:
         return jsonify({"error": "Trade not found"}), 404
+
+    # IDOR protection: verify user owns this trade
+    if trade.user_id != g.current_user_id:
+        return jsonify({"error": "Access denied"}), 403
+
     return jsonify(trade.to_dict())
 
 
 @trades_bp.route("/trades/<trade_id>", methods=["PUT"])
+@jwt_required
 def update_trade(trade_id):
     """
     Update a trade
@@ -296,7 +323,19 @@ def update_trade(trade_id):
         description: Updated trade
       404:
         description: Trade not found
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
+    # First verify ownership
+    existing_trade = TradeService.get_trade(trade_id)
+    if not existing_trade:
+        return jsonify({"error": "Trade not found"}), 404
+
+    if existing_trade.user_id != g.current_user_id:
+        return jsonify({"error": "Access denied"}), 403
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -350,60 +389,53 @@ def update_trade(trade_id):
         or direction is not None
         or entry_price is not None
     ):
-        # Get existing trade to fill in missing values
-        existing_trade = TradeService.get_trade(trade_id)
-        if existing_trade:
-            direction = direction if direction else existing_trade.direction.value
-            entry_price = (
-                float(entry_price) if entry_price else float(existing_trade.entry_price)
+        direction = direction if direction else existing_trade.direction.value
+        entry_price = (
+            float(entry_price) if entry_price else float(existing_trade.entry_price)
+        )
+        take_profit = (
+            float(take_profit)
+            if take_profit is not None
+            else (
+                float(existing_trade.take_profit)
+                if existing_trade.take_profit
+                else None
             )
-            take_profit = (
-                float(take_profit)
-                if take_profit is not None
-                else (
-                    float(existing_trade.take_profit)
-                    if existing_trade.take_profit
-                    else None
-                )
-            )
-            stop_loss = (
-                float(stop_loss)
-                if stop_loss is not None
-                else (
-                    float(existing_trade.stop_loss)
-                    if existing_trade.stop_loss
-                    else None
-                )
-            )
+        )
+        stop_loss = (
+            float(stop_loss)
+            if stop_loss is not None
+            else (float(existing_trade.stop_loss) if existing_trade.stop_loss else None)
+        )
 
-            direction = direction.lower()
+        direction = direction.lower()
 
-            if direction == "long":
-                if take_profit is not None and take_profit <= entry_price:
-                    return jsonify(
-                        {
-                            "error": "For LONG trades, take profit must be higher than entry price"
-                        }
-                    ), 400
-                if stop_loss is not None and stop_loss >= entry_price:
-                    return jsonify(
-                        {
-                            "error": "For LONG trades, stop loss must be lower than entry price"
-                        }
-                    ), 400
-            elif direction == "short":
-                if take_profit is not None and take_profit >= entry_price:
-                    return jsonify(
-                        {
-                            "error": "For SHORT trades, take profit must be lower than entry price"
-                        }
-                    ), 400
-                if stop_loss is not None and stop_loss <= entry_price:
-                    return jsonify(
-                        {
-                            "error": "For SHORT trades, stop loss must be higher than entry price"
-                        }
-                    ), 400
+        if direction == "long":
+            if take_profit is not None and take_profit <= entry_price:
+                return jsonify(
+                    {
+                        "error": "For LONG trades, take profit must be higher than entry price"
+                    }
+                ), 400
+            if stop_loss is not None and stop_loss >= entry_price:
+                return jsonify(
+                    {
+                        "error": "For LONG trades, stop loss must be lower than entry price"
+                    }
+                ), 400
+        elif direction == "short":
+            if take_profit is not None and take_profit >= entry_price:
+                return jsonify(
+                    {
+                        "error": "For SHORT trades, take profit must be lower than entry price"
+                    }
+                ), 400
+            if stop_loss is not None and stop_loss <= entry_price:
+                return jsonify(
+                    {
+                        "error": "For SHORT trades, stop loss must be higher than entry price"
+                    }
+                ), 400
 
     trade = TradeService.update_trade(trade_id, data)
     if not trade:
@@ -412,6 +444,7 @@ def update_trade(trade_id):
 
 
 @trades_bp.route("/trades/<trade_id>", methods=["DELETE"])
+@jwt_required
 def delete_trade(trade_id):
     """
     Delete a trade
@@ -428,7 +461,19 @@ def delete_trade(trade_id):
         description: Trade deleted
       404:
         description: Trade not found
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
+    # First verify ownership
+    trade = TradeService.get_trade(trade_id)
+    if not trade:
+        return jsonify({"error": "Trade not found"}), 404
+
+    if trade.user_id != g.current_user_id:
+        return jsonify({"error": "Access denied"}), 403
+
     success = TradeService.delete_trade(trade_id)
     if not success:
         return jsonify({"error": "Trade not found"}), 404
@@ -441,6 +486,7 @@ def delete_trade(trade_id):
 
 
 @trades_bp.route("/trades/<trade_id>/partial-exits", methods=["GET"])
+@jwt_required
 def get_trade_partial_exits(trade_id):
     """
     Get all partial exits for a trade
@@ -455,8 +501,17 @@ def get_trade_partial_exits(trade_id):
     responses:
       200:
         description: List of partial exits
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
     from src.models import TradePartialExit
+
+    # Verify trade ownership first
+    trade = Trade.query.filter_by(id=trade_id, user_id=g.current_user_id).first()
+    if not trade:
+        return jsonify({"error": "Trade not found or access denied"}), 404
 
     partial_exits = TradePartialExit.query.filter_by(trade_id=trade_id).all()
     return jsonify(
@@ -468,6 +523,7 @@ def get_trade_partial_exits(trade_id):
 
 
 @trades_bp.route("/trades/<trade_id>/partial-exits", methods=["POST"])
+@jwt_required
 def create_trade_partial_exit(trade_id):
     """
     Add a partial exit to a trade
@@ -500,12 +556,17 @@ def create_trade_partial_exit(trade_id):
     responses:
       201:
         description: Partial exit created
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
     from src.models import Trade, TradePartialExit
 
-    trade = Trade.query.get(trade_id)
+    # Verify trade ownership first
+    trade = Trade.query.filter_by(id=trade_id, user_id=g.current_user_id).first()
     if not trade:
-        return jsonify({"error": "Trade not found"}), 404
+        return jsonify({"error": "Trade not found or access denied"}), 404
 
     data = request.get_json() or {}
 
@@ -532,6 +593,7 @@ def create_trade_partial_exit(trade_id):
 
 
 @trades_bp.route("/partial-exits/<partial_exit_id>", methods=["PUT"])
+@jwt_required
 def update_partial_exit(partial_exit_id):
     """
     Update a partial exit
@@ -546,12 +608,23 @@ def update_partial_exit(partial_exit_id):
     responses:
       200:
         description: Partial exit updated
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
-    from src.models import TradePartialExit, Trade
+    from src.models import Trade, TradePartialExit
 
+    # Verify ownership through trade
     partial_exit = TradePartialExit.query.get(partial_exit_id)
     if not partial_exit:
         return jsonify({"error": "Partial exit not found"}), 404
+
+    trade = Trade.query.filter_by(
+        id=partial_exit.trade_id, user_id=g.current_user_id
+    ).first()
+    if not trade:
+        return jsonify({"error": "Access denied"}), 403
 
     data = request.get_json() or {}
 
@@ -563,9 +636,7 @@ def update_partial_exit(partial_exit_id):
         partial_exit.fees = Decimal(str(data["fees"]))
 
     # Recalculate P&L for the trade
-    trade = Trade.query.get(partial_exit.trade_id)
-    if trade:
-        trade.pnl = TradeService.calculate_pnl(trade)
+    trade.pnl = TradeService.calculate_pnl(trade)
 
     db.session.commit()
 
@@ -573,6 +644,7 @@ def update_partial_exit(partial_exit_id):
 
 
 @trades_bp.route("/partial-exits/<partial_exit_id>", methods=["DELETE"])
+@jwt_required
 def delete_partial_exit(partial_exit_id):
     """
     Delete a partial exit
@@ -587,21 +659,30 @@ def delete_partial_exit(partial_exit_id):
     responses:
       200:
         description: Partial exit deleted
+      401:
+        description: Authentication required
+      403:
+        description: Access denied
     """
-    from src.models import TradePartialExit, Trade
+    from src.models import Trade, TradePartialExit
 
+    # Verify ownership through trade
     partial_exit = TradePartialExit.query.get(partial_exit_id)
     if not partial_exit:
         return jsonify({"error": "Partial exit not found"}), 404
+
+    trade = Trade.query.filter_by(
+        id=partial_exit.trade_id, user_id=g.current_user_id
+    ).first()
+    if not trade:
+        return jsonify({"error": "Access denied"}), 403
 
     trade_id = partial_exit.trade_id
 
     db.session.delete(partial_exit)
 
     # Recalculate P&L for the trade
-    trade = Trade.query.get(trade_id)
-    if trade:
-        trade.pnl = TradeService.calculate_pnl(trade)
+    trade.pnl = TradeService.calculate_pnl(trade)
 
     db.session.commit()
 

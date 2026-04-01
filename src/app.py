@@ -8,7 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from src.config import config
-from src.models import Account, db
+from src.models import Account, User, db
 
 
 def create_app(config_name=None):
@@ -21,10 +21,23 @@ def create_app(config_name=None):
     )
     app.config.from_object(config[config_name])
 
+    # Session secret for OAuth state
+    app.secret_key = app.config["SECRET_KEY"]
+
     Path(app.config["SCREENSHOT_DIR"]).mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+    # Configure CORS with credentials support
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": ["http://localhost:5000", "http://localhost:3000"],
+                "supports_credentials": True,
+            }
+        },
+    )
 
     swagger_config = {
         "headers": [],
@@ -53,12 +66,18 @@ def create_app(config_name=None):
 
     Swagger(app, config=swagger_config, template=swagger_template)
 
+    from src.routes.auth import auth_bp, oauth
     from src.routes.trades import trades_bp
     from src.routes.metrics import metrics_bp
     from src.routes.favorites import favorites_bp
     from src.routes.accounts import accounts_bp
     from web.routes import web_bp
 
+    # Initialize OAuth
+    oauth.init_app(app)
+
+    # Register blueprints
+    app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(trades_bp, url_prefix="/api")
     app.register_blueprint(metrics_bp, url_prefix="/api")
     app.register_blueprint(favorites_bp, url_prefix="/api")
@@ -66,13 +85,13 @@ def create_app(config_name=None):
     app.register_blueprint(web_bp)
 
     with app.app_context():
-        db.create_all()
+        # Note: Database schema is managed by Alembic migrations
+        # Run `alembic upgrade head` to create/update schema
+        # db.create_all() is no longer used in production/development
 
-        # Auto-create Default account if none exists (skip in testing mode)
-        if not app.config.get("TESTING") and not Account.query.first():
-            default_account = Account(name="Default")
-            db.session.add(default_account)
-            db.session.commit()
+        # For testing mode, create tables and seed data
+        if app.config.get("TESTING"):
+            db.create_all()
 
     return app
 

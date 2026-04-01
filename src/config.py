@@ -1,6 +1,7 @@
 """Configuration for TradeLogger."""
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 
@@ -15,6 +16,24 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SCREENSHOT_DIR = BASE_DIR / "screenshots"
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload
+
+    # JWT Configuration
+    JWT_SECRET_KEY = os.environ.get(
+        "JWT_SECRET_KEY", "jwt-secret-key-change-in-production-min-32-chars"
+    )
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
+
+    # Google OAuth Configuration
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+    GOOGLE_REDIRECT_URI = os.environ.get(
+        "GOOGLE_REDIRECT_URI", "http://localhost:5000/auth/callback"
+    )
+
+    # Cookie Security
+    JWT_COOKIE_SECURE = False  # Set to True in production (HTTPS only)
+    JWT_COOKIE_SAMESITE = "Lax"
 
 
 class DevelopmentConfig(Config):

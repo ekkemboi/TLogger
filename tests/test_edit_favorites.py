@@ -7,12 +7,19 @@ import pytest
 class TestEditFavorite:
     """Tests for editing favorites via PUT /api/favorites/<id>."""
 
-    def test_update_favorite_symbol(self, client):
+    def test_update_favorite_symbol(self, client, default_user):
         """Update favorite symbol."""
         # Create a favorite first
         create_response = client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "BTCUSDT", "point_value": 1, "fees": 0}),
+            data=json.dumps(
+                {
+                    "symbol": "BTCUSDT",
+                    "point_value": 1,
+                    "fees": 0,
+                    "user_id": default_user,
+                }
+            ),
             content_type="application/json",
         )
         assert create_response.status_code == 201
@@ -29,12 +36,19 @@ class TestEditFavorite:
         assert data["symbol"] == "ETHUSDT"
         assert data["id"] == favorite_id
 
-    def test_update_favorite_point_value(self, client):
+    def test_update_favorite_point_value(self, client, default_user):
         """Update point value."""
         # Create a favorite first
         create_response = client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "BTCUSDT", "point_value": 1, "fees": 0}),
+            data=json.dumps(
+                {
+                    "symbol": "BTCUSDT",
+                    "point_value": 1,
+                    "fees": 0,
+                    "user_id": default_user,
+                }
+            ),
             content_type="application/json",
         )
         assert create_response.status_code == 201
@@ -50,12 +64,19 @@ class TestEditFavorite:
         data = update_response.get_json()
         assert data["point_value"] == 10
 
-    def test_update_favorite_fees(self, client):
+    def test_update_favorite_fees(self, client, default_user):
         """Update fees."""
         # Create a favorite first
         create_response = client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "BTCUSDT", "point_value": 1, "fees": 0}),
+            data=json.dumps(
+                {
+                    "symbol": "BTCUSDT",
+                    "point_value": 1,
+                    "fees": 0,
+                    "user_id": default_user,
+                }
+            ),
             content_type="application/json",
         )
         assert create_response.status_code == 201
@@ -71,12 +92,19 @@ class TestEditFavorite:
         data = update_response.get_json()
         assert data["fees"] == 5.5
 
-    def test_update_favorite_is_active(self, client):
+    def test_update_favorite_is_active(self, client, default_user):
         """Toggle is_active status."""
         # Create a favorite first
         create_response = client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "BTCUSDT", "point_value": 1, "fees": 0}),
+            data=json.dumps(
+                {
+                    "symbol": "BTCUSDT",
+                    "point_value": 1,
+                    "fees": 0,
+                    "user_id": default_user,
+                }
+            ),
             content_type="application/json",
         )
         assert create_response.status_code == 201
@@ -116,12 +144,19 @@ class TestEditFavorite:
         data = response.get_json()
         assert "error" in data
 
-    def test_update_favorite_multiple_fields(self, client):
+    def test_update_favorite_multiple_fields(self, client, default_user):
         """Update multiple fields at once."""
         # Create a favorite first
         create_response = client.post(
             "/api/favorites",
-            data=json.dumps({"symbol": "BTCUSDT", "point_value": 1, "fees": 0}),
+            data=json.dumps(
+                {
+                    "symbol": "BTCUSDT",
+                    "point_value": 1,
+                    "fees": 0,
+                    "user_id": default_user,
+                }
+            ),
             content_type="application/json",
         )
         assert create_response.status_code == 201

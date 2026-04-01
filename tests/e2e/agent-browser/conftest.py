@@ -5,6 +5,8 @@ import time
 import os
 import signal
 
+import pytest
+
 
 @pytest.fixture(scope="session")
 def electron_app():

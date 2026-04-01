@@ -8,7 +8,7 @@ Tests validation guardrails for:
 import json
 import pytest
 from src.app import create_app
-from src.models import Account, FavoriteProduct, db as _db
+from src.models import Account, FavoriteProduct, User, db as _db
 
 
 @pytest.fixture(scope="function")
@@ -29,23 +29,34 @@ def client(app):
 
 
 @pytest.fixture
-def default_account(app):
+def default_user(app):
+    """Create a default user for testing."""
+    with app.app_context():
+        user = User(email="test@example.com", name="Test User")
+        _db.session.add(user)
+        _db.session.commit()
+        return user.id
+
+
+@pytest.fixture
+def default_account(app, default_user):
     """Create a default account for testing."""
     with app.app_context():
-        account = Account(name="Test Account")
+        account = Account(name="Test Account", user_id=default_user)
         _db.session.add(account)
         _db.session.commit()
         return account.id
 
 
 @pytest.fixture
-def favorite_product(app):
+def favorite_product(app, default_user):
     """Create a favorite product for testing."""
     with app.app_context():
         fav = FavoriteProduct(
             symbol="BTCUSDT",
             point_value=1,
             fees=5.0,
+            user_id=default_user,
         )
         _db.session.add(fav)
         _db.session.commit()
@@ -57,6 +68,7 @@ def make_trade_payload(
     symbol,
     direction,
     entry_price,
+    user_id=None,
     stop_loss=None,
     take_profit=None,
     position_size=0.1,
@@ -69,6 +81,8 @@ def make_trade_payload(
         "entry_price": entry_price,
         "position_size": position_size,
     }
+    if user_id is not None:
+        payload["user_id"] = user_id
     if stop_loss is not None:
         payload["stop_loss"] = stop_loss
     if take_profit is not None:
@@ -80,11 +94,12 @@ class TestLongTradePriceValidation:
     """Tests for LONG trade price validation rules."""
 
     def test_long_tp_less_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """LONG trade with TP < entry should fail validation."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -106,11 +121,12 @@ class TestLongTradePriceValidation:
         )
 
     def test_long_sl_greater_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """LONG trade with SL > entry should fail validation."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -130,11 +146,12 @@ class TestLongTradePriceValidation:
         assert "lower" in data["error"].lower() or "stop loss" in data["error"].lower()
 
     def test_long_valid_tp_and_sl_passes(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """LONG trade with valid TP > entry AND SL < entry should pass."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -154,11 +171,12 @@ class TestLongTradePriceValidation:
         assert float(data["stop_loss"]) == 49000
 
     def test_long_tp_equal_to_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """LONG trade with TP = entry should fail (must be greater)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -176,11 +194,12 @@ class TestLongTradePriceValidation:
         assert "error" in data
 
     def test_long_sl_equal_to_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """LONG trade with SL = entry should fail (must be less)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -202,11 +221,12 @@ class TestShortTradePriceValidation:
     """Tests for SHORT trade price validation rules."""
 
     def test_short_tp_greater_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """SHORT trade with TP > entry should fail validation."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -228,11 +248,12 @@ class TestShortTradePriceValidation:
         )
 
     def test_short_sl_less_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """SHORT trade with SL < entry should fail validation."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -252,11 +273,12 @@ class TestShortTradePriceValidation:
         assert "higher" in data["error"].lower() or "stop loss" in data["error"].lower()
 
     def test_short_valid_tp_and_sl_passes(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """SHORT trade with valid TP < entry AND SL > entry should pass."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -276,11 +298,12 @@ class TestShortTradePriceValidation:
         assert float(data["stop_loss"]) == 51000
 
     def test_short_tp_equal_to_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """SHORT trade with TP = entry should fail (must be less)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -298,11 +321,12 @@ class TestShortTradePriceValidation:
         assert "error" in data
 
     def test_short_sl_equal_to_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """SHORT trade with SL = entry should fail (must be greater)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -323,10 +347,13 @@ class TestShortTradePriceValidation:
 class TestOptionalFieldsValidation:
     """Tests for optional TP/SL fields."""
 
-    def test_long_missing_tp_allowed(self, client, default_account, favorite_product):
+    def test_long_missing_tp_allowed(
+        self, client, default_account, default_user, favorite_product
+    ):
         """LONG trade without TP should be allowed (optional field)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -343,10 +370,13 @@ class TestOptionalFieldsValidation:
         # Should succeed (TP is optional)
         assert response.status_code == 201
 
-    def test_long_missing_sl_allowed(self, client, default_account, favorite_product):
+    def test_long_missing_sl_allowed(
+        self, client, default_account, default_user, favorite_product
+    ):
         """LONG trade without SL should be allowed (optional field)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -363,10 +393,13 @@ class TestOptionalFieldsValidation:
         # Should succeed (SL is optional)
         assert response.status_code == 201
 
-    def test_short_missing_tp_allowed(self, client, default_account, favorite_product):
+    def test_short_missing_tp_allowed(
+        self, client, default_account, default_user, favorite_product
+    ):
         """SHORT trade without TP should be allowed (optional field)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -383,10 +416,13 @@ class TestOptionalFieldsValidation:
         # Should succeed (TP is optional)
         assert response.status_code == 201
 
-    def test_short_missing_sl_allowed(self, client, default_account, favorite_product):
+    def test_short_missing_sl_allowed(
+        self, client, default_account, default_user, favorite_product
+    ):
         """SHORT trade without SL should be allowed (optional field)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,
@@ -404,11 +440,12 @@ class TestOptionalFieldsValidation:
         assert response.status_code == 201
 
     def test_both_missing_tp_sl_allowed(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """Trade without both TP and SL should be allowed (both optional)."""
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -430,12 +467,13 @@ class TestUpdateTradePriceValidation:
     """Tests for price validation on PUT /trades/<id> endpoint."""
 
     def test_update_long_tp_to_less_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """Updating LONG trade TP to < entry should fail."""
         # First create a valid trade
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="long",
             entry_price=50000,
@@ -466,12 +504,13 @@ class TestUpdateTradePriceValidation:
         assert "error" in data
 
     def test_update_short_tp_to_greater_than_entry_fails(
-        self, client, default_account, favorite_product
+        self, client, default_account, default_user, favorite_product
     ):
         """Updating SHORT trade TP to > entry should fail."""
         # First create a valid trade
         payload = make_trade_payload(
             account_id=default_account,
+            user_id=default_user,
             symbol=favorite_product,
             direction="short",
             entry_price=50000,

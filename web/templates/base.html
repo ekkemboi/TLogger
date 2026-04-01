@@ -4,29 +4,521 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TradeLogger{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-primary': 'var(--bg-primary)',
+                        'bg-secondary': 'var(--bg-secondary)',
+                        'bg-surface': 'var(--bg-surface)',
+                        'text-primary': 'var(--text-primary)',
+                        'text-light': 'var(--text-light)',
+                        'text-secondary': 'var(--text-secondary)',
+                        'text-tertiary': 'var(--text-tertiary)',
+                        'accent-primary': 'var(--accent-primary)',
+                        'success': 'var(--success)',
+                        'error': 'var(--error)',
+                        'warning': 'var(--warning)',
+                        'border-default': 'var(--border-default)',
+                    },
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                        'display': ['Space Grotesk', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '2px',
+                        'md': '4px',
+                        'lg': '8px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Light mode (default) */
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F4F4F5;
+            --bg-surface: #FAFAFA;
+            --text-primary: #18181B;
+            --text-light: #A1A1AA;
+            --text-secondary: #71717A;
+            --text-tertiary: #A1A1AA;
+            --accent-primary: #D97706;
+            --accent-primary-hover: #B45309;
+            --success: #22C55E;
+            --error: #EF4444;
+            --warning: #D97706;
+            --border-default: #E4E4E7;
+        }
+
+        /* Dark mode */
+        .dark {
+            --bg-primary: #18181B;
+            --bg-secondary: #0F0F10;
+            --bg-surface: #141415;
+            --text-primary: #FAFAFA;
+            --text-light: #A1A1AA;
+            --text-secondary: #71717A;
+            --text-tertiary: #52525B;
+            --accent-primary: #D97706;
+            --accent-primary-hover: #B45309;
+            --success: #22C55E;
+            --error: #EF4444;
+            --warning: #D97706;
+            --border-default: #27272A;
+        }
+
+        /* Reset border-radius only on specific elements, not globally */
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            border-radius: 8px;
+            padding: 10px 16px;
+            gap: 8px;
+        }
+        
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-link svg {
+            stroke: currentColor;
+        }
+        
+        .nav-link.active {
+            color: #FFFFFF;
+            background-color: var(--accent-primary);
+        }
+        
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: #FFFFFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--border-default);
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--bg-surface);
+        }
+        
+        .btn-danger {
+            background-color: var(--error);
+            color: #FFFFFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        .input {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 8px 12px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        .input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .account-switcher {
+            height: 36px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .account-switcher:hover {
+            border-color: var(--accent-primary);
+        }
+        
+        .account-switcher-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        
+        .account-switcher-arrow {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .account-switcher select {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .table-header {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        .table-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .badge-success {
+            background-color: color-mix(in srgb, var(--success) 12%, transparent);
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .badge-warning {
+            background-color: color-mix(in srgb, var(--warning) 12%, transparent);
+            color: var(--warning);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .badge-error {
+            background-color: color-mix(in srgb, var(--error) 12%, transparent);
+            color: var(--error);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .pagination-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .pagination-btn:hover {
+            background-color: var(--bg-surface);
+        }
+        
+        .pagination-btn.active {
+            background-color: var(--accent-primary);
+            color: #18181B;
+            border-color: var(--accent-primary);
+        }
+        
+        .metric-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .pnl-positive {
+            color: var(--success);
+        }
+        
+        .pnl-negative {
+            color: var(--error);
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-default);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+
+        /* Basic responsive adjustments */
+        @media (max-width: 768px) {
+            nav .px-10 {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            main {
+                padding: 16px;
+            }
+            
+            /* Stack grids on mobile */
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Tables scroll horizontally */
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
-    <nav class="bg-gray-800 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="text-xl font-bold text-green-400">TradeLogger</a>
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="/" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 {% if request.path == '/' %}bg-gray-700{% endif %}">Dashboard</a>
-                        <a href="/trades" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 {% if request.path == '/trades' %}bg-gray-700{% endif %}">Trades</a>
-                        <a href="/favorites" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 {% if request.path == '/favorites' %}bg-gray-700{% endif %}">Favorites</a>
+<body>
+    <nav class="bg-bg-secondary border-b border-border-default flex-shrink-0">
+        <div class="px-10">
+            <div class="flex items-center justify-between" style="height: 60px;">
+                <a href="/" class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-accent-primary rounded-full"></div>
+                    <span class="font-mono text-sm font-bold text-text-primary" style="letter-spacing: 2px;">TRADELOGGER</span>
+                </a>
+                <div class="flex items-center" style="gap: 32px;">
+                    <a href="/" class="nav-link flex items-center {% if request.path == '/' %}active{% endif %}">
+                        <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/trades" class="nav-link flex items-center {% if request.path == '/trades' %}active{% endif %}">
+                        <i data-lucide="trending-up" class="w-[18px] h-[18px]"></i>
+                        <span>Trades</span>
+                    </a>
+                    <a href="/accounts" class="nav-link flex items-center {% if request.path == '/accounts' %}active{% endif %}">
+                        <i data-lucide="wallet" class="w-[18px] h-[18px]"></i>
+                        <span>Accounts</span>
+                    </a>
+                    <a href="/favorites" class="nav-link flex items-center {% if request.path == '/favorites' %}active{% endif %}">
+                        <i data-lucide="star" class="w-[18px] h-[18px]"></i>
+                        <span>Favorites</span>
+                    </a>
+                </div>
+                <div class="flex items-center" style="gap: 12px;">
+                    <button id="theme-toggle" onclick="toggleTheme()" class="flex items-center justify-center w-9 h-9 bg-bg-surface border border-border-default text-text-primary hover:bg-bg-secondary transition-colors" style="border-radius: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                    <div class="account-switcher">
+                        <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
+                        <span class="account-switcher-arrow">▼</span>
+                        <select id="account-switcher">
+                            <option value="">All Accounts</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 overflow-hidden px-10 py-6">
         {% block content %}{% endblock %}
     </main>
+
+    <script>
+    // Theme Toggle
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        updateThemeIcon();
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeIcon();
+        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { isDark } }));
+    }
+
+    function updateThemeIcon() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const themeToggle = document.getElementById('theme-toggle');
+        if (!themeToggle) return;
+        
+        // Sun icon for dark mode, Moon icon for light mode
+        if (isDark) {
+            themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+        } else {
+            themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+        }
+    }
+
+    // Global Account Switcher
+    async function loadAccountSwitcher() {
+        try {
+            const response = await fetch('/api/accounts');
+            const data = await response.json();
+            const select = document.getElementById('account-switcher');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">All Accounts</option>';
+            (data.accounts || []).forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.id;
+                option.textContent = account.name;
+                select.appendChild(option);
+            });
+
+            // Restore selection from localStorage
+            const savedAccountId = localStorage.getItem('selectedAccountId');
+            if (savedAccountId) {
+                select.value = savedAccountId;
+                // Update label to match
+                const label = document.getElementById('account-switcher-label');
+                if (label) {
+                    label.textContent = select.options[select.selectedIndex].text;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load accounts:', error);
+        }
+    }
+
+    function initAccountSwitcher() {
+        loadAccountSwitcher();
+        document.getElementById('account-switcher').addEventListener('change', function() {
+            localStorage.setItem('selectedAccountId', this.value);
+            // Update label
+            const label = document.getElementById('account-switcher-label');
+            if (label) {
+                label.textContent = this.options[this.selectedIndex].text;
+            }
+            // Trigger custom event so pages can react
+            window.dispatchEvent(new CustomEvent('accountChanged', { detail: { accountId: this.value } }));
+        });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            initAccountSwitcher();
+            if (window.lucide) lucide.createIcons();
+        });
+    } else {
+        initTheme();
+        initAccountSwitcher();
+        if (window.lucide) lucide.createIcons();
+    }
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

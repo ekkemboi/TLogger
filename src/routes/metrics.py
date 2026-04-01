@@ -1,17 +1,19 @@
 """Metrics routes for TradeLogger API."""
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from sqlalchemy import func
 
 from src.models import Trade, TradeDirection, TradeOutcome, db
+from src.utils.jwt_utils import jwt_required
 
 metrics_bp = Blueprint("metrics", __name__)
 
 
 @metrics_bp.route("/metrics", methods=["GET"])
+@jwt_required
 def get_metrics():
     """
-    Get trading metrics and statistics
+    Get trading metrics and statistics for current user
     ---
     tags:
       - Metrics
@@ -31,61 +33,16 @@ def get_metrics():
     responses:
       200:
         description: Trading metrics including win rate, P&L, and statistics
-        schema:
-          type: object
-          properties:
-            total_trades:
-              type: integer
-            winning_trades:
-              type: integer
-            losing_trades:
-              type: integer
-            win_rate:
-              type: number
-            total_pnl:
-              type: number
-            profit_factor:
-              type: number
-            avg_win:
-              type: number
-            avg_loss:
-              type: number
-            best_trade:
-              type: number
-            worst_trade:
-              type: number
-            by_symbol:
-              type: array
-              items:
-                type: object
-                properties:
-                  symbol:
-                    type: string
-                  count:
-                    type: integer
-                  pnl:
-                    type: number
-            by_direction:
-              type: array
-              items:
-                type: object
-                properties:
-                  direction:
-                    type: string
-                  count:
-                    type: integer
-                  pnl:
-                    type: number
-            recent_pnl:
-              type: array
-              items:
-                type: number
+      401:
+        description: Authentication required
     """
     account_id = request.args.get("account_id")
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
 
-    query = Trade.query
+    # Always filter by current user
+    query = Trade.query.filter(Trade.user_id == g.current_user_id)
+
     if account_id:
         query = query.filter(Trade.account_id == account_id)
     if start_date:
@@ -135,11 +92,12 @@ def get_metrics():
     gross_loss = sum(t.pnl for t in losing_trades) if losing_trades else 0
     profit_factor = gross_profit / gross_loss if gross_loss > 0 else 0
 
+    # Symbol stats - filter by user
     symbol_query = db.session.query(
         Trade.symbol,
         func.count(Trade.id).label("count"),
         func.sum(Trade.pnl).label("pnl"),
-    ).filter(Trade.pnl.isnot(None))
+    ).filter(Trade.pnl.isnot(None), Trade.user_id == g.current_user_id)
     if account_id:
         symbol_query = symbol_query.filter(Trade.account_id == account_id)
     if start_date:
@@ -148,11 +106,12 @@ def get_metrics():
         symbol_query = symbol_query.filter(Trade.trade_date <= end_date)
     symbol_stats = symbol_query.group_by(Trade.symbol).all()
 
+    # Direction stats - filter by user
     direction_query = db.session.query(
         Trade.direction,
         func.count(Trade.id).label("count"),
         func.sum(Trade.pnl).label("pnl"),
-    ).filter(Trade.pnl.isnot(None))
+    ).filter(Trade.pnl.isnot(None), Trade.user_id == g.current_user_id)
     if account_id:
         direction_query = direction_query.filter(Trade.account_id == account_id)
     if start_date:
@@ -161,7 +120,10 @@ def get_metrics():
         direction_query = direction_query.filter(Trade.trade_date <= end_date)
     direction_stats = direction_query.group_by(Trade.direction).all()
 
-    recent_query = Trade.query.filter(Trade.pnl.isnot(None))
+    # Recent trades - filter by user
+    recent_query = Trade.query.filter(
+        Trade.pnl.isnot(None), Trade.user_id == g.current_user_id
+    )
     if account_id:
         recent_query = recent_query.filter(Trade.account_id == account_id)
     if start_date:

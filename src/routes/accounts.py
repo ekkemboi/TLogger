@@ -1,21 +1,25 @@
 """Account API routes."""
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from sqlalchemy import func
 
-from src.models import Account, Trade, TradeStatus, TradeOutcome, db
+from src.models import Account, Trade, TradeOutcome, TradeStatus, db
+from src.utils.jwt_utils import jwt_required
 
 accounts_bp = Blueprint("accounts", __name__)
 
 
 @accounts_bp.route("/accounts", methods=["GET"])
+@jwt_required
 def get_accounts():
-    """Get all active accounts with metrics."""
-    accounts = Account.query.filter_by(is_active=True).all()
+    """Get all active accounts with metrics for current user."""
+    accounts = Account.query.filter_by(is_active=True, user_id=g.current_user_id).all()
 
     result = []
     for account in accounts:
-        trades = Trade.query.filter_by(account_id=account.id).all()
+        trades = Trade.query.filter_by(
+            account_id=account.id, user_id=g.current_user_id
+        ).all()
         trade_count = len(trades)
         trades_with_pnl = [
             t for t in trades if t.outcome is not None and t.pnl is not None
@@ -59,8 +63,9 @@ def get_accounts():
 
 
 @accounts_bp.route("/accounts", methods=["POST"])
+@jwt_required
 def create_account():
-    """Create a new account."""
+    """Create a new account for current user."""
     from decimal import Decimal
 
     data = request.get_json()
@@ -72,7 +77,7 @@ def create_account():
         opening_balance = Decimal(str(opening_balance))
 
     account = Account(
-        user_id=data.get("user_id"),
+        user_id=g.current_user_id,
         name=data["name"],
         opening_balance=opening_balance if opening_balance else Decimal("0"),
     )
@@ -82,20 +87,22 @@ def create_account():
 
 
 @accounts_bp.route("/accounts/<account_id>", methods=["GET"])
+@jwt_required
 def get_account(account_id):
     """Get account by ID."""
-    account = Account.query.get(account_id)
+    account = Account.query.filter_by(id=account_id, user_id=g.current_user_id).first()
     if not account:
         return jsonify({"error": "Account not found"}), 404
     return jsonify(account.to_dict())
 
 
 @accounts_bp.route("/accounts/<account_id>", methods=["PUT"])
+@jwt_required
 def update_account(account_id):
     """Update account."""
     from decimal import Decimal
 
-    account = Account.query.get(account_id)
+    account = Account.query.filter_by(id=account_id, user_id=g.current_user_id).first()
     if not account:
         return jsonify({"error": "Account not found"}), 404
 
@@ -112,9 +119,10 @@ def update_account(account_id):
 
 
 @accounts_bp.route("/accounts/<account_id>", methods=["DELETE"])
+@jwt_required
 def delete_account(account_id):
     """Soft delete account."""
-    account = Account.query.get(account_id)
+    account = Account.query.filter_by(id=account_id, user_id=g.current_user_id).first()
     if not account:
         return jsonify({"error": "Account not found"}), 404
 
@@ -124,31 +132,40 @@ def delete_account(account_id):
 
 
 @accounts_bp.route("/accounts/<account_id>/trades", methods=["GET"])
+@jwt_required
 def get_account_trades(account_id):
     """Get trades for an account."""
-    account = Account.query.get(account_id)
+    # Verify account belongs to current user
+    account = Account.query.filter_by(id=account_id, user_id=g.current_user_id).first()
     if not account:
         return jsonify({"error": "Account not found"}), 404
 
-    trades = Trade.query.filter_by(account_id=account_id).all()
+    trades = Trade.query.filter_by(
+        account_id=account_id, user_id=g.current_user_id
+    ).all()
     return jsonify({"trades": [t.to_dict() for t in trades], "total": len(trades)})
 
 
 @accounts_bp.route("/accounts/bulk-assign", methods=["POST"])
+@jwt_required
 def bulk_assign_trades():
     """Bulk assign trades to an account."""
     data = request.get_json()
     if not data or "account_id" not in data or "trade_ids" not in data:
         return jsonify({"error": "Missing account_id or trade_ids"}), 400
 
-    account = Account.query.get(data["account_id"])
+    # Verify account belongs to current user
+    account = Account.query.filter_by(
+        id=data["account_id"], user_id=g.current_user_id
+    ).first()
     if not account:
         return jsonify({"error": "Account not found"}), 404
 
     updated = []
     failed = []
     for trade_id in data["trade_ids"]:
-        trade = Trade.query.get(trade_id)
+        # Only update trades that belong to current user
+        trade = Trade.query.filter_by(id=trade_id, user_id=g.current_user_id).first()
         if trade:
             trade.account_id = data["account_id"]
             updated.append(trade_id)

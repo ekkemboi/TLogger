@@ -219,6 +219,9 @@ class TradeService:
         query = Trade.query
 
         if filters:
+            # Always filter by user_id for security (user isolation)
+            if filters.get("user_id"):
+                query = query.filter(Trade.user_id == filters["user_id"])
             if filters.get("symbol"):
                 query = query.filter(Trade.symbol == filters["symbol"].upper())
             if filters.get("direction"):
@@ -320,8 +323,11 @@ class TradeService:
         return True
 
     @staticmethod
-    def get_pending_trades():
+    def get_pending_trades(user_id=None):
         """Get trades without exit price (open positions)."""
-        return Trade.query.filter(
+        query = Trade.query.filter(
             Trade.status == TradeStatus.CONFIRMED, Trade.take_profit.is_(None)
-        ).all()
+        )
+        if user_id:
+            query = query.filter(Trade.user_id == user_id)
+        return query.all()

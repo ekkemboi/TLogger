@@ -1,29 +1,80 @@
 """Account API routes."""
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy import func
 
-from src.models import Account, Trade, db
+from src.models import Account, Trade, TradeStatus, TradeOutcome, db
 
 accounts_bp = Blueprint("accounts", __name__)
 
 
 @accounts_bp.route("/accounts", methods=["GET"])
 def get_accounts():
-    """Get all active accounts."""
+    """Get all active accounts with metrics."""
     accounts = Account.query.filter_by(is_active=True).all()
-    return jsonify(
-        {"accounts": [a.to_dict() for a in accounts], "total": len(accounts)}
-    )
+
+    result = []
+    for account in accounts:
+        trades = Trade.query.filter_by(account_id=account.id).all()
+        trade_count = len(trades)
+        trades_with_pnl = [
+            t for t in trades if t.outcome is not None and t.pnl is not None
+        ]
+        total_pnl = (
+            float(
+                sum(
+                    t.pnl if t.outcome != TradeOutcome.LOSS else -t.pnl
+                    for t in trades_with_pnl
+                )
+            )
+            if trades_with_pnl
+            else 0
+        )
+        winning = [t for t in trades_with_pnl if t.outcome == TradeOutcome.WIN]
+        win_rate = len(winning) / len(trades_with_pnl) if trades_with_pnl else 0
+
+        opening_balance = (
+            float(account.opening_balance) if account.opening_balance else 0
+        )
+        profit_percent = (
+            (total_pnl / opening_balance * 100) if opening_balance > 0 else 0
+        )
+
+        result.append(
+            {
+                "id": account.id,
+                "name": account.name,
+                "opening_balance": opening_balance,
+                "is_active": account.is_active,
+                "created_at": account.created_at.isoformat()
+                if account.created_at
+                else None,
+                "trade_count": trade_count,
+                "total_pnl": total_pnl,
+                "profit_percent": round(profit_percent, 2),
+            }
+        )
+
+    return jsonify({"accounts": result, "total": len(result)})
 
 
 @accounts_bp.route("/accounts", methods=["POST"])
 def create_account():
     """Create a new account."""
+    from decimal import Decimal
+
     data = request.get_json()
     if not data or "name" not in data:
         return jsonify({"error": "Missing name"}), 400
 
-    account = Account(name=data["name"])
+    opening_balance = data.get("opening_balance")
+    if opening_balance is not None:
+        opening_balance = Decimal(str(opening_balance))
+
+    account = Account(
+        name=data["name"],
+        opening_balance=opening_balance if opening_balance else Decimal("0"),
+    )
     db.session.add(account)
     db.session.commit()
     return jsonify(account.to_dict()), 201
@@ -41,6 +92,8 @@ def get_account(account_id):
 @accounts_bp.route("/accounts/<account_id>", methods=["PUT"])
 def update_account(account_id):
     """Update account."""
+    from decimal import Decimal
+
     account = Account.query.get(account_id)
     if not account:
         return jsonify({"error": "Account not found"}), 404
@@ -50,6 +103,8 @@ def update_account(account_id):
         account.name = data["name"]
     if "is_active" in data:
         account.is_active = data["is_active"]
+    if "opening_balance" in data:
+        account.opening_balance = Decimal(str(data["opening_balance"]))
 
     db.session.commit()
     return jsonify(account.to_dict())

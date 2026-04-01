@@ -10,9 +10,12 @@
     <div class="widget">
         <!-- Header -->
         <div class="header">
-            <div class="title">
-                <div class="title-icon"></div>
-                <span>TRADELOGGER</span>
+            <div class="header-left">
+                <button id="menu-btn" class="control-btn menu" title="Menu">☰</button>
+                <div class="title">
+                    <div class="title-icon"></div>
+                    <span>TRADELOGGER</span>
+                </div>
             </div>
             <div class="controls">
                 <button id="float-btn" class="control-btn float" title="Minimize">▼</button>
@@ -23,17 +26,33 @@
 
         <!-- Trade Form -->
         <div class="form-container">
-            <div class="form-group">
-                <label>DATE</label>
-                <input type="date" id="trade-date">
-            </div>
+            <!-- Collapsible Trade Info Section -->
+            <div class="collapsible-section collapsed" id="trade-info-section">
+                <div class="collapsible-header" onclick="toggleTradeInfo()">
+                    <span class="section-title">TRADE INFO</span>
+                    <span class="section-summary" id="trade-info-summary">-- / -- / --</span>
+                    <span class="chevron">▼</span>
+                </div>
+                <div class="collapsible-content" id="trade-info-content">
+                    <div class="form-group">
+                        <label>DATE</label>
+                        <input type="date" id="trade-date" onchange="updateTradeInfoSummary()">
+                    </div>
 
-            <div class="form-group">
-                <label>SYMBOL</label>
-                <select id="symbol-select">
-                    <option value="">-- Select Symbol --</option>
-                </select>
-                <input type="text" id="symbol-custom" placeholder="Or type symbol" style="margin-top: 4px;">
+                    <div class="form-group">
+                        <label>ACCOUNT</label>
+                        <select id="account-select" onchange="updateTradeInfoSummary()">
+                            <option value="">-- Select Account --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>SYMBOL</label>
+                        <select id="symbol-select" onchange="updateTradeInfoSummary()">
+                            <option value="">-- Select Symbol --</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -106,6 +125,31 @@
         <div class="recent-trades">
             <h4>RECENT TRADES</h4>
             <div id="recent-list"></div>
+            <button id="view-more-btn" class="btn-view-more">VIEW ALL TRADES →</button>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="settings-panel">
+        <div class="settings-header">
+            <span>Settings</span>
+            <button id="close-settings" class="control-btn">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-item">
+                <span>Always on Top</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="always-on-top">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Dark Mode</span>
+                <label class="theme-toggle">
+                    <input type="checkbox" id="dark-mode-toggle" checked>
+                    <span class="theme-slider"></span>
+                </label>
+            </div>
         </div>
     </div>
 

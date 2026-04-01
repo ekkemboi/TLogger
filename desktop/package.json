@@ -8,7 +8,8 @@
     "dev": "electron . --dev"
   },
   "dependencies": {
-    "chrome-remote-interface": "^0.33.2"
+    "chrome-remote-interface": "^0.33.2",
+    "electron-reload": "^1.5.0"
   },
   "devDependencies": {
     "electron": "33.2.0"

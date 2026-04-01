@@ -2,8 +2,9 @@
 const API_URL = 'http://localhost:5000/api';
 
 // DOM Elements
+const accountSelect = document.getElementById('account-select');
 const symbolSelect = document.getElementById('symbol-select');
-const symbolCustom = document.getElementById('symbol-custom');
+// const symbolCustom = document.getElementById('symbol-custom');
 const directionSelect = document.getElementById('direction');
 const outcomeSelect = document.getElementById('outcome');
 const entryPriceInput = document.getElementById('entry-price');
@@ -21,6 +22,8 @@ const partialExitsList = document.getElementById('partial-exits-list');
 const addPartialBtn = document.getElementById('add-partial-btn');
 const floatBtn = document.getElementById('float-btn');
 
+// Settings Panel Elements - initialized in initSettingsPanel()
+
 // State
 let partialExits = [];
 let favoritesCache = {};
@@ -29,9 +32,154 @@ let isCollapsed = false;
 // Initialize
 function init() {
     tradeDateInput.value = new Date().toISOString().split('T')[0];
+    initTheme();
+    loadAccounts();
     loadFavorites();
     loadRecentTrades();
+    initSettingsPanel();
     setupEventListeners();
+    updateTradeInfoSummary();
+}
+
+// Set always on top
+function setAlwaysOnTop(enabled) {
+    try {
+        if (window.electronAPI && window.electronAPI.setAlwaysOnTop) {
+            window.electronAPI.setAlwaysOnTop(enabled);
+        }
+    } catch (e) {
+        console.log('setAlwaysOnTop not available');
+    }
+}
+
+// Theme Management
+function initTheme() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    
+    // Check for saved theme preference or default to dark
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+        // Use saved preference
+        const isDark = savedTheme === 'dark';
+        document.body.dataset.theme = isDark ? 'dark' : 'light';
+        if (darkModeToggle) {
+            darkModeToggle.checked = isDark;
+        }
+    } else {
+        // Check system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.body.dataset.theme = prefersDark ? 'dark' : 'light';
+        if (darkModeToggle) {
+            darkModeToggle.checked = prefersDark;
+        }
+    }
+}
+
+function toggleTheme(enabled) {
+    const isDark = enabled;
+    document.body.dataset.theme = isDark ? 'dark' : 'light';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only update if user hasn't manually set a preference
+    if (!localStorage.getItem('theme')) {
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const isDark = e.matches;
+        document.body.dataset.theme = isDark ? 'dark' : 'light';
+        if (darkModeToggle) {
+            darkModeToggle.checked = isDark;
+        }
+    }
+});
+
+// Initialize Settings Panel
+function initSettingsPanel() {
+    const menuBtn = document.getElementById('menu-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const closeSettingsBtn = document.getElementById('close-settings');
+    const alwaysOnTopToggle = document.getElementById('always-on-top');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+    // Toggle settings panel
+    function toggleSettings() {
+        settingsPanel.classList.toggle('open');
+    }
+
+    // Add event listeners
+    menuBtn.addEventListener('click', toggleSettings);
+    closeSettingsBtn.addEventListener('click', toggleSettings);
+
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+        if (settingsPanel.classList.contains('open') &&
+            !settingsPanel.contains(e.target) &&
+            !menuBtn.contains(e.target)) {
+            toggleSettings();
+        }
+    });
+
+    // Always on top toggle
+    alwaysOnTopToggle.addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        localStorage.setItem('alwaysOnTop', enabled);
+        setAlwaysOnTop(enabled);
+    });
+
+    // Load saved always on top setting
+    const alwaysOnTop = localStorage.getItem('alwaysOnTop') === 'true';
+    alwaysOnTopToggle.checked = alwaysOnTop;
+    setAlwaysOnTop(alwaysOnTop);
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener('change', (e) => {
+        toggleTheme(e.target.checked);
+    });
+}
+
+// Toggle Trade Info collapsible section
+function toggleTradeInfo() {
+    const section = document.getElementById('trade-info-section');
+    section.classList.toggle('collapsed');
+}
+
+// Update Trade Info summary display
+function updateTradeInfoSummary() {
+    const date = document.getElementById('trade-date').value || '--';
+    const accountEl = document.getElementById('account-select');
+    const account = accountEl.selectedOptions[0]?.text?.replace('-- Select Account --', '') || '--';
+    const symbolEl = document.getElementById('symbol-select');
+    const symbol = symbolEl.value || '--';
+    
+    document.getElementById('trade-info-summary').textContent = `${date} • ${account.trim()} • ${symbol}`;
+}
+
+// Load accounts from API
+async function loadAccounts() {
+    try {
+        const response = await fetch(`${API_URL}/accounts`);
+        const data = await response.json();
+
+        const accounts = data.accounts || data;
+        accountSelect.innerHTML = '<option value="">-- Select Account --</option>';
+        accounts.forEach(account => {
+            const option = document.createElement('option');
+            option.value = account.id;
+            option.textContent = account.name;
+            accountSelect.appendChild(option);
+        });
+
+        // Auto-select last used account from localStorage
+        const savedAccountId = localStorage.getItem('lastAccountId');
+        if (savedAccountId && accounts.find(a => a.id === savedAccountId)) {
+            accountSelect.value = savedAccountId;
+            updateTradeInfoSummary();
+        }
+    } catch (error) {
+        console.error('Failed to load accounts:', error);
+    }
 }
 
 // Load favorites from API
@@ -49,6 +197,13 @@ async function loadFavorites() {
             option.textContent = f.symbol;
             symbolSelect.appendChild(option);
         });
+
+        // Auto-select last used symbol from localStorage
+        const savedSymbol = localStorage.getItem('lastSymbol');
+        if (savedSymbol && data.find(f => f.symbol === savedSymbol)) {
+            symbolSelect.value = savedSymbol;
+            updateTradeInfoSummary();
+        }
     } catch (error) {
         console.error('Failed to load favorites:', error);
     }
@@ -57,7 +212,7 @@ async function loadFavorites() {
 // Load recent trades
 async function loadRecentTrades() {
     try {
-        const response = await fetch(`${API_URL}/trades?per_page=5`);
+        const response = await fetch(`${API_URL}/trades?per_page=2`);
         const data = await response.json();
         renderRecentTrades(data.trades || []);
     } catch (error) {
@@ -77,7 +232,9 @@ function renderRecentTrades(trades) {
             <div class="recent-item-header">
                 <span class="symbol">${t.symbol}</span>
                 <span class="direction ${t.direction}">${t.direction.toUpperCase()}</span>
-                <span class="${t.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">$${t.pnl?.toFixed(2) || '--'}</span>
+                <span class="${t.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'}">
+                    ${t.outcome === 'loss' && t.pnl ? '-$' + t.pnl.toFixed(2) : t.pnl ? '$' + t.pnl.toFixed(2) : '--'}
+                </span>
             </div>
             <div class="recent-item-meta">
                 <span>${t.entry_price?.toFixed(2)} → ${t.take_profit?.toFixed(2) || t.exit_price?.toFixed(2) || 'N/A'}</span>
@@ -131,8 +288,8 @@ function removePartialExit(index) {
 
 // Clear form
 function clearForm() {
+    accountSelect.value = '';
     symbolSelect.value = '';
-    symbolCustom.value = '';
     directionSelect.value = 'long';
     outcomeSelect.value = 'win';
     entryPriceInput.value = '';
@@ -162,7 +319,7 @@ function hideStatus() {
 
 // Confirm trade
 async function confirmTrade() {
-    const symbol = symbolCustom.value.trim() || symbolSelect.value;
+    const symbol = symbolSelect.value;
     const entryPrice = parseFloat(entryPriceInput.value);
     const positionSize = parseFloat(positionSizeInput.value) || 1;
     const takeProfit = parseFloat(takeProfitInput.value) || null;
@@ -172,9 +329,36 @@ async function confirmTrade() {
         return;
     }
 
+    if (!accountSelect.value) {
+        showStatus('Please select an account', 'error');
+        return;
+    }
+
     if (!entryPrice || entryPrice <= 0) {
         showStatus('Please enter a valid entry price', 'error');
         return;
+    }
+
+    // Validate price logic based on direction
+    const direction = directionSelect.value;
+    if (direction === 'long') {
+        if (takeProfit !== null && takeProfit <= entryPrice) {
+            showStatus('For LONG trades, take profit must be higher than entry price', 'error');
+            return;
+        }
+        if (stopLossInput.value && parseFloat(stopLossInput.value) >= entryPrice) {
+            showStatus('For LONG trades, stop loss must be lower than entry price', 'error');
+            return;
+        }
+    } else if (direction === 'short') {
+        if (takeProfit !== null && takeProfit >= entryPrice) {
+            showStatus('For SHORT trades, take profit must be lower than entry price', 'error');
+            return;
+        }
+        if (stopLossInput.value && parseFloat(stopLossInput.value) <= entryPrice) {
+            showStatus('For SHORT trades, stop loss must be higher than entry price', 'error');
+            return;
+        }
     }
 
     // Build exit transactions from partial exits
@@ -193,6 +377,7 @@ async function confirmTrade() {
     const fees = favorite.fees || 0;
 
     const tradeData = {
+        account_id: accountSelect.value,
         symbol: symbol.toUpperCase(),
         direction: directionSelect.value,
         entry_price: entryPrice,
@@ -232,6 +417,11 @@ async function confirmTrade() {
             showStatus(`Trade saved! P&L: $${savedTrade.pnl?.toFixed(2) || 'N/A'}`, 'success');
             clearForm();
             loadRecentTrades();
+            // Auto-collapse Trade Info section after save
+            const tradeInfoSection = document.getElementById('trade-info-section');
+            if (!tradeInfoSection.classList.contains('collapsed')) {
+                tradeInfoSection.classList.add('collapsed');
+            }
         } else {
             const error = await response.json();
             showStatus(error.error || 'Failed to save trade', 'error');
@@ -253,10 +443,11 @@ async function toggleFloat() {
         floatBtn.title = 'Expand widget';
         // Resize window to header-only height
         try {
-            const { ipcRenderer } = window.require('electron');
-            await ipcRenderer.invoke('resize-window', { height: 48 });
+            if (window.electronAPI && window.electronAPI.resizeWindow) {
+                await window.electronAPI.resizeWindow(48);
+            }
         } catch (e) {
-            console.log('Not in Electron context');
+            console.log('resizeWindow not available:', e.message);
         }
     } else {
         widget.classList.remove('collapsed');
@@ -264,10 +455,11 @@ async function toggleFloat() {
         floatBtn.title = 'Minimize';
         // Restore full height
         try {
-            const { ipcRenderer } = window.require('electron');
-            await ipcRenderer.invoke('resize-window', { height: 700 });
+            if (window.electronAPI && window.electronAPI.resizeWindow) {
+                await window.electronAPI.resizeWindow(700);
+            }
         } catch (e) {
-            console.log('Not in Electron context');
+            console.log('resizeWindow not available:', e.message);
         }
     }
 }
@@ -277,24 +469,65 @@ function setupEventListeners() {
     confirmBtn.addEventListener('click', confirmTrade);
     clearBtn.addEventListener('click', clearForm);
     addPartialBtn.addEventListener('click', addPartialExit);
-    floatBtn.addEventListener('click', toggleFloat);
+    floatBtn.addEventListener('click', (e) => {
+        e.stopPropagation();  // Prevent settings menu from closing
+        toggleFloat();
+    });
 
-    // Symbol selection
+    // Save account to localStorage when changed
+    accountSelect.addEventListener('change', () => {
+        if (accountSelect.value) {
+            localStorage.setItem('lastAccountId', accountSelect.value);
+            updateTradeInfoSummary();
+        }
+    });
+
+    // Save symbol to localStorage when changed
     symbolSelect.addEventListener('change', () => {
         if (symbolSelect.value) {
-            symbolCustom.value = '';
+            localStorage.setItem('lastSymbol', symbolSelect.value);
+            updateTradeInfoSummary();
         }
     });
 
     // Window controls
-    document.getElementById('close-btn').addEventListener('click', () => {
+    document.getElementById('close-btn').addEventListener('click', (e) => {
+        e.stopPropagation();  // Prevent settings menu from closing first
         if (confirm('Close TradeLogger?')) {
-            window.close();
+            try {
+                if (window.electronAPI && window.electronAPI.closeWindow) {
+                    window.electronAPI.closeWindow();
+                } else {
+                    window.close(); // Fallback for browser testing
+                }
+            } catch (err) {
+                console.log('Close window error:', err.message);
+                window.close(); // Fallback for browser testing
+            }
         }
     });
 
-    document.getElementById('minimize-btn').addEventListener('click', () => {
-        // Electron handles this via main.js
+    document.getElementById('minimize-btn').addEventListener('click', (e) => {
+        e.stopPropagation();  // Prevent settings menu from closing
+        try {
+            if (window.electronAPI && window.electronAPI.minimizeWindow) {
+                window.electronAPI.minimizeWindow();
+            }
+        } catch (err) {
+            console.log('Minimize window error:', err.message);
+        }
+    });
+
+    document.getElementById('view-more-btn').addEventListener('click', () => {
+        try {
+            if (window.electronAPI && window.electronAPI.openExternal) {
+                window.electronAPI.openExternal('http://localhost:5000/trades');
+            } else {
+                window.open('http://localhost:5000/trades', '_blank');
+            }
+        } catch (e) {
+            window.open('http://localhost:5000/trades', '_blank');
+        }
     });
 }
 

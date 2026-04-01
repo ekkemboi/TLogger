@@ -62,14 +62,15 @@
         <table class="min-w-full">
             <thead class="flex-shrink-0">
                 <tr class="border-b border-border-default">
-                    <th class="table-header px-3 py-2 text-left text-[10px]">SYMBOL</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">DIRECTION</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">ENTRY</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">TAKE PROFIT</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">P&L</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">STATUS</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">DATE</th>
-                    <th class="table-header px-3 py-2 text-left text-[10px]">ACTIONS</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">ACCOUNT</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">SYMBOL</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">DIRECTION</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">STOP LOSS</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">ENTRY</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">TAKE PROFIT</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">P&L</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">DATE</th>
+                    <th class="table-header px-3 py-2 text-left text-[11px]">ACTIONS</th>
                 </tr>
             </thead>
             <tbody id="trades-table" class="overflow-y-auto" style="max-height: calc(60vh - 40px);">
@@ -164,12 +165,36 @@
                 <span>Status: </span><span id="edit-status" class="font-semibold"></span>
             </div>
         </form>
+        <!-- Partial Exits Section in Edit Modal -->
+        <div class="mt-6 pt-4 border-t border-border-default">
+            <h3 class="text-sm font-semibold mb-3">Partial Exits</h3>
+            <div id="edit-partial-exits-list" class="space-y-2 mb-3">
+                <!-- Loaded dynamically -->
+            </div>
+            <form id="edit-add-partial-exit-form" class="grid grid-cols-3 gap-2">
+                <input type="hidden" id="edit-partial-exit-trade-id">
+                <div>
+                    <label class="label text-[10px]">QTY</label>
+                    <input type="number" step="any" id="edit-partial-qty" class="input text-xs" required>
+                </div>
+                <div>
+                    <label class="label text-[10px]">EXIT PRICE</label>
+                    <input type="number" step="any" id="edit-partial-price" class="input text-xs" required>
+                </div>
+                <div>
+                    <label class="label text-[10px]">FEES</label>
+                    <input type="number" step="any" id="edit-partial-fees" class="input text-xs" value="0">
+                </div>
+                <button type="submit" class="btn-primary col-span-3 text-xs">Add Partial Exit</button>
+            </form>
+        </div>
         <div class="mt-6 flex gap-3">
             <button onclick="closeEditModal()" class="btn-secondary flex-1">CANCEL</button>
             <button onclick="saveTrade()" class="btn-primary flex-1">SAVE</button>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -180,12 +205,14 @@ async function loadTrades(page = 1) {
     currentPage = page;
     const symbol = document.getElementById('filter-symbol').value;
     const direction = document.getElementById('filter-direction').value;
+    const accountId = document.getElementById('account-switcher')?.value || '';
     const startDate = document.getElementById('filter-start').value;
     const endDate = document.getElementById('filter-end').value;
 
     let url = `/api/trades?page=${page}&per_page=15`;
     if (symbol) url += `&symbol=${symbol}`;
     if (direction) url += `&direction=${direction}`;
+    if (accountId) url += `&account_id=${accountId}`;
     if (startDate) url += `&start_date=${startDate}`;
     if (endDate) url += `&end_date=${endDate}`;
 
@@ -197,9 +224,12 @@ async function loadTrades(page = 1) {
         const filteredTrades = data.trades || [];
         document.getElementById('filtered-count').textContent = filteredTrades.length;
 
-        const closedTrades = filteredTrades.filter(t => t.pnl !== null);
-        const totalPnl = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
-        const wins = closedTrades.filter(t => t.pnl > 0).length;
+        const closedTrades = filteredTrades.filter(t => t.outcome !== null);
+        const totalPnl = closedTrades.reduce((sum, t) => {
+            const pnl = t.pnl || 0;
+            return t.outcome === 'loss' ? sum - pnl : sum + pnl;
+        }, 0);
+        const wins = closedTrades.filter(t => t.outcome === 'win').length;
         const winRate = closedTrades.length > 0 ? (wins / closedTrades.length * 100) : 0;
         const avgPnl = closedTrades.length > 0 ? totalPnl / closedTrades.length : 0;
 
@@ -211,23 +241,23 @@ async function loadTrades(page = 1) {
 
         const tbody = document.getElementById('trades-table');
         if (data.trades.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-text-secondary text-xs">No trades found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="px-6 py-8 text-center text-text-secondary text-xs">No trades found</td></tr>';
             return;
         }
 
         tbody.innerHTML = data.trades.map((trade, i) => `
-            <tr class="border-b border-border-default hover:bg-bg-surface cursor-pointer ${i % 2 === 0 ? 'bg-bg-secondary' : 'bg-bg-surface'}" onclick="showTradeModal('${trade.id}')">
+            <tr class="border-b border-border-default hover:bg-bg-surface cursor-pointer ${i % 2 === 0 ? 'bg-bg-surface' : 'bg-bg-primary'}" onclick="showTradeModal('${trade.id}')">
+                <td class="table-cell px-3 py-2 text-xs text-text-secondary">${trade.account_name || '--'}</td>
                 <td class="table-cell px-3 py-2 text-xs">${trade.symbol}</td>
                 <td class="table-cell px-3 py-2">
                     <span class="${trade.direction === 'long' ? 'badge-success' : 'badge-error'} text-[9px]">${trade.direction.toUpperCase()}</span>
                 </td>
+                <td class="table-cell px-3 py-2 text-xs">${trade.stop_loss?.toFixed(2) || '--'}</td>
                 <td class="table-cell px-3 py-2 text-xs">${trade.entry_price?.toFixed(2) || '--'}</td>
                 <td class="table-cell px-3 py-2 text-xs">${trade.take_profit?.toFixed(2) || '--'}</td>
-                <td class="table-cell px-3 py-2 text-xs ${trade.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">
-                    ${trade.pnl !== null ? '$' + trade.pnl.toFixed(2) : '--'}
-                </td>
-                <td class="table-cell px-3 py-2">
-                    <span class="${trade.status === 'closed' ? 'badge-success' : 'badge-warning'} text-[9px]">${trade.status.toUpperCase()}</span>
+                <td class="table-cell px-3 py-2 text-xs ${trade.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'}">
+                    ${trade.outcome === 'loss' && trade.pnl ? '-$' + trade.pnl.toFixed(2) : 
+                      trade.pnl !== null ? '$' + trade.pnl.toFixed(2) : '--'}
                 </td>
                 <td class="table-cell px-3 py-2 text-text-secondary text-xs">${new Date(trade.created_at).toLocaleDateString()}</td>
                 <td class="table-cell px-3 py-2" onclick="event.stopPropagation()">
@@ -268,10 +298,38 @@ async function loadTrades(page = 1) {
 
 async function showTradeModal(id) {
     try {
-        const response = await fetch(`/api/trades/${id}`);
-        const trade = await response.json();
+        const [tradeRes, partialRes] = await Promise.all([
+            fetch(`/api/trades/${id}`),
+            fetch(`/api/trades/${id}/partial-exits`)
+        ]);
+        const trade = await tradeRes.json();
+        const partialData = await partialRes.json();
+        const partialExits = partialData.partial_exits || [];
 
         const content = document.getElementById('modal-content');
+        
+        let partialHtml = '';
+        if (partialExits.length > 0) {
+            partialHtml = `
+                <div class="mt-4 pt-4 border-t border-border-default">
+                    <h3 class="text-sm font-semibold mb-2">PARTIAL EXITS</h3>
+                    <div class="space-y-2">
+                        ${partialExits.map(pe => {
+                            const profit = trade.direction === 'long'
+                                ? (pe.exit_price - trade.entry_price) * pe.qty * 2
+                                : (trade.entry_price - pe.exit_price) * pe.qty * 2;
+                            return `
+                                <div class="flex justify-between items-center bg-bg-surface p-2 rounded text-xs">
+                                    <span>${pe.qty} contract${pe.qty != 1 ? 's' : ''} @ $${pe.exit_price.toFixed(2)}</span>
+                                    <span class="${profit >= 0 ? 'pnl-positive' : 'pnl-negative'}">$${profit.toFixed(2)}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         content.innerHTML = `
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -296,24 +354,31 @@ async function showTradeModal(id) {
                 </div>
                 <div>
                     <span class="label text-[10px]">P&L:</span>
-                    <span class="${trade.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'} ml-2 text-sm">$${trade.pnl?.toFixed(2) || '--'}</span>
+                    <span class="${trade.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'} ml-2 text-sm">
+                        ${trade.outcome === 'loss' && trade.pnl ? '-$' + trade.pnl.toFixed(2) : 
+                          trade.pnl !== null ? '$' + trade.pnl.toFixed(2) : '--'}
+                    </span>
                 </div>
                 <div>
                     <span class="label text-[10px]">STOP LOSS:</span>
                     <span class="table-cell ml-2 text-sm">$${trade.stop_loss?.toFixed(2) || '--'}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">STATUS:</span>
-                    <span class="${trade.status === 'closed' ? 'badge-success' : 'badge-warning'} ml-2">${trade.status.toUpperCase()}</span>
+                    <span class="label text-[10px]">OUTCOME:</span>
+                    <span class="${trade.outcome === 'win' ? 'badge-success' : 
+                                  trade.outcome === 'loss' ? 'badge-error' : 'badge-warning'} ml-2">
+                        ${trade.outcome?.toUpperCase() || 'OPEN'}
+                    </span>
                 </div>
             </div>
+            ${partialHtml}
             ${trade.notes ? `
-                <div class="mt-4">
+                <div class="mt-4 pt-4 border-t border-border-default">
                     <span class="label text-[10px]">NOTES:</span>
                     <p class="table-cell mt-2 text-text-light text-xs">${trade.notes}</p>
                 </div>
             ` : ''}
-            <div class="mt-4 text-[10px] text-text-tertiary">
+            <div class="mt-4 pt-4 border-t border-border-default text-[10px] text-text-tertiary">
                 <div>Created: ${new Date(trade.created_at).toLocaleString()}</div>
                 ${trade.exited_at ? `<div>Closed: ${new Date(trade.exited_at).toLocaleString()}</div>` : ''}
             </div>
@@ -341,9 +406,16 @@ async function deleteTrade(id) {
 
 async function editTrade(id) {
     try {
-        const response = await fetch(`/api/trades/${id}`);
-        const trade = await response.json();
+        const [tradeRes, partialRes] = await Promise.all([
+            fetch(`/api/trades/${id}`),
+            fetch(`/api/trades/${id}/partial-exits`)
+        ]);
+        const trade = await tradeRes.json();
+        const partialData = await partialRes.json();
+        const partialExits = partialData.partial_exits || [];
+
         document.getElementById('edit-trade-id').value = trade.id;
+        document.getElementById('edit-partial-exit-trade-id').value = trade.id;
         document.getElementById('edit-symbol').value = trade.symbol;
         document.getElementById('edit-direction').value = trade.direction;
         document.getElementById('edit-entry-price').value = trade.entry_price || '';
@@ -355,6 +427,26 @@ async function editTrade(id) {
         document.getElementById('edit-tags').value = trade.tags ? trade.tags.join(', ') : '';
         document.getElementById('edit-notes').value = trade.notes || '';
         document.getElementById('edit-status').textContent = trade.status.toUpperCase();
+
+        // Load partial exits into edit modal
+        const partialList = document.getElementById('edit-partial-exits-list');
+        if (partialExits.length > 0) {
+            partialList.innerHTML = partialExits.map(pe => {
+                const profit = trade.direction === 'long'
+                    ? (pe.exit_price - trade.entry_price) * pe.qty * 2
+                    : (trade.entry_price - pe.exit_price) * pe.qty * 2;
+                return `
+                    <div class="flex justify-between items-center bg-bg-surface p-2 rounded text-xs">
+                        <span>${pe.qty} contract${pe.qty != 1 ? 's' : ''} @ $${pe.exit_price.toFixed(2)}</span>
+                        <span class="${profit >= 0 ? 'pnl-positive' : 'pnl-negative'} mr-2">$${profit.toFixed(2)}</span>
+                        <button type="button" onclick="deletePartialExit('${pe.id}', '${trade.id}')" class="text-error hover:text-red-300 text-[10px]">DELETE</button>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            partialList.innerHTML = '<p class="text-text-secondary text-xs">No partial exits</p>';
+        }
+
         document.getElementById('edit-modal').classList.remove('hidden');
     } catch (error) {
         console.error('Failed to load trade:', error);
@@ -402,6 +494,59 @@ async function saveTrade() {
 
 loadTrades();
 
+// Partial Exits Functions
+async function deletePartialExit(partialExitId, tradeId) {
+    if (!confirm('Delete this partial exit?')) return;
+    
+    try {
+        const response = await fetch(`/api/partial-exits/${partialExitId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            loadTrades(currentPage);
+            if (!document.getElementById('edit-modal').classList.contains('hidden')) {
+                editTrade(tradeId);
+            }
+        } else {
+            alert('Failed to delete partial exit');
+        }
+    } catch (error) {
+        console.error('Failed to delete partial exit:', error);
+    }
+}
+
+document.getElementById('edit-add-partial-exit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const tradeId = document.getElementById('edit-partial-exit-trade-id').value;
+    const qty = parseFloat(document.getElementById('edit-partial-qty').value);
+    const exit_price = parseFloat(document.getElementById('edit-partial-price').value);
+    const fees = parseFloat(document.getElementById('edit-partial-fees').value) || 0;
+    
+    try {
+        const response = await fetch(`/api/trades/${tradeId}/partial-exits`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ qty, exit_price, fees })
+        });
+        
+        if (response.ok) {
+            document.getElementById('edit-partial-qty').value = '';
+            document.getElementById('edit-partial-price').value = '';
+            document.getElementById('edit-partial-fees').value = '0';
+            loadTrades(currentPage);
+            editTrade(tradeId); // Refresh edit modal
+        } else {
+            alert('Failed to add partial exit');
+        }
+    } catch (error) {
+        console.error('Failed to add partial exit:', error);
+    }
+});
+
+// Listen for account changes from global switcher
+window.addEventListener('accountChanged', () => loadTrades(1));
 document.getElementById('filter-symbol').addEventListener('change', () => loadTrades(1));
 document.getElementById('filter-direction').addEventListener('change', () => loadTrades(1));
 document.getElementById('filter-start').addEventListener('change', () => loadTrades(1));

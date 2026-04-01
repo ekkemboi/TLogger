@@ -24,7 +24,7 @@ def create_app(config_name=None):
     Path(app.config["SCREENSHOT_DIR"]).mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
-    CORS(app, origins=["http://localhost:*"])
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     swagger_config = {
         "headers": [],

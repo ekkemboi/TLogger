@@ -1,9 +1,12 @@
 """Trade routes for TradeLogger API."""
 
+import json
+from decimal import Decimal
+
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request, send_from_directory
 
-from src.models import Account
+from src.models import Account, db
 from src.services.trade_service import TradeService
 
 trades_bp = Blueprint("trades", __name__)
@@ -74,6 +77,13 @@ def create_trade():
     """
     data = request.form.to_dict() if request.form else request.get_json()
 
+    # Parse exit_transactions if it's a JSON string (sent from widget via FormData)
+    if "exit_transactions" in data and isinstance(data["exit_transactions"], str):
+        try:
+            data["exit_transactions"] = json.loads(data["exit_transactions"])
+        except (json.JSONDecodeError, ValueError):
+            data["exit_transactions"] = []
+
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
@@ -89,6 +99,42 @@ def create_trade():
     account = Account.query.get(data["account_id"])
     if not account:
         return jsonify({"error": "Invalid account_id"}), 400
+
+    # Validate price logic based on direction
+    direction = data.get("direction", "").lower()
+    entry_price = data.get("entry_price")
+    take_profit = data.get("take_profit")
+    stop_loss = data.get("stop_loss")
+
+    if entry_price and direction:
+        entry_price = float(entry_price)
+
+        if direction == "long":
+            if take_profit is not None and float(take_profit) <= entry_price:
+                return jsonify(
+                    {
+                        "error": "For LONG trades, take profit must be higher than entry price"
+                    }
+                ), 400
+            if stop_loss is not None and float(stop_loss) >= entry_price:
+                return jsonify(
+                    {
+                        "error": "For LONG trades, stop loss must be lower than entry price"
+                    }
+                ), 400
+        elif direction == "short":
+            if take_profit is not None and float(take_profit) >= entry_price:
+                return jsonify(
+                    {
+                        "error": "For SHORT trades, take profit must be lower than entry price"
+                    }
+                ), 400
+            if stop_loss is not None and float(stop_loss) <= entry_price:
+                return jsonify(
+                    {
+                        "error": "For SHORT trades, stop loss must be higher than entry price"
+                    }
+                ), 400
 
     if "outcome" in data and data["outcome"].upper() not in (
         "WIN",
@@ -156,6 +202,7 @@ def get_trades():
         "symbol": request.args.get("symbol"),
         "direction": request.args.get("direction"),
         "status": request.args.get("status"),
+        "account_id": request.args.get("account_id"),
         "start_date": request.args.get("start_date"),
         "end_date": request.args.get("end_date"),
     }
@@ -289,6 +336,75 @@ def update_trade(trade_id):
     if "fees" in data and data["fees"] is not None and float(data["fees"]) < 0:
         return jsonify({"error": "Fees must be non-negative"}), 400
 
+    # Validate price logic based on direction
+    # Get existing or new direction and entry_price
+    direction = data.get("direction")
+    entry_price = data.get("entry_price")
+    take_profit = data.get("take_profit")
+    stop_loss = data.get("stop_loss")
+
+    # If updating these fields, we need to validate - get existing trade for missing values
+    if (
+        take_profit is not None
+        or stop_loss is not None
+        or direction is not None
+        or entry_price is not None
+    ):
+        # Get existing trade to fill in missing values
+        existing_trade = TradeService.get_trade(trade_id)
+        if existing_trade:
+            direction = direction if direction else existing_trade.direction.value
+            entry_price = (
+                float(entry_price) if entry_price else float(existing_trade.entry_price)
+            )
+            take_profit = (
+                float(take_profit)
+                if take_profit is not None
+                else (
+                    float(existing_trade.take_profit)
+                    if existing_trade.take_profit
+                    else None
+                )
+            )
+            stop_loss = (
+                float(stop_loss)
+                if stop_loss is not None
+                else (
+                    float(existing_trade.stop_loss)
+                    if existing_trade.stop_loss
+                    else None
+                )
+            )
+
+            direction = direction.lower()
+
+            if direction == "long":
+                if take_profit is not None and take_profit <= entry_price:
+                    return jsonify(
+                        {
+                            "error": "For LONG trades, take profit must be higher than entry price"
+                        }
+                    ), 400
+                if stop_loss is not None and stop_loss >= entry_price:
+                    return jsonify(
+                        {
+                            "error": "For LONG trades, stop loss must be lower than entry price"
+                        }
+                    ), 400
+            elif direction == "short":
+                if take_profit is not None and take_profit >= entry_price:
+                    return jsonify(
+                        {
+                            "error": "For SHORT trades, take profit must be lower than entry price"
+                        }
+                    ), 400
+                if stop_loss is not None and stop_loss <= entry_price:
+                    return jsonify(
+                        {
+                            "error": "For SHORT trades, stop loss must be higher than entry price"
+                        }
+                    ), 400
+
     trade = TradeService.update_trade(trade_id, data)
     if not trade:
         return jsonify({"error": "Trade not found"}), 404
@@ -317,3 +433,176 @@ def delete_trade(trade_id):
     if not success:
         return jsonify({"error": "Trade not found"}), 404
     return jsonify({"message": "Trade deleted"}), 200
+
+
+# =============================================================================
+# Partial Exits API
+# =============================================================================
+
+
+@trades_bp.route("/trades/<trade_id>/partial-exits", methods=["GET"])
+def get_trade_partial_exits(trade_id):
+    """
+    Get all partial exits for a trade
+    ---
+    tags:
+      - Partial Exits
+    parameters:
+      - name: trade_id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: List of partial exits
+    """
+    from src.models import TradePartialExit
+
+    partial_exits = TradePartialExit.query.filter_by(trade_id=trade_id).all()
+    return jsonify(
+        {
+            "partial_exits": [pe.to_dict() for pe in partial_exits],
+            "total": len(partial_exits),
+        }
+    )
+
+
+@trades_bp.route("/trades/<trade_id>/partial-exits", methods=["POST"])
+def create_trade_partial_exit(trade_id):
+    """
+    Add a partial exit to a trade
+    ---
+    tags:
+      - Partial Exits
+    parameters:
+      - name: trade_id
+        in: path
+        type: string
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - qty
+            - exit_price
+          properties:
+            qty:
+              type: number
+              example: 0.5
+            exit_price:
+              type: number
+              example: 52000
+            fees:
+              type: number
+              example: 5
+    responses:
+      201:
+        description: Partial exit created
+    """
+    from src.models import Trade, TradePartialExit
+
+    trade = Trade.query.get(trade_id)
+    if not trade:
+        return jsonify({"error": "Trade not found"}), 404
+
+    data = request.get_json() or {}
+
+    if not data.get("qty"):
+        return jsonify({"error": "qty is required"}), 400
+    if not data.get("exit_price"):
+        return jsonify({"error": "exit_price is required"}), 400
+
+    partial_exit = TradePartialExit(
+        trade_id=trade_id,
+        qty=Decimal(str(data["qty"])),
+        exit_price=Decimal(str(data["exit_price"])),
+        fees=Decimal(str(data.get("fees", 0))) if data.get("fees") else Decimal("0"),
+    )
+
+    db.session.add(partial_exit)
+
+    # Recalculate P&L
+    trade.pnl = TradeService.calculate_pnl(trade)
+
+    db.session.commit()
+
+    return jsonify(partial_exit.to_dict()), 201
+
+
+@trades_bp.route("/partial-exits/<partial_exit_id>", methods=["PUT"])
+def update_partial_exit(partial_exit_id):
+    """
+    Update a partial exit
+    ---
+    tags:
+      - Partial Exits
+    parameters:
+      - name: partial_exit_id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Partial exit updated
+    """
+    from src.models import TradePartialExit, Trade
+
+    partial_exit = TradePartialExit.query.get(partial_exit_id)
+    if not partial_exit:
+        return jsonify({"error": "Partial exit not found"}), 404
+
+    data = request.get_json() or {}
+
+    if "qty" in data:
+        partial_exit.qty = Decimal(str(data["qty"]))
+    if "exit_price" in data:
+        partial_exit.exit_price = Decimal(str(data["exit_price"]))
+    if "fees" in data:
+        partial_exit.fees = Decimal(str(data["fees"]))
+
+    # Recalculate P&L for the trade
+    trade = Trade.query.get(partial_exit.trade_id)
+    if trade:
+        trade.pnl = TradeService.calculate_pnl(trade)
+
+    db.session.commit()
+
+    return jsonify(partial_exit.to_dict())
+
+
+@trades_bp.route("/partial-exits/<partial_exit_id>", methods=["DELETE"])
+def delete_partial_exit(partial_exit_id):
+    """
+    Delete a partial exit
+    ---
+    tags:
+      - Partial Exits
+    parameters:
+      - name: partial_exit_id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Partial exit deleted
+    """
+    from src.models import TradePartialExit, Trade
+
+    partial_exit = TradePartialExit.query.get(partial_exit_id)
+    if not partial_exit:
+        return jsonify({"error": "Partial exit not found"}), 404
+
+    trade_id = partial_exit.trade_id
+
+    db.session.delete(partial_exit)
+
+    # Recalculate P&L for the trade
+    trade = Trade.query.get(trade_id)
+    if trade:
+        trade.pnl = TradeService.calculate_pnl(trade)
+
+    db.session.commit()
+
+    return jsonify({"message": "Partial exit deleted"})

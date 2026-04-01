@@ -8,6 +8,7 @@ from src.models import (
     Trade,
     TradeDirection,
     TradeOutcome,
+    TradePartialExit,
     TradeStatus,
     db,
 )
@@ -46,8 +47,38 @@ class TradeService:
 
         is_long = trade.direction == TradeDirection.LONG
 
+        # Check for partial exits from new table first
+        if trade.partial_exits:
+            total_pnl = Decimal("0")
+            exited_qty = Decimal("0")
+
+            # Calculate P&L from partial exits
+            for pe in trade.partial_exits:
+                qty = Decimal(str(pe.qty))
+                exit_price = Decimal(str(pe.exit_price))
+                exit_fees = Decimal(str(pe.fees or 0))
+                if is_long:
+                    total_pnl += (exit_price - entry) * qty * point_value - exit_fees
+                else:
+                    total_pnl += (entry - exit_price) * qty * point_value - exit_fees
+                exited_qty += qty
+
+            # Calculate remaining position using take_profit
+            remaining_qty = size - exited_qty
+            if remaining_qty > 0 and trade.take_profit:
+                tp = Decimal(str(trade.take_profit))
+                if is_long:
+                    total_pnl += (tp - entry) * remaining_qty * point_value
+                else:
+                    total_pnl += (entry - tp) * remaining_qty * point_value
+
+            return total_pnl
+
+        # Fallback to JSON (for backward compatibility)
         if trade.exit_transactions:
             total_pnl = Decimal("0")
+            exited_qty = Decimal("0")
+
             for exit_tx in trade.exit_transactions:
                 qty = Decimal(str(exit_tx["qty"]))
                 exit_price = Decimal(str(exit_tx["exit_price"]))
@@ -56,6 +87,17 @@ class TradeService:
                     total_pnl += (exit_price - entry) * qty * point_value - exit_fees
                 else:
                     total_pnl += (entry - exit_price) * qty * point_value - exit_fees
+                exited_qty += qty
+
+            # Calculate remaining position using take_profit
+            remaining_qty = size - exited_qty
+            if remaining_qty > 0 and trade.take_profit:
+                tp = Decimal(str(trade.take_profit))
+                if is_long:
+                    total_pnl += (tp - entry) * remaining_qty * point_value
+                else:
+                    total_pnl += (entry - tp) * remaining_qty * point_value
+
             return total_pnl
 
         outcome = trade.outcome
@@ -67,10 +109,10 @@ class TradeService:
             if trade.stop_loss:
                 sl = Decimal(str(trade.stop_loss))
                 if is_long:
-                    return (sl - entry) * size * point_value - fees
+                    return abs((sl - entry) * size * point_value)
                 else:
-                    return (entry - sl) * size * point_value - fees
-            return -fees
+                    return abs((entry - sl) * size * point_value)
+            return Decimal("0")
 
         # Default: WIN - use take_profit
         if trade.take_profit:
@@ -86,11 +128,15 @@ class TradeService:
         """Create a new trade journal entry."""
         exit_transactions = data.get("exit_transactions", [])
         take_profit = data.get("take_profit")
+        exit_price = data.get("exit_price")
         symbol = data.get("symbol").upper()
         outcome = data.get("outcome", "win")
         # Convert to uppercase to match enum values
         if outcome:
             outcome = outcome.upper()
+
+        # Trade is closed if it has exit_price, take_profit, or exit_transactions
+        is_closed = exit_price or take_profit or exit_transactions
 
         trade_date = None
         if data.get("trade_date"):
@@ -108,6 +154,9 @@ class TradeService:
             symbol=symbol,
             direction=TradeDirection(data.get("direction")),
             entry_price=Decimal(str(data.get("entry_price"))),
+            exit_price=(
+                Decimal(str(data.get("exit_price"))) if data.get("exit_price") else None
+            ),
             take_profit=(
                 Decimal(str(data.get("take_profit")))
                 if data.get("take_profit")
@@ -121,9 +170,7 @@ class TradeService:
                 if data.get("position_size")
                 else None
             ),
-            status=TradeStatus.CLOSED
-            if take_profit or exit_transactions
-            else TradeStatus.CONFIRMED,
+            status=TradeStatus.CLOSED if is_closed else TradeStatus.CONFIRMED,
             outcome=TradeOutcome(outcome) if outcome else TradeOutcome.WIN,
             fees=fees,
             notes=data.get("notes"),
@@ -131,12 +178,27 @@ class TradeService:
             exit_transactions=exit_transactions if exit_transactions else None,
             trade_date=trade_date,
             confirmed_at=datetime.utcnow(),
-            exited_at=datetime.utcnow() if take_profit or exit_transactions else None,
+            exited_at=datetime.utcnow() if is_closed else None,
         )
 
         trade.pnl = TradeService.calculate_pnl(trade)
 
         db.session.add(trade)
+        db.session.flush()  # Get trade.id before committing
+
+        # Save partial exits to new table
+        if exit_transactions:
+            for tx in exit_transactions:
+                partial_exit = TradePartialExit(
+                    trade_id=trade.id,
+                    qty=Decimal(str(tx.get("qty", 0))),
+                    exit_price=Decimal(str(tx.get("exit_price", 0))),
+                    fees=Decimal(str(tx.get("fees", 0)))
+                    if tx.get("fees")
+                    else Decimal("0"),
+                )
+                db.session.add(partial_exit)
+
         db.session.commit()
 
         if screenshot_file:
@@ -164,6 +226,8 @@ class TradeService:
                 )
             if filters.get("status"):
                 query = query.filter(Trade.status == TradeStatus(filters["status"]))
+            if filters.get("account_id"):
+                query = query.filter(Trade.account_id == filters["account_id"])
             if filters.get("start_date"):
                 query = query.filter(Trade.trade_date >= filters["start_date"])
             if filters.get("end_date"):

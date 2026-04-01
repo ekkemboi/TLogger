@@ -3,60 +3,77 @@
 {% block title %}TradeLogger - Dashboard{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <h1 class="text-2xl font-bold">Dashboard</h1>
-
-    <!-- Metrics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Total Trades</p>
-            <p id="total-trades" class="text-3xl font-bold">--</p>
+<div class="h-full flex flex-col gap-4">
+    <div class="flex justify-between items-center flex-shrink-0">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">Dashboard</h1>
+            <p class="text-text-light text-[11px] mt-0.5">Monitor your trading performance and metrics</p>
         </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Win Rate</p>
-            <p id="win-rate" class="text-3xl font-bold text-green-400">--</p>
-        </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Total P&L</p>
-            <p id="total-pnl" class="text-3xl font-bold">--</p>
-        </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Profit Factor</p>
-            <p id="profit-factor" class="text-3xl font-bold">--</p>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <p class="label text-[11px]">FROM</p>
+                <input type="date" id="filter-start" class="input text-xs py-2 px-3">
+            </div>
+            <div class="flex items-center gap-2">
+                <p class="label text-[11px]">TO</p>
+                <input type="date" id="filter-end" class="input text-xs py-2 px-3">
+            </div>
         </div>
     </div>
 
-    <!-- Equity Curve -->
-    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h2 class="text-lg font-semibold mb-4">Equity Curve</h2>
-        <canvas id="equity-chart"></canvas>
+    <!-- Metrics Cards Row 1 -->
+    <div class="grid grid-cols-4 gap-4 flex-shrink-0">
+        <div class="card p-6">
+            <p class="label text-[11px]">TOTAL TRADES</p>
+            <p id="total-trades" class="metric-value text-3xl mt-1">--</p>
+        </div>
+        <div class="card p-6">
+            <p class="label text-[11px]">WIN RATE</p>
+            <p id="win-rate" class="metric-value text-3xl mt-1 pnl-positive">--</p>
+        </div>
+        <div class="card p-6">
+            <p class="label text-[11px]">TOTAL P&L</p>
+            <p id="total-pnl" class="metric-value text-3xl mt-1">--</p>
+        </div>
+        <div class="card p-6">
+            <p class="label text-[11px]">PROFIT FACTOR</p>
+            <p id="profit-factor" class="metric-value text-3xl mt-1">--</p>
+        </div>
     </div>
 
-    <!-- Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 class="text-lg font-semibold mb-4">Recent P&L</h2>
-            <canvas id="pnl-chart"></canvas>
+    <!-- Metrics Cards Row 2 -->
+    <div class="grid grid-cols-4 gap-4 flex-shrink-0">
+        <div class="card p-6">
+            <p class="label text-[11px]">AVG WIN</p>
+            <p id="avg-win" class="metric-value text-2xl mt-1 pnl-positive">--</p>
         </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h2 class="text-lg font-semibold mb-4">By Symbol</h2>
-            <canvas id="symbol-chart"></canvas>
+        <div class="card p-6">
+            <p class="label text-[11px]">AVG LOSS</p>
+            <p id="avg-loss" class="metric-value text-2xl mt-1 pnl-negative">--</p>
+        </div>
+        <div class="card p-6">
+            <p class="label text-[11px]">BEST TRADE</p>
+            <p id="best-trade" class="metric-value text-2xl mt-1 pnl-positive">--</p>
+        </div>
+        <div class="card p-6">
+            <p class="label text-[11px]">WORST TRADE</p>
+            <p id="worst-trade" class="metric-value text-2xl mt-1 pnl-negative">--</p>
         </div>
     </div>
 
-    <!-- Additional Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Avg Win</p>
-            <p id="avg-win" class="text-2xl font-bold text-green-400">--</p>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+        <div class="card p-6 flex flex-col">
+            <p class="label text-[11px] flex-shrink-0">EQUITY CURVE</p>
+            <div class="flex-1 mt-3 min-h-0">
+                <canvas id="equity-chart"></canvas>
+            </div>
         </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Avg Loss</p>
-            <p id="avg-loss" class="text-2xl font-bold text-red-400">--</p>
-        </div>
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <p class="text-sm text-gray-400">Best / Worst</p>
-            <p id="best-worst" class="text-2xl font-bold">--</p>
+        <div class="card p-6 flex flex-col">
+            <p class="label text-[11px] flex-shrink-0">RECENT P&L</p>
+            <div class="flex-1 mt-3 min-h-0">
+                <canvas id="pnl-chart"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -64,25 +81,44 @@
 
 {% block scripts %}
 <script>
+let equityChart, pnlChart;
+
 async function loadMetrics() {
     try {
-        const metricsRes = await fetch('/api/metrics');
+        const accountId = document.getElementById('account-switcher')?.value || '';
+        const startDate = document.getElementById('filter-start').value;
+        const endDate = document.getElementById('filter-end').value;
+        
+        let params = [];
+        if (accountId) params.push(`account_id=${accountId}`);
+        if (startDate) params.push(`start_date=${startDate}`);
+        if (endDate) params.push(`end_date=${endDate}`);
+        const queryParams = params.length ? '?' + params.join('&') : '';
+        
+        const metricsRes = await fetch(`/api/metrics${queryParams}`);
         const metrics = await metricsRes.json();
 
         document.getElementById('total-trades').textContent = metrics.total_trades;
         document.getElementById('win-rate').textContent = (metrics.win_rate * 100).toFixed(1) + '%';
         document.getElementById('total-pnl').textContent = '$' + metrics.total_pnl.toFixed(2);
-        document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'text-3xl font-bold text-green-400' : 'text-3xl font-bold text-red-400';
+        document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-1 pnl-positive' : 'metric-value text-3xl mt-1 pnl-negative';
         document.getElementById('profit-factor').textContent = metrics.profit_factor.toFixed(2);
+        
         document.getElementById('avg-win').textContent = '$' + metrics.avg_win.toFixed(2);
         document.getElementById('avg-loss').textContent = '$' + metrics.avg_loss.toFixed(2);
-        document.getElementById('best-worst').textContent = '$' + metrics.best_trade.toFixed(2) + ' / $' + metrics.worst_trade.toFixed(2);
+        document.getElementById('best-trade').textContent = '$' + metrics.best_trade.toFixed(2);
+        document.getElementById('worst-trade').textContent = '$' + metrics.worst_trade.toFixed(2);
 
-        // Equity Curve - fetch all closed trades
-        const tradesRes = await fetch('/api/trades?status=closed&per_page=100');
+        // Equity Curve
+        let tradesParams = ['status=closed', 'per_page=100'];
+        if (accountId) tradesParams.push(`account_id=${accountId}`);
+        if (startDate) tradesParams.push(`start_date=${startDate}`);
+        if (endDate) tradesParams.push(`end_date=${endDate}`);
+        const tradesUrl = `/api/trades?${tradesParams.join('&')}`;
+        const tradesRes = await fetch(tradesUrl);
         const tradesData = await tradesRes.json();
         const trades = tradesData.trades || [];
-        
+
         let equity = 0;
         const equityData = [];
         const labels = [];
@@ -94,36 +130,51 @@ async function loadMetrics() {
             }
         });
 
+        // Theme-aware chart colors
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? '#27272A' : '#E4E4E7';
+        const tickColor = '#71717A';
+
+        // Destroy existing charts
+        if (equityChart) equityChart.destroy();
+        if (pnlChart) pnlChart.destroy();
+
+        // Equity Curve Chart
         const equityCtx = document.getElementById('equity-chart').getContext('2d');
-        new Chart(equityCtx, {
+        equityChart = new Chart(equityCtx, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'Equity',
                     data: equityData,
-                    borderColor: equity >= 0 ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)',
-                    backgroundColor: equity >= 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                    borderColor: '#D97706',
+                    backgroundColor: 'rgba(217, 119, 6, 0.1)',
                     fill: true,
-                    tension: 0.1
+                    tension: 0.1,
+                    pointRadius: 0
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { 
-                        grid: { color: 'rgba(255,255,255,0.1)' },
-                        ticks: { callback: (v) => '$' + v.toFixed(0) }
+                    y: {
+                        grid: { color: gridColor, lineWidth: 0.5 },
+                        ticks: { color: tickColor, font: { size: 9 }, callback: (v) => '$' + v.toFixed(0) }
                     },
-                    x: { grid: { color: 'rgba(255,255,255,0.1)' } }
+                    x: {
+                        grid: { color: gridColor, lineWidth: 0.5 },
+                        ticks: { color: tickColor, font: { size: 9 } }
+                    }
                 }
             }
         });
 
         // PnL Chart
         const pnlCtx = document.getElementById('pnl-chart').getContext('2d');
-        new Chart(pnlCtx, {
+        pnlChart = new Chart(pnlCtx, {
             type: 'bar',
             data: {
                 labels: metrics.recent_pnl.map((_, i) => i + 1),
@@ -131,41 +182,33 @@ async function loadMetrics() {
                     label: 'P&L',
                     data: metrics.recent_pnl,
                     backgroundColor: metrics.recent_pnl.map(v => v >= 0 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
-                    borderColor: metrics.recent_pnl.map(v => v >= 0 ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)'),
+                    borderColor: metrics.recent_pnl.map(v => v >= 0 ? '#22C55E' : '#EF4444'),
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.1)' } },
-                    x: { grid: { color: 'rgba(255,255,255,0.1)' } }
+                    y: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 9 } } },
+                    x: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 9 } } }
                 }
             }
         });
-
-        // Symbol Chart
-        const symbolCtx = document.getElementById('symbol-chart').getContext('2d');
-        new Chart(symbolCtx, {
-            type: 'doughnut',
-            data: {
-                labels: metrics.by_symbol.map(s => s.symbol),
-                datasets: [{
-                    data: metrics.by_symbol.map(s => s.count),
-                    backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { position: 'bottom' } }
-            }
-        });
-    } catch (error) {
+        } catch (error) {
         console.error('Failed to load metrics:', error);
     }
 }
 
 loadMetrics();
+
+// Re-render charts when theme changes
+window.addEventListener('themeChanged', () => loadMetrics());
+
+// Listen for account changes from global switcher
+window.addEventListener('accountChanged', () => loadMetrics());
+document.getElementById('filter-start').addEventListener('change', () => loadMetrics());
+document.getElementById('filter-end').addEventListener('change', () => loadMetrics());
 </script>
 {% endblock %}

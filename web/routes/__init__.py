@@ -21,3 +21,9 @@ def trades():
 def favorites():
     """Render favorites page."""
     return render_template("favorites.html")
+
+
+@web_bp.route("/accounts")
+def accounts():
+    """Render accounts page."""
+    return render_template("accounts.html")

@@ -39,6 +39,7 @@ class Account(db.Model):
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(100), nullable=False)
+    opening_balance = db.Column(db.Numeric(18, 2), nullable=True, default=0)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(
         db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
@@ -51,6 +52,9 @@ class Account(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "opening_balance": float(self.opening_balance)
+            if self.opening_balance
+            else 0,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
@@ -94,7 +98,7 @@ class Trade(db.Model):
     __tablename__ = "trades"
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=True)
+    account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=False)
     symbol = db.Column(db.String(50), nullable=False)
     direction = db.Column(db.Enum(TradeDirection), nullable=False)
     entry_price = db.Column(db.Numeric(18, 8), nullable=False)
@@ -113,6 +117,10 @@ class Trade(db.Model):
     tags = db.Column(db.JSON, nullable=True)
     screenshot_path = db.Column(db.String(500), nullable=True)
     exit_transactions = db.Column(db.JSON, nullable=True)
+    # New: relationship to TradePartialExit table
+    partial_exits = db.relationship(
+        "TradePartialExit", backref="trade", lazy=True, cascade="all, delete-orphan"
+    )
     trade_date = db.Column(db.Date, nullable=True, default=date.today)
     created_at = db.Column(
         db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
@@ -131,6 +139,7 @@ class Trade(db.Model):
         return {
             "id": self.id,
             "account_id": self.account_id,
+            "account_name": self.account.name if self.account else None,
             "symbol": self.symbol,
             "direction": self.direction.value if self.direction else None,
             "entry_price": float(self.entry_price) if self.entry_price else None,
@@ -147,6 +156,9 @@ class Trade(db.Model):
             "tags": self.tags,
             "screenshot_path": self.screenshot_path,
             "exit_transactions": self.exit_transactions,
+            "partial_exits": [pe.to_dict() for pe in self.partial_exits]
+            if self.partial_exits
+            else [],
             "trade_date": self.trade_date.isoformat() if self.trade_date else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "confirmed_at": self.confirmed_at.isoformat()
@@ -158,3 +170,32 @@ class Trade(db.Model):
 
     def __repr__(self):
         return f"<Trade {self.symbol} {self.direction} {self.status}>"
+
+
+class TradePartialExit(db.Model):
+    """Model for trade partial exits - separate table for better querying."""
+
+    __tablename__ = "trade_partial_exits"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    trade_id = db.Column(db.String(36), db.ForeignKey("trades.id"), nullable=False)
+    qty = db.Column(db.Numeric(18, 8), nullable=False)
+    exit_price = db.Column(db.Numeric(18, 8), nullable=False)
+    fees = db.Column(db.Numeric(18, 8), nullable=True, default=0)
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+
+    def to_dict(self):
+        """Convert partial exit to dictionary."""
+        return {
+            "id": self.id,
+            "trade_id": self.trade_id,
+            "qty": float(self.qty) if self.qty else None,
+            "exit_price": float(self.exit_price) if self.exit_price else None,
+            "fees": float(self.fees) if self.fees else 0,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f"<TradePartialExit trade={self.trade_id} qty={self.qty}>"

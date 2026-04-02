@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TradeLogger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-primary': 'var(--bg-primary)',
+                        'bg-secondary': 'var(--bg-secondary)',
+                        'bg-surface': 'var(--bg-surface)',
+                        'text-primary': 'var(--text-primary)',
+                        'text-secondary': 'var(--text-secondary)',
+                        'accent-primary': 'var(--accent-primary)',
+                        'accent-primary-hover': 'var(--accent-primary-hover)',
+                        'error': 'var(--error)',
+                        'border-default': 'var(--border-default)',
+                    },
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                        'display': ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F4F4F5;
+            --bg-surface: #FAFAFA;
+            --text-primary: #18181B;
+            --text-secondary: #71717A;
+            --accent-primary: #D97706;
+            --accent-primary-hover: #B45309;
+            --error: #EF4444;
+            --border-default: #E4E4E7;
+        }
+
+        .dark {
+            --bg-primary: #18181B;
+            --bg-secondary: #0F0F10;
+            --bg-surface: #141415;
+            --text-primary: #FAFAFA;
+            --text-secondary: #71717A;
+            --accent-primary: #D97706;
+            --accent-primary-hover: #B45309;
+            --error: #EF4444;
+            --border-default: #27272A;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 48px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .input {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            padding: 12px 16px;
+            width: 100%;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: #FFFFFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            padding: 14px 24px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-google {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--border-default);
+            padding: 14px 24px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-google:hover {
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-default);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 13px;
+            padding: 12px;
+            background-color: color-mix(in srgb, var(--error) 8%, transparent);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .tab-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="w-12 h-12 bg-accent-primary rounded-full mx-auto mb-4"></div>
+            <h1 class="font-display text-2xl font-bold text-text-primary" style="letter-spacing: 2px;">TRADELOGGER</h1>
+            <p class="text-text-secondary text-sm mt-2">Sign in to your account</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-center mb-6 border-b border-border-default">
+            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message mb-4"></div>
+
+        <!-- Google Login -->
+        <button id="google-btn" class="btn-google mb-6" onclick="loginWithGoogle()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+        </button>
+
+        <div class="divider mb-6">or</div>
+
+        <!-- Login Form -->
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="mb-4">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
+                <input type="email" id="login-email" class="input" placeholder="you@example.com" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
+                <input type="password" id="login-password" class="input" placeholder="••••••••" required>
+            </div>
+            <button type="submit" id="login-submit" class="btn-primary">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
+            <div class="mb-4">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Name</label>
+                <input type="text" id="register-name" class="input" placeholder="John Doe" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
+                <input type="email" id="register-email" class="input" placeholder="you@example.com" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
+                <input type="password" id="register-password" class="input" placeholder="Min 8 chars, with uppercase, number & special" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Confirm Password</label>
+                <input type="password" id="register-password-confirm" class="input" placeholder="••••••••" required>
+            </div>
+            <button type="submit" id="register-submit" class="btn-primary">Create Account</button>
+        </form>
+    </div>
+
+    <script>
+        // Check if already authenticated
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/status', { credentials: 'include' });
+                const data = await response.json();
+                if (data.authenticated) {
+                    // Already logged in, redirect to dashboard
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect') || '/';
+                    window.location.href = redirect;
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        // Run auth check on page load
+        checkAuth();
+
+        function switchTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const loginTab = document.getElementById('tab-login');
+            const registerTab = document.getElementById('tab-register');
+            const errorDiv = document.getElementById('error-message');
+            
+            errorDiv.classList.remove('visible');
+            
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.classList.remove('visible');
+        }
+
+        function setLoading(buttonId, loading) {
+            const button = document.getElementById(buttonId);
+            button.disabled = loading;
+            button.textContent = loading ? 'Please wait...' : (buttonId === 'login-submit' ? 'Sign In' : 'Create Account');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            hideError();
+            setLoading('login-submit', true);
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Login successful, redirect
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect') || '/';
+                    window.location.href = redirect;
+                } else {
+                    showError(data.error || 'Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                setLoading('login-submit', false);
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            hideError();
+            setLoading('register-submit', true);
+
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+
+            // Validate password match
+            if (password !== passwordConfirm) {
+                showError('Passwords do not match.');
+                setLoading('register-submit', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Registration successful, redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    showError(data.error || 'Registration failed. Please try again.');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                setLoading('register-submit', false);
+            }
+        }
+
+        function loginWithGoogle() {
+            // Redirect to Google OAuth login
+            window.location.href = '/api/auth/google/login';
+        }
+    </script>
+</body>
+</html>

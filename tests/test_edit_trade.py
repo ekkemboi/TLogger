@@ -7,10 +7,10 @@ import pytest
 class TestEditTradeSymbol:
     """Tests for editing trade symbol."""
 
-    def test_edit_symbol_success(self, client, sample_trade_data):
+    def test_edit_symbol_success(self, auth_client, sample_trade_data):
         """Test updating symbol changes it correctly."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -20,7 +20,7 @@ class TestEditTradeSymbol:
         assert create_response.get_json()["symbol"] == "BTCUSDT"
 
         # Update symbol
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"symbol": "ETHUSDT"}),
             content_type="application/json",
@@ -29,10 +29,10 @@ class TestEditTradeSymbol:
         data = response.get_json()
         assert data["symbol"] == "ETHUSDT"
 
-    def test_edit_symbol_uppercase(self, client, sample_trade_data):
+    def test_edit_symbol_uppercase(self, auth_client, sample_trade_data):
         """Test that lowercase symbol input becomes uppercase."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -40,7 +40,7 @@ class TestEditTradeSymbol:
         trade_id = create_response.get_json()["id"]
 
         # Update with lowercase symbol
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"symbol": "ethusdt"}),
             content_type="application/json",
@@ -53,7 +53,7 @@ class TestEditTradeSymbol:
 class TestEditTradeDirection:
     """Tests for editing trade direction."""
 
-    def test_edit_direction_success(self, client, sample_trade_data):
+    def test_edit_direction_success(self, auth_client, sample_trade_data):
         """Test changing direction from long to short."""
         # Create a long trade without TP/SL to avoid validation conflicts
         trade_data = {
@@ -61,7 +61,7 @@ class TestEditTradeDirection:
             for k, v in sample_trade_data.items()
             if k not in ["stop_loss", "take_profit"]
         }
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(trade_data),
             content_type="application/json",
@@ -70,7 +70,7 @@ class TestEditTradeDirection:
         assert create_response.get_json()["direction"] == "long"
 
         # Update to short
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"direction": "short"}),
             content_type="application/json",
@@ -79,10 +79,10 @@ class TestEditTradeDirection:
         data = response.get_json()
         assert data["direction"] == "short"
 
-    def test_edit_direction_invalid(self, client, sample_trade_data):
+    def test_edit_direction_invalid(self, auth_client, sample_trade_data):
         """Test that invalid direction returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -90,7 +90,7 @@ class TestEditTradeDirection:
         trade_id = create_response.get_json()["id"]
 
         # Try invalid direction
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"direction": "sideways"}),
             content_type="application/json",
@@ -103,10 +103,10 @@ class TestEditTradeDirection:
 class TestEditTradeEntryPrice:
     """Tests for editing trade entry price."""
 
-    def test_edit_entry_price_success(self, client, sample_trade_data):
+    def test_edit_entry_price_success(self, auth_client, sample_trade_data):
         """Test updating entry_price successfully."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -115,7 +115,7 @@ class TestEditTradeEntryPrice:
         assert create_response.get_json()["entry_price"] == 67234.50
 
         # Update entry price
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"entry_price": 68000.00}),
             content_type="application/json",
@@ -124,10 +124,10 @@ class TestEditTradeEntryPrice:
         data = response.get_json()
         assert data["entry_price"] == 68000.00
 
-    def test_edit_entry_price_invalid_zero(self, client, sample_trade_data):
+    def test_edit_entry_price_invalid_zero(self, auth_client, sample_trade_data):
         """Test that zero entry_price returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -135,7 +135,7 @@ class TestEditTradeEntryPrice:
         trade_id = create_response.get_json()["id"]
 
         # Try zero entry price
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"entry_price": 0}),
             content_type="application/json",
@@ -144,10 +144,10 @@ class TestEditTradeEntryPrice:
         data = response.get_json()
         assert "error" in data
 
-    def test_edit_entry_price_invalid_negative(self, client, sample_trade_data):
+    def test_edit_entry_price_invalid_negative(self, auth_client, sample_trade_data):
         """Test that negative entry_price returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -155,7 +155,7 @@ class TestEditTradeEntryPrice:
         trade_id = create_response.get_json()["id"]
 
         # Try negative entry price
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"entry_price": -100}),
             content_type="application/json",
@@ -168,11 +168,11 @@ class TestEditTradeEntryPrice:
 class TestEditTradeStopLoss:
     """Tests for editing trade stop loss."""
 
-    def test_edit_stop_loss_success(self, client, sample_trade_data):
+    def test_edit_stop_loss_success(self, auth_client, sample_trade_data):
         """Test adding stop_loss to a trade."""
         # Create a trade without stop_loss
         trade_data = {k: v for k, v in sample_trade_data.items() if k != "stop_loss"}
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(trade_data),
             content_type="application/json",
@@ -181,7 +181,7 @@ class TestEditTradeStopLoss:
         assert create_response.get_json()["stop_loss"] is None
 
         # Add stop loss
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"stop_loss": 66500.00}),
             content_type="application/json",
@@ -190,10 +190,10 @@ class TestEditTradeStopLoss:
         data = response.get_json()
         assert data["stop_loss"] == 66500.00
 
-    def test_edit_stop_loss_null(self, client, sample_trade_data):
+    def test_edit_stop_loss_null(self, auth_client, sample_trade_data):
         """Test setting stop_loss to null removes it."""
         # Create a trade with stop_loss
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -202,7 +202,7 @@ class TestEditTradeStopLoss:
         assert create_response.get_json()["stop_loss"] == 66800.00
 
         # Set stop loss to null
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"stop_loss": None}),
             content_type="application/json",

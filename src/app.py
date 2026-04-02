@@ -6,9 +6,13 @@ from pathlib import Path
 from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
+from flask_wtf.csrf import CSRFProtect
 
 from src.config import config
 from src.models import Account, User, db
+
+# Initialize CSRF protection
+csrf = CSRFProtect()
 
 
 def create_app(config_name=None):
@@ -28,6 +32,9 @@ def create_app(config_name=None):
 
     db.init_app(app)
 
+    # Initialize CSRF protection
+    csrf.init_app(app)
+
     # Configure CORS with credentials support
     CORS(
         app,
@@ -38,6 +45,40 @@ def create_app(config_name=None):
             }
         },
     )
+
+    # Add security headers to all responses
+    @app.after_request
+    def add_security_headers(response):
+        """Add security headers to all responses."""
+        # Prevent MIME type sniffing
+        response.headers["X-Content-Type-Options"] = "nosniff"
+
+        # Prevent clickjacking
+        response.headers["X-Frame-Options"] = "DENY"
+
+        # Enable XSS protection in browsers
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+
+        # Control referrer information
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        # Content Security Policy
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://unpkg.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self';"
+        )
+
+        # Strict Transport Security (only in production)
+        if not app.config.get("DEBUG"):
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains"
+            )
+
+        return response
 
     swagger_config = {
         "headers": [],
@@ -83,6 +124,13 @@ def create_app(config_name=None):
     app.register_blueprint(favorites_bp, url_prefix="/api")
     app.register_blueprint(accounts_bp, url_prefix="/api")
     app.register_blueprint(web_bp)
+
+    # Exempt API routes from CSRF (they use JWT tokens)
+    csrf.exempt(auth_bp)
+    csrf.exempt(trades_bp)
+    csrf.exempt(metrics_bp)
+    csrf.exempt(favorites_bp)
+    csrf.exempt(accounts_bp)
 
     with app.app_context():
         # Note: Database schema is managed by Alembic migrations

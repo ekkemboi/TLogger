@@ -59,6 +59,18 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 
+    def __init__(self):
+        """Validate required configuration."""
+        super().__init__()
+        if not os.environ.get("SECRET_KEY"):
+            raise ValueError(
+                "SECRET_KEY environment variable must be set in production"
+            )
+        if not os.environ.get("JWT_SECRET_KEY"):
+            raise ValueError(
+                "JWT_SECRET_KEY environment variable must be set in production"
+            )
+
 
 config = {
     "development": DevelopmentConfig,

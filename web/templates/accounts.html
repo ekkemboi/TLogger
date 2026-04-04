@@ -6,7 +6,7 @@
 <div class="h-full flex flex-col gap-4">
     <div class="flex justify-between items-center flex-shrink-0">
         <div>
-            <h1 class="text-3xl font-display font-bold tracking-tight">Accounts</h1>
+            <h1 class="text-3xl font-bold text-text-primary">Accounts</h1>
             <p class="text-text-light text-xs mt-1">Manage your trading accounts</p>
         </div>
         <button onclick="showAddModal()" class="btn-primary text-xs py-2 px-4">+ ADD ACCOUNT</button>
@@ -36,10 +36,10 @@
 </div>
 
 <!-- Add Account Modal -->
-<div id="add-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
-    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+<div id="add-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center rounded-xl" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4 rounded-xl">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-display font-bold">New Account</h2>
+            <h2 class="text-xl font-bold text-text-primary">New Account</h2>
             <button onclick="closeAddModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
         </div>
         <form id="add-form" class="space-y-4">
@@ -60,10 +60,10 @@
 </div>
 
 <!-- Edit Account Modal -->
-<div id="edit-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
-    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+<div id="edit-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center rounded-xl" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4 rounded-xl">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-display font-bold">Edit Account</h2>
+            <h2 class="text-xl font-bold text-text-primary">Edit Account</h2>
             <button onclick="closeEditModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
         </div>
         <form id="edit-form" class="space-y-4">
@@ -116,8 +116,8 @@ async function loadAccounts() {
                     </span>
                 </td>
                 <td class="table-cell px-3 py-2">
-                    <button onclick="editAccount('${account.id}', '${account.name}', '${account.opening_balance}')" class="text-accent hover:text-blue-300 text-[10px] font-semibold mr-2">EDIT</button>
-                    <button onclick="deleteAccount('${account.id}', '${account.name}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
+                    <button onclick="editAccount('${account.id}', '${account.name}', '${account.opening_balance}')" class="text-accent-primary hover:opacity-80 text-[10px] font-semibold mr-2">EDIT</button>
+                    <button onclick="deleteAccount('${account.id}', '${account.name}')" class="text-accent-danger hover:opacity-80 text-[10px] font-semibold">DELETE</button>
                 </td>
             </tr>
         `).join('');

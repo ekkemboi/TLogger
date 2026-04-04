@@ -6,7 +6,7 @@
 <div class="h-full flex flex-col gap-4">
     <div class="flex justify-between items-center flex-shrink-0">
         <div>
-            <h1 class="text-3xl font-display font-bold tracking-tight">Favorite Products</h1>
+            <h1 class="text-3xl font-bold text-text-primary">Favorite Products</h1>
             <p class="text-text-light text-xs mt-1">Manage your favorite trading symbols</p>
         </div>
         <button onclick="showAddModal()" class="btn-primary text-xs py-2 px-4">+ ADD SYMBOL</button>
@@ -37,16 +37,16 @@
         <div class="w-12 h-12 border-2 border-text-tertiary mb-4 flex items-center justify-center">
             <span class="text-text-tertiary text-xl">+</span>
         </div>
-        <p class="text-sm font-display text-text-secondary">No favorites yet</p>
+        <p class="text-sm text-text-secondary">No favorites yet</p>
         <p class="text-xs text-text-tertiary mt-1">Add symbols you trade frequently</p>
     </div>
 </div>
 
 <!-- Add/Edit Modal -->
-<div id="favorite-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
-    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4">
+<div id="favorite-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center rounded-xl" style="backdrop-filter: blur(10px);">
+    <div class="bg-bg-secondary border border-border-default p-6 max-w-md w-full mx-4 rounded-xl">
         <div class="flex justify-between items-center mb-6">
-            <h2 id="modal-title" class="text-xl font-display font-bold">Add Favorite</h2>
+            <h2 id="modal-title" class="text-xl font-bold text-text-primary">Add Favorite</h2>
             <button onclick="closeModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
         </div>
         <form id="favorite-form" onsubmit="saveFavorite(event)">
@@ -112,8 +112,8 @@ async function loadFavorites() {
                 </td>
                 <td class="table-cell px-4 py-2 text-text-secondary text-xs">${new Date(item.created_at).toLocaleDateString()}</td>
                 <td class="table-cell px-4 py-2">
-                    <button onclick="editFavorite('${item.id}')" class="text-primary hover:text-blue-300 text-[10px] font-semibold mr-3">EDIT</button>
-                    <button onclick="deleteFavorite('${item.id}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
+                    <button onclick="editFavorite('${item.id}')" class="text-accent-primary hover:opacity-80 text-[10px] font-semibold mr-3">EDIT</button>
+                    <button onclick="deleteFavorite('${item.id}')" class="text-accent-danger hover:opacity-80 text-[10px] font-semibold">DELETE</button>
                 </td>
             </tr>
         `).join('');

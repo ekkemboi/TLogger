@@ -3,75 +3,75 @@
 {% block title %}TradeLogger - Dashboard{% endblock %}
 
 {% block content %}
-<div class="h-full flex flex-col gap-4">
-    <div class="flex justify-between items-center flex-shrink-0">
+<div class="h-full flex flex-col gap-6">
+    <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-display font-bold tracking-tight">Dashboard</h1>
-            <p class="text-text-light text-[11px] mt-0.5">Monitor your trading performance and metrics</p>
+            <h1 class="text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
+            <p class="text-text-light text-sm mt-1">Monitor your trading performance and metrics</p>
         </div>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
-                <p class="label text-[11px]">FROM</p>
-                <input type="date" id="filter-start" class="input text-xs py-2 px-3">
+                <p class="label text-xs">FROM</p>
+                <input type="date" id="filter-start" class="input text-sm py-2 px-3 w-36">
             </div>
             <div class="flex items-center gap-2">
-                <p class="label text-[11px]">TO</p>
-                <input type="date" id="filter-end" class="input text-xs py-2 px-3">
+                <p class="label text-xs">TO</p>
+                <input type="date" id="filter-end" class="input text-sm py-2 px-3 w-36">
             </div>
         </div>
     </div>
 
     <!-- Metrics Cards Row 1 -->
-    <div class="grid grid-cols-4 gap-4 flex-shrink-0">
+    <div class="grid grid-cols-4 gap-5">
         <div class="card p-6">
-            <p class="label text-[11px]">TOTAL TRADES</p>
-            <p id="total-trades" class="metric-value text-3xl mt-1">--</p>
+            <p class="label text-xs">TOTAL TRADES</p>
+            <p id="total-trades" class="metric-value text-3xl mt-2">--</p>
         </div>
         <div class="card p-6">
-            <p class="label text-[11px]">WIN RATE</p>
-            <p id="win-rate" class="metric-value text-3xl mt-1 pnl-positive">--</p>
+            <p class="label text-xs">WIN RATE</p>
+            <p id="win-rate" class="metric-value text-3xl mt-2 pnl-positive">--</p>
         </div>
         <div class="card p-6">
-            <p class="label text-[11px]">TOTAL P&L</p>
-            <p id="total-pnl" class="metric-value text-3xl mt-1">--</p>
+            <p class="label text-xs">TOTAL P&L</p>
+            <p id="total-pnl" class="metric-value text-3xl mt-2">--</p>
         </div>
         <div class="card p-6">
-            <p class="label text-[11px]">PROFIT FACTOR</p>
-            <p id="profit-factor" class="metric-value text-3xl mt-1">--</p>
+            <p class="label text-xs">PROFIT FACTOR</p>
+            <p id="profit-factor" class="metric-value text-3xl mt-2">--</p>
         </div>
     </div>
 
     <!-- Metrics Cards Row 2 -->
-    <div class="grid grid-cols-4 gap-4 flex-shrink-0">
-        <div class="card p-6">
-            <p class="label text-[11px]">AVG WIN</p>
-            <p id="avg-win" class="metric-value text-2xl mt-1 pnl-positive">--</p>
+    <div class="grid grid-cols-4 gap-5">
+        <div class="card p-5">
+            <p class="label text-xs">AVG WIN</p>
+            <p id="avg-win" class="metric-value text-2xl mt-2 pnl-positive">--</p>
         </div>
-        <div class="card p-6">
-            <p class="label text-[11px]">AVG LOSS</p>
-            <p id="avg-loss" class="metric-value text-2xl mt-1 pnl-negative">--</p>
+        <div class="card p-5">
+            <p class="label text-xs">AVG LOSS</p>
+            <p id="avg-loss" class="metric-value text-2xl mt-2 pnl-negative">--</p>
         </div>
-        <div class="card p-6">
-            <p class="label text-[11px]">BEST TRADE</p>
-            <p id="best-trade" class="metric-value text-2xl mt-1 pnl-positive">--</p>
+        <div class="card p-5">
+            <p class="label text-xs">BEST TRADE</p>
+            <p id="best-trade" class="metric-value text-2xl mt-2 pnl-positive">--</p>
         </div>
-        <div class="card p-6">
-            <p class="label text-[11px]">WORST TRADE</p>
-            <p id="worst-trade" class="metric-value text-2xl mt-1 pnl-negative">--</p>
+        <div class="card p-5">
+            <p class="label text-xs">WORST TRADE</p>
+            <p id="worst-trade" class="metric-value text-2xl mt-2 pnl-negative">--</p>
         </div>
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+    <div class="grid grid-cols-2 gap-5 flex-1 min-h-0">
         <div class="card p-6 flex flex-col">
-            <p class="label text-[11px] flex-shrink-0">EQUITY CURVE</p>
-            <div class="flex-1 mt-3 min-h-0">
+            <p class="label text-xs flex-shrink-0">EQUITY CURVE</p>
+            <div class="flex-1 mt-4 min-h-0">
                 <canvas id="equity-chart"></canvas>
             </div>
         </div>
         <div class="card p-6 flex flex-col">
-            <p class="label text-[11px] flex-shrink-0">RECENT P&L</p>
-            <div class="flex-1 mt-3 min-h-0">
+            <p class="label text-xs flex-shrink-0">RECENT P&L</p>
+            <div class="flex-1 mt-4 min-h-0">
                 <canvas id="pnl-chart"></canvas>
             </div>
         </div>
@@ -101,7 +101,7 @@ async function loadMetrics() {
         document.getElementById('total-trades').textContent = metrics.total_trades;
         document.getElementById('win-rate').textContent = (metrics.win_rate * 100).toFixed(1) + '%';
         document.getElementById('total-pnl').textContent = '$' + metrics.total_pnl.toFixed(2);
-        document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-1 pnl-positive' : 'metric-value text-3xl mt-1 pnl-negative';
+        document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-2 pnl-positive' : 'metric-value text-3xl mt-2 pnl-negative';
         document.getElementById('profit-factor').textContent = metrics.profit_factor.toFixed(2);
         
         document.getElementById('avg-win').textContent = '$' + metrics.avg_win.toFixed(2);
@@ -132,8 +132,8 @@ async function loadMetrics() {
 
         // Theme-aware chart colors
         const isDark = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? '#27272A' : '#E4E4E7';
-        const tickColor = '#71717A';
+        const gridColor = isDark ? '#334155' : '#E2E8F0';
+        const tickColor = '#64748B';
 
         // Destroy existing charts
         if (equityChart) equityChart.destroy();
@@ -148,8 +148,8 @@ async function loadMetrics() {
                 datasets: [{
                     label: 'Equity',
                     data: equityData,
-                    borderColor: '#D97706',
-                    backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                    borderColor: '#22C55E',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
                     fill: true,
                     tension: 0.1,
                     pointRadius: 0
@@ -162,11 +162,11 @@ async function loadMetrics() {
                 scales: {
                     y: {
                         grid: { color: gridColor, lineWidth: 0.5 },
-                        ticks: { color: tickColor, font: { size: 9 }, callback: (v) => '$' + v.toFixed(0) }
+                        ticks: { color: tickColor, font: { size: 10 }, callback: (v) => '$' + v.toFixed(0) }
                     },
                     x: {
                         grid: { color: gridColor, lineWidth: 0.5 },
-                        ticks: { color: tickColor, font: { size: 9 } }
+                        ticks: { color: tickColor, font: { size: 10 } }
                     }
                 }
             }
@@ -191,8 +191,8 @@ async function loadMetrics() {
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 9 } } },
-                    x: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 9 } } }
+                    y: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } },
+                    x: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } }
                 }
             }
         });

@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TradeLogger{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -24,20 +22,21 @@
                         'text-secondary': 'var(--text-secondary)',
                         'text-tertiary': 'var(--text-tertiary)',
                         'accent-primary': 'var(--accent-primary)',
+                        'accent-primary-hover': 'var(--accent-primary-hover)',
                         'success': 'var(--success)',
                         'error': 'var(--error)',
                         'warning': 'var(--warning)',
                         'border-default': 'var(--border-default)',
                     },
                     fontFamily: {
-                        'mono': ['JetBrains Mono', 'monospace'],
-                        'display': ['Space Grotesk', 'sans-serif'],
+                        'sans': ['ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
                     },
                     borderRadius: {
                         'none': '0px',
                         'sm': '2px',
                         'md': '4px',
                         'lg': '8px',
+                        'xl': '12px',
                     }
                 }
             }
@@ -47,38 +46,40 @@
         /* Light mode (default) */
         :root {
             --bg-primary: #FFFFFF;
-            --bg-secondary: #F4F4F5;
-            --bg-surface: #FAFAFA;
-            --text-primary: #18181B;
-            --text-light: #A1A1AA;
-            --text-secondary: #71717A;
-            --text-tertiary: #A1A1AA;
-            --accent-primary: #D97706;
-            --accent-primary-hover: #B45309;
+            --bg-secondary: #F8FAFC;
+            --bg-surface: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-light: #64748B;
+            --text-secondary: #475569;
+            --text-tertiary: #94A3B8;
+            --accent-primary: #22C55E;
+            --accent-primary-hover: #16A34A;
             --success: #22C55E;
             --error: #EF4444;
-            --warning: #D97706;
-            --border-default: #E4E4E7;
+            --warning: #F59E0B;
+            --border-default: #E2E8F0;
         }
 
         /* Dark mode */
         .dark {
-            --bg-primary: #18181B;
-            --bg-secondary: #0F0F10;
-            --bg-surface: #141415;
-            --text-primary: #FAFAFA;
-            --text-light: #A1A1AA;
-            --text-secondary: #71717A;
-            --text-tertiary: #52525B;
-            --accent-primary: #D97706;
-            --accent-primary-hover: #B45309;
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-surface: #334155;
+            --text-primary: #F8FAFC;
+            --text-light: #94A3B8;
+            --text-secondary: #CBD5E1;
+            --text-tertiary: #64748B;
+            --accent-primary: #22C55E;
+            --accent-primary-hover: #4ADE80;
             --success: #22C55E;
             --error: #EF4444;
-            --warning: #D97706;
-            --border-default: #27272A;
+            --warning: #F59E0B;
+            --border-default: #334155;
         }
 
-        /* Reset border-radius only on specific elements, not globally */
+        * {
+            font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
         
         html, body {
             height: 100%;
@@ -86,35 +87,36 @@
         }
         
         body {
-            font-family: 'JetBrains Mono', monospace;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            display: flex;
-            flex-direction: column;
         }
         
-        .nav-link {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 600;
+        .sidebar-link {
+            font-size: 14px;
+            font-weight: 500;
             color: var(--text-secondary);
             transition: all 0.2s;
             border-radius: 8px;
             padding: 10px 16px;
-            gap: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
-        .nav-link:hover {
+        .sidebar-link:hover {
             color: var(--text-primary);
+            background-color: var(--bg-surface);
         }
         
-        .nav-link svg {
+        .sidebar-link svg {
             stroke: currentColor;
+            width: 18px;
+            height: 18px;
         }
         
-        .nav-link.active {
-            color: #FFFFFF;
-            background-color: var(--accent-primary);
+        .sidebar-link.active {
+            color: var(--accent-primary);
+            background-color: rgba(34, 197, 94, 0.1);
         }
         
         .card {
@@ -126,11 +128,8 @@
         .btn-primary {
             background-color: var(--accent-primary);
             color: #FFFFFF;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 600;
             border: none;
             padding: 10px 18px;
             cursor: pointer;
@@ -145,11 +144,8 @@
         .btn-secondary {
             background-color: transparent;
             color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 500;
             border: 1px solid var(--border-default);
             padding: 10px 18px;
             cursor: pointer;
@@ -164,11 +160,8 @@
         .btn-danger {
             background-color: var(--error);
             color: #FFFFFF;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 600;
             border: none;
             padding: 10px 18px;
             cursor: pointer;
@@ -181,28 +174,28 @@
         }
         
         .label {
-            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            color: var(--text-secondary);
+            color: var(--text-light);
         }
         
         .input {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-default);
             color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            padding: 8px 12px;
+            font-size: 14px;
+            padding: 10px 14px;
             width: 100%;
             border-radius: 8px;
+            transition: all 0.2s;
         }
         
         .input:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
         }
         
         .input::placeholder {
@@ -210,7 +203,7 @@
         }
         
         .account-switcher {
-            height: 36px;
+            height: 40px;
             background-color: var(--bg-surface);
             border: 1px solid var(--border-default);
             border-radius: 8px;
@@ -228,15 +221,14 @@
         }
         
         .account-switcher-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 500;
             color: var(--accent-primary);
         }
         
         .account-switcher-arrow {
             font-size: 10px;
-            color: var(--text-secondary);
+            color: var(--text-light);
         }
         
         .account-switcher select {
@@ -248,70 +240,65 @@
         }
         
         .table-header {
-            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            color: var(--text-secondary);
+            color: var(--text-light);
         }
         
         .table-cell {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-primary);
         }
         
         .badge-success {
-            background-color: color-mix(in srgb, var(--success) 12%, transparent);
+            background-color: rgba(34, 197, 94, 0.15);
             color: var(--success);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .badge-warning {
-            background-color: color-mix(in srgb, var(--warning) 12%, transparent);
+            background-color: rgba(245, 158, 11, 0.15);
             color: var(--warning);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .badge-error {
-            background-color: color-mix(in srgb, var(--error) 12%, transparent);
+            background-color: rgba(239, 68, 68, 0.15);
             color: var(--error);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
         
         .pagination-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             border: 1px solid var(--border-default);
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s;
             border-radius: 8px;
+            background-color: var(--bg-secondary);
         }
         
         .pagination-btn:hover {
@@ -320,12 +307,11 @@
         
         .pagination-btn.active {
             background-color: var(--accent-primary);
-            color: #18181B;
+            color: #FFFFFF;
             border-color: var(--accent-primary);
         }
         
         .metric-value {
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -350,88 +336,119 @@
         
         ::-webkit-scrollbar-thumb {
             background: var(--border-default);
+            border-radius: 3px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-tertiary);
         }
 
-        /* Basic responsive adjustments */
-        @media (max-width: 768px) {
-            nav .px-10 {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-            
-            main {
-                padding: 16px;
-            }
-            
-            /* Stack grids on mobile */
-            .grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            /* Tables scroll horizontally */
-            table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
+        /* Sidebar specific */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-default);
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            overflow: auto;
+            padding: 24px 32px;
         }
     </style>
     {% block head %}{% endblock %}
 </head>
-<body>
-    <nav class="bg-bg-secondary border-b border-border-default flex-shrink-0">
-        <div class="px-10">
-            <div class="flex items-center justify-between" style="height: 60px;">
-                <a href="/" class="flex items-center gap-2">
-                    <div class="w-6 h-6 bg-accent-primary rounded-full"></div>
-                    <span class="font-mono text-sm font-bold text-text-primary" style="letter-spacing: 2px;">TRADELOGGER</span>
-                </a>
-                <div class="flex items-center" style="gap: 32px;">
-                    <a href="/" class="nav-link flex items-center {% if request.path == '/' %}active{% endif %}">
-                        <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="/trades" class="nav-link flex items-center {% if request.path == '/trades' %}active{% endif %}">
-                        <i data-lucide="trending-up" class="w-[18px] h-[18px]"></i>
-                        <span>Trades</span>
-                    </a>
-                    <a href="/accounts" class="nav-link flex items-center {% if request.path == '/accounts' %}active{% endif %}">
-                        <i data-lucide="wallet" class="w-[18px] h-[18px]"></i>
-                        <span>Accounts</span>
-                    </a>
-                    <a href="/favorites" class="nav-link flex items-center {% if request.path == '/favorites' %}active{% endif %}">
-                        <i data-lucide="star" class="w-[18px] h-[18px]"></i>
-                        <span>Favorites</span>
-                    </a>
+<body class="flex">
+    {% if not htmx_request %}
+    <!-- Sidebar - only for normal page loads -->
+    <aside class="sidebar flex flex-col h-screen">
+        <!-- Logo -->
+        <div class="p-5 border-b border-border-default">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
                 </div>
-                <div class="flex items-center" style="gap: 12px;">
-                    <button id="theme-toggle" onclick="toggleTheme()" class="flex items-center justify-center w-9 h-9 bg-bg-surface border border-border-default text-text-primary hover:bg-bg-secondary transition-colors" style="border-radius: 8px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
-                    <div class="account-switcher">
-                        <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
-                        <span class="account-switcher-arrow">▼</span>
-                        <select id="account-switcher">
-                            <option value="">All Accounts</option>
-                        </select>
-                    </div>
-                    <!-- User Navigation Section -->
-                    <div id="user-nav-section" class="flex items-center">
-                        <!-- Will be populated by auth.js -->
-                    </div>
-                </div>
+                <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <a href="/" 
+               hx-get="/" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/' %}active{% endif %}">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/trades" 
+               hx-get="/trades" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
+                <i data-lucide="trending-up"></i>
+                <span>Trades</span>
+            </a>
+            <a href="/favorites" 
+               hx-get="/favorites" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
+                <i data-lucide="star"></i>
+                <span>Favorites</span>
+            </a>
+            <a href="/accounts" 
+               hx-get="/accounts" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
+                <i data-lucide="wallet"></i>
+                <span>Accounts</span>
+            </a>
+        </nav>
+
+        <!-- Bottom Section -->
+        <div class="p-4 border-t border-border-default space-y-3">
+            <!-- Account Switcher -->
+            <div class="account-switcher">
+                <i data-lucide="building-2" class="w-4 h-4 text-text-light"></i>
+                <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-text-light ml-auto"></i>
+                <select id="account-switcher">
+                    <option value="">All Accounts</option>
+                </select>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" onclick="toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors">
+                <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <span class="text-sm font-medium">Toggle Theme</span>
+            </button>
+
+            <!-- User Section -->
+            <div id="user-nav-section">
+                <!-- Will be populated by auth.js -->
             </div>
         </div>
-    </nav>
+    </aside>
+    {% endif %}
 
-    <main class="flex-1 overflow-hidden px-10 py-6">
+    <!-- Main Content -->
+    <main class="main-content bg-bg-primary">
         {% block content %}{% endblock %}
     </main>
 
+    {% if not htmx_request %}
     <script>
     // Theme Toggle
     function initTheme() {
@@ -454,14 +471,14 @@
 
     function updateThemeIcon() {
         const isDark = document.documentElement.classList.contains('dark');
-        const themeToggle = document.getElementById('theme-toggle');
-        if (!themeToggle) return;
+        const themeIcon = document.getElementById('theme-icon');
+        if (!themeIcon) return;
         
         // Sun icon for dark mode, Moon icon for light mode
         if (isDark) {
-            themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
         } else {
-            themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
         }
     }
 
@@ -522,9 +539,54 @@
         initAccountSwitcher();
         if (window.lucide) lucide.createIcons();
     }
+
+    // HTMX Event Handlers
+    document.addEventListener('htmx:afterSwap', function(evt) {
+        // Re-initialize Lucide icons after content swap
+        if (window.lucide) lucide.createIcons();
+        
+        // Update active sidebar link based on current URL
+        updateActiveSidebarLink();
+        
+        // Re-initialize page-specific scripts
+        if (window.initPageScripts) {
+            window.initPageScripts();
+        }
+    });
+
+    // Update active sidebar link
+    function updateActiveSidebarLink() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            // Remove active class logic - compare href with current path
+            const linkPath = link.getAttribute('href');
+            if (linkPath === currentPath || (currentPath === '/' && linkPath === '/')) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // HTMX Error Handler - Fallback to full page reload
+    document.addEventListener('htmx:error', function(evt) {
+        console.warn('HTMX request failed, falling back to full page load:', evt.detail.error);
+        // Let the default link behavior handle it (full page reload)
+    });
+
+    // Handle OOB account dropdown updates
+    document.addEventListener('accountDropdownUpdated', function() {
+        // Re-initialize account switcher after OOB update
+        loadAccountSwitcher();
+    });
+
+    // HTMX Configuration: Include credentials (cookies) with all requests
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        evt.detail.withCredentials = true;
+    });
     </script>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    {% endif %}
     {% block scripts %}{% endblock %}
 </body>
 </html>

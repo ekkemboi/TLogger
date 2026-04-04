@@ -3,93 +3,96 @@
 {% block title %}TradeLogger - Trades{% endblock %}
 
 {% block content %}
-<div class="h-full flex flex-col gap-4">
-    <div class="flex justify-between items-center flex-shrink-0">
+<div class="h-full flex flex-col gap-5">
+    <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-display font-bold tracking-tight">Trades</h1>
-            <p class="text-text-light text-xs mt-1">View and manage your trade history</p>
+            <h1 class="text-3xl font-bold tracking-tight text-text-primary">Trades</h1>
+            <p class="text-text-light text-sm mt-1">View and manage your trade history</p>
         </div>
+        <a href="/" class="btn-primary text-xs py-2 px-4">+ ADD TRADE</a>
     </div>
 
     <!-- Filter Bar -->
-    <div class="grid grid-cols-4 gap-3 flex-shrink-0">
+    <div class="grid grid-cols-4 gap-4">
         <div>
-            <p class="label text-[10px] mb-1">SYMBOL</p>
-            <select id="filter-symbol" class="input text-xs py-2">
+            <p class="label text-xs mb-2">SYMBOL</p>
+            <select id="filter-symbol" class="input text-sm py-2">
                 <option value="">All Symbols</option>
             </select>
         </div>
         <div>
-            <p class="label text-[10px] mb-1">DIRECTION</p>
-            <select id="filter-direction" class="input text-xs py-2">
+            <p class="label text-xs mb-2">DIRECTION</p>
+            <select id="filter-direction" class="input text-sm py-2">
                 <option value="">All Directions</option>
                 <option value="long">Long</option>
                 <option value="short">Short</option>
             </select>
         </div>
         <div>
-            <p class="label text-[10px] mb-1">START DATE</p>
-            <input type="date" id="filter-start" class="input text-xs py-2">
+            <p class="label text-xs mb-2">START DATE</p>
+            <input type="date" id="filter-start" class="input text-sm py-2">
         </div>
         <div>
-            <p class="label text-[10px] mb-1">END DATE</p>
-            <input type="date" id="filter-end" class="input text-xs py-2">
+            <p class="label text-xs mb-2">END DATE</p>
+            <input type="date" id="filter-end" class="input text-sm py-2">
         </div>
     </div>
 
     <!-- Stats Bar -->
-    <div class="grid grid-cols-4 gap-3 flex-shrink-0" id="stats-bar">
-        <div class="card p-3">
-            <p class="label text-[10px]">FILTERED</p>
-            <p id="filtered-count" class="metric-value text-xl mt-1">--</p>
+    <div class="grid grid-cols-4 gap-4" id="stats-bar">
+        <div class="card p-4">
+            <p class="label text-xs">FILTERED</p>
+            <p id="filtered-count" class="metric-value text-xl mt-2">--</p>
         </div>
-        <div class="card p-3">
-            <p class="label text-[10px]">FILTERED P&L</p>
-            <p id="filtered-pnl" class="metric-value text-xl mt-1">--</p>
+        <div class="card p-4">
+            <p class="label text-xs">FILTERED P&L</p>
+            <p id="filtered-pnl" class="metric-value text-xl mt-2">--</p>
         </div>
-        <div class="card p-3">
-            <p class="label text-[10px]">WIN RATE</p>
-            <p id="filtered-winrate" class="metric-value text-xl mt-1 pnl-positive">--</p>
+        <div class="card p-4">
+            <p class="label text-xs">WIN RATE</p>
+            <p id="filtered-winrate" class="metric-value text-xl mt-2 pnl-positive">--</p>
         </div>
-        <div class="card p-3">
-            <p class="label text-[10px]">AVG P&L</p>
-            <p id="filtered-avg" class="metric-value text-xl mt-1">--</p>
+        <div class="card p-4">
+            <p class="label text-xs">AVG P&L</p>
+            <p id="filtered-avg" class="metric-value text-xl mt-2">--</p>
         </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-bg-secondary border border-border-default flex flex-col" style="max-height: 60vh;">
-        <table class="min-w-full">
-            <thead class="flex-shrink-0">
-                <tr class="border-b border-border-default">
-                    <th class="table-header px-3 py-2 text-left text-[11px]">ACCOUNT</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">SYMBOL</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">DIRECTION</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">STOP LOSS</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">ENTRY</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">TAKE PROFIT</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">P&L</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">DATE</th>
-                    <th class="table-header px-3 py-2 text-left text-[11px]">ACTIONS</th>
-                </tr>
-            </thead>
-            <tbody id="trades-table" class="overflow-y-auto" style="max-height: calc(60vh - 40px);">
-                <tr>
-                    <td colspan="8" class="px-6 py-8 text-center text-text-secondary text-xs">Loading...</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="card flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div class="overflow-auto flex-1">
+            <table class="min-w-full">
+                <thead class="sticky top-0 bg-bg-secondary border-b border-border-default">
+                    <tr>
+                        <th class="table-header px-4 py-3 text-left">ACCOUNT</th>
+                        <th class="table-header px-4 py-3 text-left">SYMBOL</th>
+                        <th class="table-header px-4 py-3 text-left">DIRECTION</th>
+                        <th class="table-header px-4 py-3 text-left">STOP LOSS</th>
+                        <th class="table-header px-4 py-3 text-left">ENTRY</th>
+                        <th class="table-header px-4 py-3 text-left">TAKE PROFIT</th>
+                        <th class="table-header px-4 py-3 text-left">P&L</th>
+                        <th class="table-header px-4 py-3 text-left">DATE</th>
+                        <th class="table-header px-4 py-3 text-left">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="trades-table">
+                    <tr>
+                        <td colspan="9" class="px-6 py-8 text-center text-text-secondary text-sm">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Pagination -->
-    <div id="pagination" class="flex justify-center gap-2 flex-shrink-0"></div>
+    <div id="pagination" class="flex justify-center gap-2"></div>
 </div>
 
 <!-- Trade Detail Modal -->
 <div id="trade-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
-    <div class="bg-bg-secondary border border-border-default p-6 max-w-lg w-full mx-4">
+    <div class="bg-bg-secondary border border-border-default rounded-xl p-6 max-w-lg w-full mx-4">
         <div class="flex justify-between items-center mb-6">
-            <h2 id="modal-title" class="text-xl font-display font-bold">Trade Details</h2>
+            <h2 id="modal-title" class="text-xl font-bold text-text-primary">Trade Details</h2>
             <button onclick="closeModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
         </div>
         <div id="modal-content" class="space-y-4">
@@ -103,21 +106,21 @@
 
 <!-- Edit Trade Modal -->
 <div id="edit-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center" style="backdrop-filter: blur(10px);">
-    <div class="bg-bg-secondary border border-border-default p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="bg-bg-secondary border border-border-default rounded-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-display font-bold">Edit Trade</h2>
+            <h2 class="text-xl font-bold text-text-primary">Edit Trade</h2>
             <button onclick="closeEditModal()" class="text-text-secondary hover:text-text-primary text-2xl">&times;</button>
         </div>
         <form id="edit-form" class="space-y-4">
             <input type="hidden" id="edit-trade-id">
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="label text-[10px]">SYMBOL</label>
-                    <input type="text" id="edit-symbol" class="input text-xs" required>
+                    <label class="label text-xs">SYMBOL</label>
+                    <input type="text" id="edit-symbol" class="input text-sm mt-1" required>
                 </div>
                 <div>
-                    <label class="label text-[10px]">DIRECTION</label>
-                    <select id="edit-direction" class="input text-xs" required>
+                    <label class="label text-xs">DIRECTION</label>
+                    <select id="edit-direction" class="input text-sm mt-1" required>
                         <option value="long">Long</option>
                         <option value="short">Short</option>
                     </select>
@@ -125,43 +128,43 @@
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="label text-[10px]">ENTRY PRICE</label>
-                    <input type="number" step="any" id="edit-entry-price" class="input text-xs" required>
+                    <label class="label text-xs">ENTRY PRICE</label>
+                    <input type="number" step="any" id="edit-entry-price" class="input text-sm mt-1" required>
                 </div>
                 <div>
-                    <label class="label text-[10px]">STOP LOSS</label>
-                    <input type="number" step="any" id="edit-stop-loss" class="input text-xs">
+                    <label class="label text-xs">STOP LOSS</label>
+                    <input type="number" step="any" id="edit-stop-loss" class="input text-sm mt-1">
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="label text-[10px]">TAKE PROFIT</label>
-                    <input type="number" step="any" id="edit-take-profit" class="input text-xs">
+                    <label class="label text-xs">TAKE PROFIT</label>
+                    <input type="number" step="any" id="edit-take-profit" class="input text-sm mt-1">
                 </div>
                 <div>
-                    <label class="label text-[10px]">POSITION SIZE</label>
-                    <input type="number" step="any" id="edit-position-size" class="input text-xs">
+                    <label class="label text-xs">POSITION SIZE</label>
+                    <input type="number" step="any" id="edit-position-size" class="input text-sm mt-1">
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="label text-[10px]">FEES</label>
-                    <input type="number" step="any" id="edit-fees" class="input text-xs">
+                    <label class="label text-xs">FEES</label>
+                    <input type="number" step="any" id="edit-fees" class="input text-sm mt-1">
                 </div>
                 <div>
-                    <label class="label text-[10px]">TRADE DATE</label>
-                    <input type="date" id="edit-trade-date" class="input text-xs">
+                    <label class="label text-xs">TRADE DATE</label>
+                    <input type="date" id="edit-trade-date" class="input text-sm mt-1">
                 </div>
             </div>
             <div>
-                <label class="label text-[10px]">TAGS (comma-separated)</label>
-                <input type="text" id="edit-tags" class="input text-xs" placeholder="breakout, btc">
+                <label class="label text-xs">TAGS (comma-separated)</label>
+                <input type="text" id="edit-tags" class="input text-sm mt-1" placeholder="breakout, btc">
             </div>
             <div>
-                <label class="label text-[10px]">NOTES</label>
-                <textarea id="edit-notes" class="input text-xs" rows="3"></textarea>
+                <label class="label text-xs">NOTES</label>
+                <textarea id="edit-notes" class="input text-sm mt-1" rows="3"></textarea>
             </div>
-            <div class="text-[10px] text-text-tertiary">
+            <div class="text-xs text-text-tertiary">
                 <span>Status: </span><span id="edit-status" class="font-semibold"></span>
             </div>
         </form>
@@ -174,18 +177,18 @@
             <form id="edit-add-partial-exit-form" class="grid grid-cols-3 gap-2">
                 <input type="hidden" id="edit-partial-exit-trade-id">
                 <div>
-                    <label class="label text-[10px]">QTY</label>
-                    <input type="number" step="any" id="edit-partial-qty" class="input text-xs" required>
+                    <label class="label text-xs">QTY</label>
+                    <input type="number" step="any" id="edit-partial-qty" class="input text-sm" required>
                 </div>
                 <div>
-                    <label class="label text-[10px]">EXIT PRICE</label>
-                    <input type="number" step="any" id="edit-partial-price" class="input text-xs" required>
+                    <label class="label text-xs">EXIT PRICE</label>
+                    <input type="number" step="any" id="edit-partial-price" class="input text-sm" required>
                 </div>
                 <div>
-                    <label class="label text-[10px]">FEES</label>
-                    <input type="number" step="any" id="edit-partial-fees" class="input text-xs" value="0">
+                    <label class="label text-xs">FEES</label>
+                    <input type="number" step="any" id="edit-partial-fees" class="input text-sm" value="0">
                 </div>
-                <button type="submit" class="btn-primary col-span-3 text-xs">Add Partial Exit</button>
+                <button type="submit" class="btn-primary col-span-3 text-sm">Add Partial Exit</button>
             </form>
         </div>
         <div class="mt-6 flex gap-3">
@@ -194,7 +197,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -234,35 +236,35 @@ async function loadTrades(page = 1) {
         const avgPnl = closedTrades.length > 0 ? totalPnl / closedTrades.length : 0;
 
         document.getElementById('filtered-pnl').textContent = '$' + totalPnl.toFixed(2);
-        document.getElementById('filtered-pnl').className = 'metric-value text-xl mt-1 ' + (totalPnl >= 0 ? 'pnl-positive' : 'pnl-negative');
+        document.getElementById('filtered-pnl').className = 'metric-value text-xl mt-2 ' + (totalPnl >= 0 ? 'pnl-positive' : 'pnl-negative');
         document.getElementById('filtered-winrate').textContent = winRate.toFixed(1) + '%';
         document.getElementById('filtered-avg').textContent = '$' + avgPnl.toFixed(2);
-        document.getElementById('filtered-avg').className = 'metric-value text-xl mt-1 ' + (avgPnl >= 0 ? 'pnl-positive' : 'pnl-negative');
+        document.getElementById('filtered-avg').className = 'metric-value text-xl mt-2 ' + (avgPnl >= 0 ? 'pnl-positive' : 'pnl-negative');
 
         const tbody = document.getElementById('trades-table');
         if (data.trades.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" class="px-6 py-8 text-center text-text-secondary text-xs">No trades found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="px-6 py-8 text-center text-text-secondary text-sm">No trades found</td></tr>';
             return;
         }
 
         tbody.innerHTML = data.trades.map((trade, i) => `
-            <tr class="border-b border-border-default hover:bg-bg-surface cursor-pointer ${i % 2 === 0 ? 'bg-bg-surface' : 'bg-bg-primary'}" onclick="showTradeModal('${trade.id}')">
-                <td class="table-cell px-3 py-2 text-xs text-text-secondary">${trade.account_name || '--'}</td>
-                <td class="table-cell px-3 py-2 text-xs">${trade.symbol}</td>
-                <td class="table-cell px-3 py-2">
-                    <span class="${trade.direction === 'long' ? 'badge-success' : 'badge-error'} text-[9px]">${trade.direction.toUpperCase()}</span>
+            <tr class="border-b border-border-default hover:bg-bg-surface cursor-pointer ${i % 2 === 0 ? 'bg-bg-primary' : 'bg-bg-secondary'}" onclick="showTradeModal('${trade.id}')">
+                <td class="table-cell px-4 py-3 text-sm text-text-secondary">${trade.account_name || '--'}</td>
+                <td class="table-cell px-4 py-3 text-sm font-medium">${trade.symbol}</td>
+                <td class="table-cell px-4 py-3">
+                    <span class="${trade.direction === 'long' ? 'badge-success' : 'badge-error'}">${trade.direction.toUpperCase()}</span>
                 </td>
-                <td class="table-cell px-3 py-2 text-xs">${trade.stop_loss?.toFixed(2) || '--'}</td>
-                <td class="table-cell px-3 py-2 text-xs">${trade.entry_price?.toFixed(2) || '--'}</td>
-                <td class="table-cell px-3 py-2 text-xs">${trade.take_profit?.toFixed(2) || '--'}</td>
-                <td class="table-cell px-3 py-2 text-xs ${trade.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'}">
+                <td class="table-cell px-4 py-3 text-sm">${trade.stop_loss?.toFixed(2) || '--'}</td>
+                <td class="table-cell px-4 py-3 text-sm">${trade.entry_price?.toFixed(2) || '--'}</td>
+                <td class="table-cell px-4 py-3 text-sm">${trade.take_profit?.toFixed(2) || '--'}</td>
+                <td class="table-cell px-4 py-3 text-sm ${trade.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'}">
                     ${trade.outcome === 'loss' && trade.pnl ? '-$' + trade.pnl.toFixed(2) : 
                       trade.pnl !== null ? '$' + trade.pnl.toFixed(2) : '--'}
                 </td>
-                <td class="table-cell px-3 py-2 text-text-secondary text-xs">${new Date(trade.created_at).toLocaleDateString()}</td>
-                <td class="table-cell px-3 py-2" onclick="event.stopPropagation()">
-                    <button onclick="editTrade('${trade.id}')" class="text-accent hover:text-blue-300 text-[10px] font-semibold mr-2">EDIT</button>
-                    <button onclick="deleteTrade('${trade.id}')" class="text-error hover:text-red-300 text-[10px] font-semibold">DELETE</button>
+                <td class="table-cell px-4 py-3 text-text-secondary text-sm">${new Date(trade.created_at).toLocaleDateString()}</td>
+                <td class="table-cell px-4 py-3" onclick="event.stopPropagation()">
+                    <button onclick="editTrade('${trade.id}')" class="text-accent-primary hover:text-accent-primary-hover text-xs font-semibold mr-3">EDIT</button>
+                    <button onclick="deleteTrade('${trade.id}')" class="text-error hover:text-red-400 text-xs font-semibold">DELETE</button>
                 </td>
             </tr>
         `).join('');
@@ -286,7 +288,7 @@ async function loadTrades(page = 1) {
             for (let i = 1; i <= data.pages; i++) {
                 const btn = document.createElement('button');
                 btn.textContent = i.toString().padStart(2, '0');
-                btn.className = `pagination-btn text-xs ${i === page ? 'active' : ''}`;
+                btn.className = `pagination-btn ${i === page ? 'active' : ''}`;
                 btn.onclick = () => loadTrades(i);
                 pagination.appendChild(btn);
             }
@@ -319,7 +321,7 @@ async function showTradeModal(id) {
                                 ? (pe.exit_price - trade.entry_price) * pe.qty * 2
                                 : (trade.entry_price - pe.exit_price) * pe.qty * 2;
                             return `
-                                <div class="flex justify-between items-center bg-bg-surface p-2 rounded text-xs">
+                                <div class="flex justify-between items-center bg-bg-surface p-2 rounded-lg text-xs">
                                     <span>${pe.qty} contract${pe.qty != 1 ? 's' : ''} @ $${pe.exit_price.toFixed(2)}</span>
                                     <span class="${profit >= 0 ? 'pnl-positive' : 'pnl-negative'}">$${profit.toFixed(2)}</span>
                                 </div>
@@ -333,38 +335,38 @@ async function showTradeModal(id) {
         content.innerHTML = `
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <span class="label text-[10px]">SYMBOL:</span>
-                    <span class="table-cell ml-2 text-sm">${trade.symbol}</span>
+                    <span class="label text-xs">SYMBOL:</span>
+                    <span class="table-cell ml-2 text-sm font-medium">${trade.symbol}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">DIRECTION:</span>
+                    <span class="label text-xs">DIRECTION:</span>
                     <span class="${trade.direction === 'long' ? 'badge-success' : 'badge-error'} ml-2">${trade.direction.toUpperCase()}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">ENTRY:</span>
+                    <span class="label text-xs">ENTRY:</span>
                     <span class="table-cell ml-2 text-sm">$${trade.entry_price?.toFixed(2) || '--'}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">TAKE PROFIT:</span>
+                    <span class="label text-xs">TAKE PROFIT:</span>
                     <span class="table-cell ml-2 text-sm">$${trade.take_profit?.toFixed(2) || '--'}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">SIZE:</span>
+                    <span class="label text-xs">SIZE:</span>
                     <span class="table-cell ml-2 text-sm">${trade.position_size || '--'}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">P&L:</span>
+                    <span class="label text-xs">P&L:</span>
                     <span class="${trade.outcome === 'loss' ? 'pnl-negative' : 'pnl-positive'} ml-2 text-sm">
                         ${trade.outcome === 'loss' && trade.pnl ? '-$' + trade.pnl.toFixed(2) : 
                           trade.pnl !== null ? '$' + trade.pnl.toFixed(2) : '--'}
                     </span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">STOP LOSS:</span>
+                    <span class="label text-xs">STOP LOSS:</span>
                     <span class="table-cell ml-2 text-sm">$${trade.stop_loss?.toFixed(2) || '--'}</span>
                 </div>
                 <div>
-                    <span class="label text-[10px]">OUTCOME:</span>
+                    <span class="label text-xs">OUTCOME:</span>
                     <span class="${trade.outcome === 'win' ? 'badge-success' : 
                                   trade.outcome === 'loss' ? 'badge-error' : 'badge-warning'} ml-2">
                         ${trade.outcome?.toUpperCase() || 'OPEN'}
@@ -374,11 +376,11 @@ async function showTradeModal(id) {
             ${partialHtml}
             ${trade.notes ? `
                 <div class="mt-4 pt-4 border-t border-border-default">
-                    <span class="label text-[10px]">NOTES:</span>
-                    <p class="table-cell mt-2 text-text-light text-xs">${trade.notes}</p>
+                    <span class="label text-xs">NOTES:</span>
+                    <p class="table-cell mt-2 text-text-light text-sm">${trade.notes}</p>
                 </div>
             ` : ''}
-            <div class="mt-4 pt-4 border-t border-border-default text-[10px] text-text-tertiary">
+            <div class="mt-4 pt-4 border-t border-border-default text-xs text-text-tertiary">
                 <div>Created: ${new Date(trade.created_at).toLocaleString()}</div>
                 ${trade.exited_at ? `<div>Closed: ${new Date(trade.exited_at).toLocaleString()}</div>` : ''}
             </div>
@@ -436,15 +438,15 @@ async function editTrade(id) {
                     ? (pe.exit_price - trade.entry_price) * pe.qty * 2
                     : (trade.entry_price - pe.exit_price) * pe.qty * 2;
                 return `
-                    <div class="flex justify-between items-center bg-bg-surface p-2 rounded text-xs">
+                    <div class="flex justify-between items-center bg-bg-surface p-2 rounded-lg text-xs">
                         <span>${pe.qty} contract${pe.qty != 1 ? 's' : ''} @ $${pe.exit_price.toFixed(2)}</span>
                         <span class="${profit >= 0 ? 'pnl-positive' : 'pnl-negative'} mr-2">$${profit.toFixed(2)}</span>
-                        <button type="button" onclick="deletePartialExit('${pe.id}', '${trade.id}')" class="text-error hover:text-red-300 text-[10px]">DELETE</button>
+                        <button type="button" onclick="deletePartialExit('${pe.id}', '${trade.id}')" class="text-error hover:text-red-400 text-xs">DELETE</button>
                     </div>
                 `;
             }).join('');
         } else {
-            partialList.innerHTML = '<p class="text-text-secondary text-xs">No partial exits</p>';
+            partialList.innerHTML = '<p class="text-text-secondary text-sm">No partial exits</p>';
         }
 
         document.getElementById('edit-modal').classList.remove('hidden');

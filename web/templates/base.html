@@ -366,6 +366,11 @@
             evt.detail.withCredentials = true;
         });
     </script>
+    {% if htmx_request %}
+    <!-- HTMX Request: Only render content block -->
+    {% block content %}{% endblock %}
+    {% block scripts %}{% endblock %}
+    {% else %}
     <!-- Sidebar -->
     <aside class="sidebar flex flex-col h-screen">
         <!-- Logo -->
@@ -585,5 +590,6 @@
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     {% block scripts %}{% endblock %}
+    {% endif %}
 </body>
 </html>

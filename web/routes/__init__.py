@@ -105,7 +105,7 @@ def dashboard():
     """Render dashboard."""
     if is_htmx_request():
         # Return only content for HTMX requests (no base template wrapper)
-        return render_content_only("dashboard.html")
+        return render_template("dashboard.html", htmx_request=True)
     return render_template("dashboard.html")
 
 
@@ -114,7 +114,7 @@ def dashboard():
 def trades():
     """Render trades list."""
     if is_htmx_request():
-        return render_content_only("trades.html")
+        return render_template("trades.html", htmx_request=True)
     return render_template("trades.html")
 
 
@@ -123,7 +123,7 @@ def trades():
 def favorites():
     """Render favorites page."""
     if is_htmx_request():
-        return render_content_only("favorites.html")
+        return render_template("favorites.html", htmx_request=True)
     return render_template("favorites.html")
 
 
@@ -133,7 +133,9 @@ def accounts():
     """Render accounts page."""
     if is_htmx_request():
         accounts_list = get_accounts_for_template()
-        return render_content_only("accounts.html", accounts=accounts_list)
+        return render_template(
+            "accounts.html", htmx_request=True, accounts=accounts_list
+        )
     return render_template("accounts.html")
 
 

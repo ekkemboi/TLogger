@@ -57,163 +57,33 @@
             --border-default: #27272A;
         }
 
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-default);
-            border-radius: 16px;
-            padding: 48px;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .input {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            padding: 12px 16px;
-            width: 100%;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        .input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
-
-        .btn-primary {
-            background-color: var(--accent-primary);
-            color: #FFFFFF;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: none;
-            padding: 14px 24px;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 8px;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-primary-hover);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-google {
-            background-color: var(--bg-surface);
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 600;
-            border: 1px solid var(--border-default);
-            padding: 14px 24px;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .btn-google:hover {
-            background-color: var(--bg-primary);
-            border-color: var(--accent-primary);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background-color: var(--border-default);
-        }
-
-        .error-message {
-            color: var(--error);
-            font-size: 13px;
-            padding: 12px;
-            background-color: color-mix(in srgb, var(--error) 8%, transparent);
-            border-radius: 8px;
-            display: none;
-        }
-
-        .error-message.visible {
-            display: block;
-        }
-
-        .tab-btn {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
+        .active-tab {
             color: var(--accent-primary);
             border-bottom-color: var(--accent-primary);
         }
-
-        .tab-btn:hover:not(.active) {
-            color: var(--text-primary);
-        }
     </style>
 </head>
-<body>
-    <div class="login-card">
+<body class="h-screen overflow-hidden flex items-center justify-center p-4 font-mono bg-bg-primary text-text-primary">
+    <div class="w-full max-w-[min(420px,90vw)] bg-bg-secondary border border-border-default rounded-2xl p-[clamp(1rem,4vh,2.5rem)] max-h-[95vh] flex flex-col justify-center">
         <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="w-12 h-12 bg-accent-primary rounded-full mx-auto mb-4"></div>
-            <h1 class="font-display text-2xl font-bold text-text-primary" style="letter-spacing: 2px;">TRADELOGGER</h1>
-            <p class="text-text-secondary text-sm mt-2">Sign in to your account</p>
+        <div class="text-center mb-[clamp(0.5rem,1.5vh,1.5rem)]">
+            <div class="w-[clamp(2rem,5vh,3rem)] h-[clamp(2rem,5vh,3rem)] bg-accent-primary rounded-full mx-auto mb-[clamp(0.5rem,1vh,1rem)]"></div>
+            <h1 class="font-display font-bold text-text-primary text-[clamp(1.25rem,3.5vh,1.75rem)]" style="letter-spacing: 2px;">TRADELOGGER</h1>
+            <p class="text-text-secondary text-[clamp(0.75rem,2vh,0.875rem)] mt-[clamp(0.25rem,0.5vh,0.5rem)]">Sign in to your account</p>
         </div>
 
         <!-- Tabs -->
-        <div class="flex justify-center mb-6 border-b border-border-default">
-            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+        <div class="flex justify-center mb-[clamp(0.75rem,2vh,1.5rem)] border-b border-border-default">
+            <button class="font-mono font-semibold py-[clamp(0.5rem,1.5vh,0.75rem)] px-[clamp(0.75rem,2vh,1.5rem)] bg-transparent border-none text-text-secondary cursor-pointer border-b-2 border-transparent transition-all hover:text-text-primary text-[clamp(0.75rem,2vh,0.875rem)] [&.active]:text-accent-primary [&.active]:border-accent-primary active-tab" id="tab-login" onclick="switchTab('login')">Sign In</button>
+            <button class="font-mono font-semibold py-[clamp(0.5rem,1.5vh,0.75rem)] px-[clamp(0.75rem,2vh,1.5rem)] bg-transparent border-none text-text-secondary cursor-pointer border-b-2 border-transparent transition-all hover:text-text-primary text-[clamp(0.75rem,2vh,0.875rem)] [&.active]:text-accent-primary [&.active]:border-accent-primary" id="tab-register" onclick="switchTab('register')">Register</button>
         </div>
 
         <!-- Error Message -->
-        <div id="error-message" class="error-message mb-4"></div>
+        <div id="error-message" class="hidden text-error text-[clamp(0.75rem,1.8vh,0.875rem)] p-[clamp(0.5rem,1.2vh,0.75rem)] rounded-lg bg-error/10 mb-[clamp(0.5rem,1.5vh,1rem)]"></div>
 
         <!-- Google Login -->
-        <button id="google-btn" class="btn-google mb-6" onclick="loginWithGoogle()">
-            <svg width="20" height="20" viewBox="0 0 24 24">
+        <button id="google-btn" class="w-full bg-bg-surface border border-border-default text-text-primary font-mono font-semibold py-[clamp(0.5rem,1.5vh,0.875rem)] px-[clamp(1rem,2vh,1.5rem)] rounded-lg text-[clamp(0.7rem,1.8vh,0.8125rem)] hover:bg-bg-primary hover:border-accent-primary transition-all flex items-center justify-center gap-[clamp(0.5rem,1vh,0.75rem)] mb-[clamp(0.75rem,2vh,1.5rem)]" onclick="loginWithGoogle()">
+            <svg class="w-[clamp(1rem,2.5vh,1.25rem)] h-[clamp(1rem,2.5vh,1.25rem)]" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -222,40 +92,44 @@
             Continue with Google
         </button>
 
-        <div class="divider mb-6">or</div>
+        <div class="flex items-center gap-[clamp(0.75rem,2vh,1rem)] text-text-secondary text-[clamp(0.7rem,1.5vh,0.75rem)] mb-[clamp(0.75rem,2vh,1.5rem)]">
+            <div class="flex-1 h-px bg-border-default"></div>
+            <span>or</span>
+            <div class="flex-1 h-px bg-border-default"></div>
+        </div>
 
         <!-- Login Form -->
         <form id="login-form" onsubmit="handleLogin(event)">
-            <div class="mb-4">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
-                <input type="email" id="login-email" class="input" placeholder="you@example.com" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Email</label>
+                <input type="email" id="login-email" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="you@example.com" required>
             </div>
-            <div class="mb-6">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
-                <input type="password" id="login-password" class="input" placeholder="••••••••" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Password</label>
+                <input type="password" id="login-password" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="••••••••" required>
             </div>
-            <button type="submit" id="login-submit" class="btn-primary">Sign In</button>
+            <button type="submit" id="login-submit" class="w-full bg-accent-primary text-white font-mono font-bold uppercase tracking-wider py-[clamp(0.5rem,1.5vh,0.875rem)] px-[clamp(1rem,2vh,1.5rem)] rounded-lg text-[clamp(0.7rem,1.5vh,0.8125rem)] hover:bg-accent-primary-hover transition-all disabled:opacity-60 disabled:cursor-not-allowed">Sign In</button>
         </form>
 
         <!-- Register Form -->
         <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
-            <div class="mb-4">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Name</label>
-                <input type="text" id="register-name" class="input" placeholder="John Doe" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Name</label>
+                <input type="text" id="register-name" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="John Doe" required>
             </div>
-            <div class="mb-4">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
-                <input type="email" id="register-email" class="input" placeholder="you@example.com" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Email</label>
+                <input type="email" id="register-email" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="you@example.com" required>
             </div>
-            <div class="mb-4">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
-                <input type="password" id="register-password" class="input" placeholder="Min 8 chars, with uppercase, number & special" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Password</label>
+                <input type="password" id="register-password" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="Min 8 chars, with uppercase, number & special" required>
             </div>
-            <div class="mb-6">
-                <label class="block text-text-secondary text-xs font-semibold uppercase tracking-wider mb-2">Confirm Password</label>
-                <input type="password" id="register-password-confirm" class="input" placeholder="••••••••" required>
+            <div class="mb-[clamp(0.5rem,1.2vh,1rem)]">
+                <label class="block text-text-secondary text-[clamp(0.65rem,1.5vh,0.75rem)] font-semibold uppercase tracking-wider mb-[clamp(0.25rem,0.5vh,0.5rem)]">Confirm Password</label>
+                <input type="password" id="register-password-confirm" class="w-full bg-bg-surface border border-border-default rounded-lg py-[clamp(0.5rem,1.2vh,0.75rem)] px-[clamp(0.75rem,1.5vh,1rem)] text-text-primary font-mono text-[clamp(0.8rem,1.8vh,0.875rem)] focus:outline-none focus:border-accent-primary transition-all" placeholder="••••••••" required>
             </div>
-            <button type="submit" id="register-submit" class="btn-primary">Create Account</button>
+            <button type="submit" id="register-submit" class="w-full bg-accent-primary text-white font-mono font-bold uppercase tracking-wider py-[clamp(0.5rem,1.5vh,0.875rem)] px-[clamp(1rem,2vh,1.5rem)] rounded-lg text-[clamp(0.7rem,1.5vh,0.8125rem)] hover:bg-accent-primary-hover transition-all disabled:opacity-60 disabled:cursor-not-allowed">Create Account</button>
         </form>
     </div>
 
@@ -286,30 +160,30 @@
             const registerTab = document.getElementById('tab-register');
             const errorDiv = document.getElementById('error-message');
             
-            errorDiv.classList.remove('visible');
+            errorDiv.classList.add('hidden');
             
             if (tab === 'login') {
                 loginForm.style.display = 'block';
                 registerForm.style.display = 'none';
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
+                loginTab.classList.add('active-tab');
+                registerTab.classList.remove('active-tab');
             } else {
                 loginForm.style.display = 'none';
                 registerForm.style.display = 'block';
-                loginTab.classList.remove('active');
-                registerTab.classList.add('active');
+                loginTab.classList.remove('active-tab');
+                registerTab.classList.add('active-tab');
             }
         }
 
         function showError(message) {
             const errorDiv = document.getElementById('error-message');
             errorDiv.textContent = message;
-            errorDiv.classList.add('visible');
+            errorDiv.classList.remove('hidden');
         }
 
         function hideError() {
             const errorDiv = document.getElementById('error-message');
-            errorDiv.classList.remove('visible');
+            errorDiv.classList.add('hidden');
         }
 
         function setLoading(buttonId, loading) {

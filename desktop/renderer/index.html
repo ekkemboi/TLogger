@@ -13,7 +13,11 @@
             <div class="header-left">
                 <button id="menu-btn" class="control-btn menu" title="Menu">☰</button>
                 <div class="title">
-                    <div class="title-icon"></div>
+                    <div class="title-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
                     <span>TRADELOGGER</span>
                 </div>
             </div>
@@ -24,108 +28,154 @@
             </div>
         </div>
 
-        <!-- Trade Form -->
-        <div class="form-container">
-            <!-- Collapsible Trade Info Section -->
-            <div class="collapsible-section collapsed" id="trade-info-section">
-                <div class="collapsible-header" onclick="toggleTradeInfo()">
-                    <span class="section-title">TRADE INFO</span>
-                    <span class="section-summary" id="trade-info-summary">-- / -- / --</span>
-                    <span class="chevron">▼</span>
-                </div>
-                <div class="collapsible-content" id="trade-info-content">
-                    <div class="form-group">
-                        <label>DATE</label>
-                        <input type="date" id="trade-date" onchange="updateTradeInfoSummary()">
-                    </div>
-
-                    <div class="form-group">
-                        <label>ACCOUNT</label>
-                        <select id="account-select" onchange="updateTradeInfoSummary()">
-                            <option value="">-- Select Account --</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>SYMBOL</label>
-                        <select id="symbol-select" onchange="updateTradeInfoSummary()">
-                            <option value="">-- Select Symbol --</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>DIRECTION</label>
-                <select id="direction">
-                    <option value="long">Long</option>
-                    <option value="short">Short</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>OUTCOME</label>
-                <select id="outcome">
-                    <option value="win">Win</option>
-                    <option value="loss">Loss</option>
-                    <option value="break_even">Break Even</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>ENTRY PRICE</label>
-                    <input type="number" id="entry-price" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>POSITION SIZE</label>
-                    <input type="number" id="position-size" step="0.01" placeholder="0.00">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>STOP LOSS</label>
-                    <input type="number" id="stop-loss" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>TAKE PROFIT</label>
-                    <input type="number" id="take-profit" step="0.01" placeholder="0.00">
-                </div>
-            </div>
-
-            <!-- Partial Exits Section -->
-            <div class="partial-exits-section">
-                <div class="section-header">
-                    <label>PARTIAL EXITS</label>
-                    <button type="button" id="add-partial-btn" class="btn-add">+ ADD</button>
-                </div>
-                <div id="partial-exits-list"></div>
-            </div>
-
-            <div class="form-group">
-                <label>NOTES</label>
-                <textarea id="notes" rows="2" placeholder="Trade notes..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>SCREENSHOT</label>
-                <input type="file" id="screenshot" accept="image/*" class="file-input">
-            </div>
-
-            <div class="form-actions">
-                <button id="confirm-btn" class="btn btn-success">SAVE TRADE</button>
-                <button id="clear-btn" class="btn btn-secondary">CLEAR</button>
-            </div>
-
-            <div id="status-message" class="status-message hidden"></div>
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="loading-container hidden">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading...</p>
         </div>
 
-        <!-- Recent Trades -->
-        <div class="recent-trades">
-            <h4>RECENT TRADES</h4>
-            <div id="recent-list"></div>
-            <button id="view-more-btn" class="btn-view-more">VIEW ALL TRADES →</button>
+        <!-- Login View -->
+        <div id="login-view" class="login-container hidden">
+            <div class="login-box">
+                <div class="login-icon">🔐</div>
+                <h3>Welcome to TradeLogger</h3>
+                <p>Sign in via your browser to sync your trading session</p>
+                
+                <div id="login-error" class="login-error hidden"></div>
+                
+                <button id="browser-login-btn" class="btn btn-primary btn-login">
+                    <span class="btn-icon">🌐</span>
+                    Open Browser Login
+                </button>
+                
+                <div class="login-hint">
+                    <small>1. Click above to open browser<br>2. Log in to TradeLogger<br>3. Click "I'm Logged In" below</small>
+                </div>
+                
+                <div class="login-manual-check">
+                    <button id="check-auth-btn" class="btn btn-primary btn-check">
+                        I'm Logged In ✓
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade View -->
+        <div id="trade-view" class="trade-view hidden">
+            <!-- User Bar -->
+            <div id="user-bar" class="user-bar hidden">
+                <div class="user-info">
+                    <span class="user-avatar">👤</span>
+                    <span id="user-name" class="user-name">User</span>
+                </div>
+                <button id="logout-btn" class="btn-logout" title="Logout">
+                    <span>Logout</span>
+                </button>
+            </div>
+
+            <!-- Trade Form -->
+            <div class="form-container">
+                <!-- Collapsible Trade Info Section -->
+                <div class="collapsible-section collapsed" id="trade-info-section">
+                    <div class="collapsible-header" onclick="toggleTradeInfo()">
+                        <span class="section-title">TRADE INFO</span>
+                        <span class="section-summary" id="trade-info-summary">-- / -- / --</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="collapsible-content" id="trade-info-content">
+                        <div class="form-group">
+                            <label>DATE</label>
+                            <input type="date" id="trade-date" onchange="updateTradeInfoSummary()">
+                        </div>
+
+                        <div class="form-group">
+                            <label>ACCOUNT</label>
+                            <select id="account-select" onchange="updateTradeInfoSummary()">
+                                <option value="">-- Select Account --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>SYMBOL</label>
+                            <select id="symbol-select" onchange="updateTradeInfoSummary()">
+                                <option value="">-- Select Symbol --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>DIRECTION</label>
+                    <select id="direction">
+                        <option value="long">Long</option>
+                        <option value="short">Short</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>OUTCOME</label>
+                    <select id="outcome">
+                        <option value="win">Win</option>
+                        <option value="loss">Loss</option>
+                        <option value="break_even">Break Even</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ENTRY PRICE</label>
+                        <input type="number" id="entry-price" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>POSITION SIZE</label>
+                        <input type="number" id="position-size" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>STOP LOSS</label>
+                        <input type="number" id="stop-loss" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>TAKE PROFIT</label>
+                        <input type="number" id="take-profit" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <!-- Partial Exits Section -->
+                <div class="partial-exits-section">
+                    <div class="section-header">
+                        <label>PARTIAL EXITS</label>
+                        <button type="button" id="add-partial-btn" class="btn-add">+ ADD</button>
+                    </div>
+                    <div id="partial-exits-list"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>NOTES</label>
+                    <textarea id="notes" rows="2" placeholder="Trade notes..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>SCREENSHOT</label>
+                    <input type="file" id="screenshot" accept="image/*" class="file-input">
+                </div>
+
+                <div class="form-actions">
+                    <button id="confirm-btn" class="btn btn-success">SAVE TRADE</button>
+                    <button id="clear-btn" class="btn btn-secondary">CLEAR</button>
+                </div>
+
+                <div id="status-message" class="status-message hidden"></div>
+            </div>
+
+            <!-- Recent Trades -->
+            <div class="recent-trades">
+                <h4>RECENT TRADES</h4>
+                <div id="recent-list"></div>
+                <button id="view-more-btn" class="btn-view-more">VIEW ALL TRADES →</button>
+            </div>
         </div>
     </div>
 
@@ -153,6 +203,7 @@
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script src="widget.js"></script>
 </body>
 </html>

@@ -243,20 +243,41 @@ def google_callback():
 def refresh_token():
     """Refresh access token using refresh token.
 
+    Supports both cookie-based and Authorization header-based refresh token.
+
     ---
     tags:
       - Authentication
     responses:
       200:
         description: Token refreshed successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            access_token:
+              type: string
+            refresh_token:
+              type: string
       401:
         description: Invalid refresh token
     """
-    refresh_token = request.cookies.get("refresh_token")
-    if not refresh_token:
+    refresh_token_value = None
+
+    # Try Authorization header first (for desktop widget)
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        refresh_token_value = auth_header[7:]
+
+    # Fall back to cookie
+    if not refresh_token_value:
+        refresh_token_value = request.cookies.get("refresh_token")
+
+    if not refresh_token_value:
         return jsonify({"error": "Refresh token required"}), 401
 
-    payload = verify_refresh_token(refresh_token)
+    payload = verify_refresh_token(refresh_token_value)
     if not payload:
         return jsonify({"error": "Invalid or expired refresh token"}), 401
 
@@ -269,7 +290,16 @@ def refresh_token():
     access_token = generate_access_token(user.id, user.email)
     new_refresh_token = generate_refresh_token(user.id)
 
-    response = jsonify({"message": "Token refreshed successfully"})
+    # Return tokens in JSON for desktop widget, or set cookies for web
+    response_data = {
+        "message": "Token refreshed successfully",
+        "access_token": access_token,
+        "refresh_token": new_refresh_token,
+    }
+
+    response = jsonify(response_data)
+
+    # Also set cookies for web clients
     set_auth_cookies(response, access_token, new_refresh_token)
 
     return response
@@ -320,6 +350,8 @@ def get_current_user():
 def auth_status():
     """Check if user is authenticated (public endpoint).
 
+    Supports both cookie-based and Authorization header-based authentication.
+
     ---
     tags:
       - Authentication
@@ -335,12 +367,20 @@ def auth_status():
               type: object
     """
     from flask import g
+    from src.utils.jwt_utils import verify_access_token
 
-    # Try to get token from cookie
-    token = request.cookies.get("access_token")
+    token = None
+
+    # Try to get token from Authorization header first (for desktop widget)
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+
+    # Fall back to cookie
+    if not token:
+        token = request.cookies.get("access_token")
+
     if token:
-        from src.utils.jwt_utils import verify_access_token
-
         payload = verify_access_token(token)
         if payload:
             user = auth_service.get_user_by_id(payload["sub"])
@@ -354,24 +394,36 @@ def auth_status():
 def desktop_auth_callback():
     """Redirect endpoint for desktop app authentication.
 
-    After browser login, redirects to custom protocol URL to notify widget.
+    After browser login, redirects to custom protocol URL with tokens.
 
     ---
     tags:
       - Authentication
     responses:
       302:
-        description: Redirect to tradelogger:// protocol URL
+        description: Redirect to tradelogger:// protocol URL with tokens
     """
     from flask import redirect
 
-    token = request.cookies.get("access_token")
-    if token:
+    access_token = request.cookies.get("access_token")
+    refresh_token = request.cookies.get("refresh_token")
+
+    if access_token:
         try:
             from src.utils.jwt_utils import decode_token
 
-            decode_token(token)
-            return redirect("tradelogger://auth?status=success")
+            decode_token(access_token)
+
+            # Get remember_me preference from query param or default to false
+            remember_me = request.args.get("remember_me", "false").lower() == "true"
+
+            # Include tokens in protocol URL for desktop widget
+            return redirect(
+                f"tradelogger://auth?status=success"
+                f"&access_token={access_token}"
+                f"&refresh_token={refresh_token}"
+                f"&remember_me={str(remember_me).lower()}"
+            )
         except jwt.ExpiredSignatureError:
             return redirect("tradelogger://auth?status=expired")
         except jwt.InvalidTokenError:

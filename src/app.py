@@ -36,12 +36,15 @@ def create_app(config_name=None):
     csrf.init_app(app)
 
     # Configure CORS with credentials support
+    # Allow all origins for API requests (needed for Electron file:// protocol)
     CORS(
         app,
         resources={
             r"/api/*": {
-                "origins": ["http://localhost:5000", "http://localhost:3000"],
+                "origins": "*",
                 "supports_credentials": True,
+                "allow_headers": ["Content-Type", "Authorization"],
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             }
         },
     )

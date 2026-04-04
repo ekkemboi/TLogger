@@ -1,6 +1,40 @@
 // TradeLogger Journal - Manual Trade Entry
 const API_URL = 'http://localhost:5000/api';
 
+/**
+ * Make authenticated API request with automatic token refresh
+ * Uses widgetAuth.apiRequest if available, otherwise falls back to basic fetch
+ * @param {string} url - API endpoint (relative to API_URL)
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Response>} Fetch response
+ */
+async function apiRequest(url, options = {}) {
+    // Use widgetAuth's apiRequest if available (handles token refresh automatically)
+    if (window.widgetAuth && window.widgetAuth.apiRequest) {
+        return window.widgetAuth.apiRequest(`${API_URL}${url}`, options);
+    }
+
+    // Fallback: make request without auth (for browser testing)
+    return fetch(`${API_URL}${url}`, {
+        ...options,
+        credentials: 'include'
+    });
+}
+
+/**
+ * Get auth headers for manual fetch calls
+ * @returns {Promise<Object>} Headers object
+ */
+async function getAuthHeaders() {
+    if (window.widgetAuth && window.widgetAuth.getAuthHeaders) {
+        return window.widgetAuth.getAuthHeaders();
+    }
+    return {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    };
+}
+
 // DOM Elements
 const accountSelect = document.getElementById('account-select');
 const symbolSelect = document.getElementById('symbol-select');
@@ -33,12 +67,23 @@ let isCollapsed = false;
 function init() {
     tradeDateInput.value = new Date().toISOString().split('T')[0];
     initTheme();
-    loadAccounts();
-    loadFavorites();
-    loadRecentTrades();
     initSettingsPanel();
     setupEventListeners();
+    setupAuthListeners();
     updateTradeInfoSummary();
+    // Note: Data loading happens after auth check in auth.js
+}
+
+// Setup auth state change listeners
+function setupAuthListeners() {
+    window.addEventListener('authStateChanged', (e) => {
+        if (e.detail.authenticated) {
+            // Load data when authenticated
+            loadAccounts();
+            loadFavorites();
+            loadRecentTrades();
+        }
+    });
 }
 
 // Set always on top
@@ -159,7 +204,13 @@ function updateTradeInfoSummary() {
 // Load accounts from API
 async function loadAccounts() {
     try {
-        const response = await fetch(`${API_URL}/accounts`);
+        const response = await apiRequest('/accounts');
+
+        if (response.status === 401) {
+            console.log('Not authenticated, skipping account load');
+            return;
+        }
+
         const data = await response.json();
 
         const accounts = data.accounts || data;
@@ -185,9 +236,15 @@ async function loadAccounts() {
 // Load favorites from API
 async function loadFavorites() {
     try {
-        const response = await fetch(`${API_URL}/favorites`);
+        const response = await apiRequest('/favorites');
+
+        if (response.status === 401) {
+            console.log('Not authenticated, skipping favorites load');
+            return;
+        }
+
         const data = await response.json();
-        
+
         favoritesCache = {};
         symbolSelect.innerHTML = '<option value="">-- Select Symbol --</option>';
         data.forEach(f => {
@@ -212,7 +269,13 @@ async function loadFavorites() {
 // Load recent trades
 async function loadRecentTrades() {
     try {
-        const response = await fetch(`${API_URL}/trades?per_page=2`);
+        const response = await apiRequest('/trades?per_page=2');
+
+        if (response.status === 401) {
+            console.log('Not authenticated, skipping trades load');
+            return;
+        }
+
         const data = await response.json();
         renderRecentTrades(data.trades || []);
     } catch (error) {
@@ -407,10 +470,21 @@ async function confirmTrade() {
             formData.append('screenshot', screenshotFile);
         }
 
-        const response = await fetch(`${API_URL}/trades`, {
+        // Get auth headers and merge with FormData request
+        const headers = await getAuthHeaders();
+        // Remove Content-Type for FormData (browser will set with boundary)
+        delete headers['Content-Type'];
+
+        const response = await apiRequest('/trades', {
             method: 'POST',
+            headers,
             body: formData
         });
+
+        if (response.status === 401) {
+            showStatus('Please log in to save trades', 'error');
+            return;
+        }
 
         if (response.ok) {
             const savedTrade = await response.json();

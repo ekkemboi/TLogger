@@ -266,8 +266,16 @@
                 if (response.ok) {
                     // Login successful, redirect
                     const urlParams = new URLSearchParams(window.location.search);
-                    const redirect = urlParams.get('redirect') || '/';
-                    window.location.href = redirect;
+                    
+                    // Check if this is a desktop login flow
+                    if (urlParams.get('source') === 'desktop') {
+                        // Redirect to desktop callback with remember_me param
+                        const rememberMe = document.getElementById('remember-me').checked;
+                        window.location.href = `/api/auth/desktop-callback?remember_me=${rememberMe}`;
+                    } else {
+                        const redirect = urlParams.get('redirect') || '/';
+                        window.location.href = redirect;
+                    }
                 } else {
                     showError(data.error || 'Login failed. Please check your credentials.');
                 }

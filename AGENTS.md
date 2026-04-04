@@ -1,6 +1,13 @@
 # TradeLogger - Agent Guidelines
 
-TradeLogger is a trade journaling system with a Flask backend, PostgreSQL database, and Electron desktop widget for manual trade entry. The web dashboard displays metrics and trade history.
+TradeLogger is a trade journaling system with a Flask backend, PostgreSQL database, and Electron desktop widget for manual trade entry. The web dashboard displays metrics and trade history using a **v2 sidebar design with HTMX for SPA-like navigation**.
+
+### Recent Updates (v2 Sidebar Redesign)
+- **Layout**: Left sidebar (260px) instead of top navbar
+- **Colors**: Green primary (#22C55E) instead of amber
+- **Font**: System font stack (Inter removed)
+- **Navigation**: HTMX-powered SPA-like navigation (sidebar persists)
+- **Authentication**: Login page with theme toggle and "remember me" checkbox
 
 ## Build & Development
 
@@ -49,6 +56,29 @@ tests/
   conftest.py         # Fixtures (app, client, sample_trade_data)
   test_trades.py      # Trade API tests
   test_metrics.py     # Metrics API tests
+```
+
+## HTMX Navigation
+
+The v2 redesign uses HTMX for SPA-like navigation:
+- Sidebar persists across page transitions (no full reloads)
+- `hx-get` attributes on sidebar links trigger AJAX requests
+- `hx-target="main"` swaps only the content area
+- `hx-push-url="true"` updates browser URL
+- `withCredentials: true` ensures authentication cookies are sent
+
+### Template Structure
+```html
+<!-- base.html - Single content block definition -->
+{% if not htmx_request %}
+  <!-- Sidebar, scripts, global handlers -->
+{% endif %}
+<main>
+  {% block content %}{% endblock %}
+</main>
+{% if not htmx_request %}
+  <!-- Footer scripts -->
+{% endif %}
 ```
 
 ## Code Style

@@ -11,18 +11,21 @@ const mkdir = promisify(fs.mkdir);
 const TOKEN_FILE = path.join(app.getPath('userData'), 'auth_tokens.enc');
 
 // Register tradelogger:// protocol
-const protocolRegistered = app.setAsDefaultProtocolClient('tradelogger');
-console.log('Protocol registered:', protocolRegistered);
-
-// On Linux, we need to handle the protocol differently
 if (process.platform === 'linux') {
-  // Check if we were launched via protocol
+  // On Linux, setAsDefaultProtocolClient needs the app to be installed
+  // For development, we use xdg-mime or check if already registered
+  const protocolRegistered = app.setAsDefaultProtocolClient('tradelogger');
+  console.log('Protocol registered (Linux):', protocolRegistered);
+  
+  // Linux passes protocol URL in argv when app is launched
   const protocolUrl = process.argv.find(arg => arg.startsWith('tradelogger://'));
   if (protocolUrl) {
     console.log('Linux: Found protocol URL in argv:', protocolUrl);
-    // Store for later processing
     process.env.PENDING_AUTH_URL = protocolUrl;
   }
+} else {
+  const protocolRegistered = app.setAsDefaultProtocolClient('tradelogger');
+  console.log('Protocol registered:', protocolRegistered);
 }
 
 console.log('=== TradeLogger Widget Starting ===');

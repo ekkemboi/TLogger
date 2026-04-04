@@ -252,30 +252,35 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const rememberMe = document.getElementById('remember-me').checked;
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('source'); // 'desktop' or null
 
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ email, password, remember_me: rememberMe })
+                    body: JSON.stringify({ 
+                        email, 
+                        password, 
+                        source,
+                        remember_me: rememberMe 
+                    })
                 });
+
+                // Check if response is a redirect (desktop flow)
+                if (response.redirected && source === 'desktop') {
+                    // Desktop flow: browser follows redirect to tradelogger://
+                    window.location.href = response.url;
+                    return;
+                }
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Login successful, redirect
-                    const urlParams = new URLSearchParams(window.location.search);
-                    
-                    // Check if this is a desktop login flow
-                    if (urlParams.get('source') === 'desktop') {
-                        // Redirect to desktop callback with remember_me param
-                        const rememberMe = document.getElementById('remember-me').checked;
-                        window.location.href = `/api/auth/desktop-callback?remember_me=${rememberMe}`;
-                    } else {
-                        const redirect = urlParams.get('redirect') || '/';
-                        window.location.href = redirect;
-                    }
+                    // Web flow: redirect to dashboard
+                    const redirect = urlParams.get('redirect') || '/';
+                    window.location.href = redirect;
                 } else {
                     showError(data.error || 'Login failed. Please check your credentials.');
                 }
@@ -328,7 +333,12 @@
 
         function loginWithGoogle() {
             // Redirect to Google OAuth login
-            window.location.href = '/api/auth/google/login';
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('source');
+            const redirectUrl = source 
+                ? `/api/auth/google/login?source=${source}` 
+                : '/api/auth/google/login';
+            window.location.href = redirectUrl;
         }
     </script>
 </body>

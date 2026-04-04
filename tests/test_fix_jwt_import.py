@@ -1,4 +1,4 @@
-"""Test for desktop auth callback jwt import fix."""
+"""Test for desktop authentication flow via direct redirect."""
 
 import json
 from datetime import datetime, timedelta, timezone
@@ -11,77 +11,105 @@ from src.models import User
 from src.utils.jwt_utils import generate_access_token
 
 
-class TestDesktopAuthCallback:
-    """Test desktop authentication callback endpoint."""
+class TestDesktopAuthFlow:
+    """Test desktop authentication via direct redirect from login."""
 
-    def test_desktop_callback_success(self, client, default_user):
-        """Test successful desktop auth callback redirects with success status."""
+    def test_login_desktop_redirect(self, client, default_user):
+        """Test login with source=desktop redirects to tradelogger:// protocol."""
         with client.application.app_context():
             user = User.query.get(default_user)
-            access_token = generate_access_token(user.id, user.email)
 
-        client.set_cookie("access_token", access_token)
-
-        response = client.get("/api/auth/desktop-callback")
+        response = client.post(
+            "/api/auth/login",
+            data=json.dumps(
+                {
+                    "email": user.email,
+                    "password": "TestPassword123!",  # Default test password from conftest.py
+                    "source": "desktop",
+                    "remember_me": True,
+                }
+            ),
+            content_type="application/json",
+        )
 
         # Should redirect to tradelogger:// protocol
         assert response.status_code == 302
         assert "tradelogger://auth?status=success" in response.location
+        assert "access_token=" in response.location
+        assert "refresh_token=" in response.location
+        assert "remember_me=true" in response.location
 
-    def test_desktop_callback_no_token(self, client):
-        """Test desktop callback without token redirects as unauthenticated."""
-        response = client.get("/api/auth/desktop-callback")
+    def test_login_web_returns_json(self, client, default_user):
+        """Test login without source returns JSON (web flow)."""
+        with client.application.app_context():
+            user = User.query.get(default_user)
 
-        assert response.status_code == 302
-        assert "tradelogger://auth?status=unauthenticated" in response.location
+        response = client.post(
+            "/api/auth/login",
+            data=json.dumps(
+                {
+                    "email": user.email,
+                    "password": "TestPassword123!",
+                }
+            ),
+            content_type="application/json",
+        )
 
-    def test_desktop_callback_expired_token(self, client, default_user, app):
-        """Test desktop callback with expired token redirects with expired status.
+        # Should return JSON response
+        assert response.status_code == 200
+        assert response.content_type == "application/json"
+        data = json.loads(response.data)
+        assert "message" in data
+        assert "user" in data
 
-        Bug: jwt import was missing causing NameError on jwt.ExpiredSignatureError
-        """
-        # Create an expired token manually
+    def test_login_desktop_invalid_credentials(self, client):
+        """Test desktop login with invalid credentials returns error (not redirect)."""
+        response = client.post(
+            "/api/auth/login",
+            data=json.dumps(
+                {
+                    "email": "wrong@example.com",
+                    "password": "wrongpassword",
+                    "source": "desktop",
+                }
+            ),
+            content_type="application/json",
+        )
+
+        # Should return 401 error, not redirect
+        assert response.status_code == 401
+        assert response.content_type == "application/json"
+
+    def test_auth_status_with_bearer_token(self, client, default_user):
+        """Test auth status accepts Authorization: Bearer header."""
+        with client.application.app_context():
+            user = User.query.get(default_user)
+            access_token = generate_access_token(user.id, user.email)
+
+        response = client.get(
+            "/api/auth/status",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data["authenticated"] is True
+        assert data["user"]["email"] == user.email
+
+    def test_refresh_token_with_bearer(self, client, default_user, app):
+        """Test token refresh accepts Authorization: Bearer header."""
+        from src.utils.jwt_utils import generate_refresh_token
+
         with app.app_context():
             user = User.query.get(default_user)
-            payload = {
-                "sub": user.id,
-                "email": user.email,
-                "exp": datetime.now(timezone.utc) - timedelta(hours=1),
-                "iat": datetime.now(timezone.utc) - timedelta(hours=2),
-            }
-            expired_token = jwt_lib.encode(
-                payload,
-                app.config["JWT_SECRET_KEY"],
-                algorithm="HS256",
-            )
+            refresh_token = generate_refresh_token(user.id)
 
-        client.set_cookie("access_token", expired_token)
+        response = client.post(
+            "/api/auth/refresh",
+            headers={"Authorization": f"Bearer {refresh_token}"},
+        )
 
-        response = client.get("/api/auth/desktop-callback")
-
-        # Should redirect with expired status, not 500 error
-        assert response.status_code == 302
-        assert "tradelogger://auth?status=expired" in response.location
-
-    def test_desktop_callback_invalid_token(self, client):
-        """Test desktop callback with invalid token redirects with invalid status.
-
-        Bug: jwt import was missing causing NameError on jwt.InvalidTokenError
-        """
-        client.set_cookie("access_token", "invalid.token.format")
-
-        response = client.get("/api/auth/desktop-callback")
-
-        # Should redirect with invalid status, not 500 error
-        assert response.status_code == 302
-        assert "tradelogger://auth?status=invalid" in response.location
-
-    def test_desktop_callback_malformed_token(self, client):
-        """Test desktop callback with malformed token redirects with invalid status."""
-        client.set_cookie("access_token", "not-a-valid-jwt")
-
-        response = client.get("/api/auth/desktop-callback")
-
-        # Should redirect with invalid status
-        assert response.status_code == 302
-        assert "tradelogger://auth?status=invalid" in response.location
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert "access_token" in data
+        assert "refresh_token" in data

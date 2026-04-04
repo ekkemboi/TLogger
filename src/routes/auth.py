@@ -108,6 +108,9 @@ def register():
 def login():
     """Login with email and password.
 
+    For desktop: redirects to tradelogger:// protocol with tokens.
+    For web: returns JSON with cookies.
+
     ---
     tags:
       - Authentication
@@ -124,9 +127,15 @@ def login():
             password:
               type: string
               example: Password123!
+            source:
+              type: string
+              example: desktop
+            remember_me:
+              type: boolean
+              example: true
     responses:
       200:
-        description: Login successful
+        description: Login successful (web)
         schema:
           type: object
           properties:
@@ -134,9 +143,13 @@ def login():
               type: string
             user:
               type: object
+      302:
+        description: Redirect to tradelogger:// protocol (desktop)
       401:
         description: Invalid credentials
     """
+    from flask import redirect
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "Request body required"}), 400
@@ -152,6 +165,20 @@ def login():
     access_token = generate_access_token(user.id, user.email)
     refresh_token = generate_refresh_token(user.id)
 
+    # Check if this is a desktop login
+    source = data.get("source")
+
+    if source == "desktop":
+        # For desktop: redirect directly to protocol with tokens
+        remember_me = data.get("remember_me", False)
+        return redirect(
+            f"tradelogger://auth?status=success"
+            f"&access_token={access_token}"
+            f"&refresh_token={refresh_token}"
+            f"&remember_me={str(remember_me).lower()}"
+        )
+
+    # For web: return JSON and set cookies
     response = jsonify({"message": "Login successful", "user": user.to_dict()})
     set_auth_cookies(response, access_token, refresh_token)
 
@@ -179,6 +206,11 @@ def google_login():
     state = auth_service.generate_oauth_state()
     session["oauth_state"] = state
 
+    # Store source (desktop vs web) in session for callback
+    source = request.args.get("source")
+    if source:
+        session["oauth_source"] = source
+
     redirect_uri = current_app.config.get("GOOGLE_REDIRECT_URI")
     return google.authorize_redirect(redirect_uri, state=state)
 
@@ -187,13 +219,18 @@ def google_login():
 def google_callback():
     """Handle Google OAuth callback.
 
+    For desktop: redirects to tradelogger:// protocol with tokens.
+    For web: returns JSON with cookies.
+
     ---
     tags:
       - Authentication
     responses:
       302:
-        description: Redirect to dashboard on success, login on failure
+        description: Redirect to dashboard or tradelogger:// protocol
     """
+    from flask import redirect
+
     google = get_google_client()
     if not google:
         return jsonify({"error": "Google OAuth not configured"}), 503
@@ -204,6 +241,9 @@ def google_callback():
 
     if not state or state != stored_state:
         return jsonify({"error": "Invalid state parameter"}), 400
+
+    # Get source from session (desktop vs web)
+    source = session.pop("oauth_source", None)
 
     try:
         # Get token and user info from Google
@@ -229,6 +269,16 @@ def google_callback():
         access_token = generate_access_token(user.id, user.email)
         refresh_token = generate_refresh_token(user.id)
 
+        if source == "desktop":
+            # For desktop: redirect directly to protocol with tokens
+            return redirect(
+                f"tradelogger://auth?status=success"
+                f"&access_token={access_token}"
+                f"&refresh_token={refresh_token}"
+                f"&remember_me=true"
+            )
+
+        # For web: return JSON and set cookies
         response = jsonify({"message": "Login successful", "user": user.to_dict()})
         set_auth_cookies(response, access_token, refresh_token)
 
@@ -388,45 +438,3 @@ def auth_status():
                 return jsonify({"authenticated": True, "user": user.to_dict()})
 
     return jsonify({"authenticated": False, "user": None})
-
-
-@auth_bp.route("/auth/desktop-callback")
-def desktop_auth_callback():
-    """Redirect endpoint for desktop app authentication.
-
-    After browser login, redirects to custom protocol URL with tokens.
-
-    ---
-    tags:
-      - Authentication
-    responses:
-      302:
-        description: Redirect to tradelogger:// protocol URL with tokens
-    """
-    from flask import redirect
-
-    access_token = request.cookies.get("access_token")
-    refresh_token = request.cookies.get("refresh_token")
-
-    if access_token:
-        try:
-            from src.utils.jwt_utils import decode_token
-
-            decode_token(access_token)
-
-            # Get remember_me preference from query param or default to false
-            remember_me = request.args.get("remember_me", "false").lower() == "true"
-
-            # Include tokens in protocol URL for desktop widget
-            return redirect(
-                f"tradelogger://auth?status=success"
-                f"&access_token={access_token}"
-                f"&refresh_token={refresh_token}"
-                f"&remember_me={str(remember_me).lower()}"
-            )
-        except jwt.ExpiredSignatureError:
-            return redirect("tradelogger://auth?status=expired")
-        except jwt.InvalidTokenError:
-            return redirect("tradelogger://auth?status=invalid")
-
-    return redirect("tradelogger://auth?status=unauthenticated")

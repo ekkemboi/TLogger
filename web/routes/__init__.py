@@ -57,29 +57,46 @@ def is_htmx_request():
     return request.headers.get("HX-Request") == "true"
 
 
-def render_for_htmx(template_name, **context):
-    """Render template and extract content block for HTMX requests.
+def render_content_only(template_name, **context):
+    """Render only the content block from a template for HTMX requests.
 
-    For HTMX requests, renders the child template content only.
+    This reads the template file, extracts the content block, and renders it directly
+    without extending base.html.
     """
-    from jinja2 import Environment, BaseLoader, DictLoader
+    from flask import current_app
+    import os
     import re
 
-    # First render the full template to get the HTML
-    full_html = render_template(template_name, **context)
+    # Get template path
+    template_path = os.path.join(
+        current_app.root_path, "web", "templates", template_name
+    )
 
-    # Extract content between {% block content %} and {% endblock %}
-    # This is a simple regex extraction - might need refinement
+    # Read template content
+    with open(template_path, "r") as f:
+        template_content = f.read()
+
+    # Extract content block
     pattern = r"{%\s*block\s+content\s*%}(.*?){%\s*endblock\s*%}"
-    match = re.search(pattern, full_html, re.DOTALL)
+    match = re.search(pattern, template_content, re.DOTALL)
 
     if match:
-        content = match.group(1).strip()
-        # Now render base.html with just the content_block variable
-        return render_template("base.html", htmx_request=True, content_block=content)
+        content_template = match.group(1).strip()
 
-    # Fallback: return full HTML
-    return full_html
+        # Also extract scripts block if present
+        scripts_pattern = r"{%\s*block\s+scripts\s*%}(.*?){%\s*endblock\s*%}"
+        scripts_match = re.search(scripts_pattern, template_content, re.DOTALL)
+        if scripts_match:
+            scripts_template = scripts_match.group(1).strip()
+            content_template += "\n" + scripts_template
+
+        # Render just the content block
+        from flask import render_template_string
+
+        return render_template_string(content_template, **context)
+
+    # Fallback: render full template
+    return render_template(template_name, **context)
 
 
 @web_bp.route("/")
@@ -88,7 +105,7 @@ def dashboard():
     """Render dashboard."""
     if is_htmx_request():
         # Return only content for HTMX requests (no base template wrapper)
-        return render_for_htmx("dashboard.html")
+        return render_content_only("dashboard.html")
     return render_template("dashboard.html")
 
 
@@ -97,7 +114,7 @@ def dashboard():
 def trades():
     """Render trades list."""
     if is_htmx_request():
-        return render_template("trades.html", htmx_request=True)
+        return render_content_only("trades.html")
     return render_template("trades.html")
 
 
@@ -106,7 +123,7 @@ def trades():
 def favorites():
     """Render favorites page."""
     if is_htmx_request():
-        return render_template("favorites.html", htmx_request=True)
+        return render_content_only("favorites.html")
     return render_template("favorites.html")
 
 
@@ -116,9 +133,7 @@ def accounts():
     """Render accounts page."""
     if is_htmx_request():
         accounts_list = get_accounts_for_template()
-        return render_template(
-            "accounts.html", htmx_request=True, accounts=accounts_list
-        )
+        return render_content_only("accounts.html", accounts=accounts_list)
     return render_template("accounts.html")
 
 

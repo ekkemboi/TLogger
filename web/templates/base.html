@@ -359,9 +359,6 @@
     </style>
     {% block head %}{% endblock %}
 </head>
-{% if htmx_request %}
-{{ content_block|safe }}
-{% else %}
 <body class="flex">
     <!-- Sidebar -->
     <aside class="sidebar flex flex-col h-screen">
@@ -584,4 +581,3 @@
     {% block scripts %}{% endblock %}
 </body>
 </html>
-{% endif %}

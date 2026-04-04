@@ -360,18 +360,8 @@
     {% block head %}{% endblock %}
 </head>
 <body class="flex">
-    <script>
-        // HTMX Configuration: Include credentials (cookies) with all requests
-        document.body.addEventListener('htmx:configRequest', function(evt) {
-            evt.detail.withCredentials = true;
-        });
-    </script>
-    {% if htmx_request %}
-    <!-- HTMX Request: Only render content block -->
-    {% block content %}{% endblock %}
-    {% block scripts %}{% endblock %}
-    {% else %}
-    <!-- Sidebar -->
+    {% if not htmx_request %}
+    <!-- Sidebar - only for normal page loads -->
     <aside class="sidebar flex flex-col h-screen">
         <!-- Logo -->
         <div class="p-5 border-b border-border-default">
@@ -451,12 +441,14 @@
             </div>
         </div>
     </aside>
+    {% endif %}
 
     <!-- Main Content -->
     <main class="main-content bg-bg-primary">
         {% block content %}{% endblock %}
     </main>
 
+    {% if not htmx_request %}
     <script>
     // Theme Toggle
     function initTheme() {
@@ -586,10 +578,15 @@
         // Re-initialize account switcher after OOB update
         loadAccountSwitcher();
     });
+
+    // HTMX Configuration: Include credentials (cookies) with all requests
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        evt.detail.withCredentials = true;
+    });
     </script>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-    {% block scripts %}{% endblock %}
     {% endif %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>

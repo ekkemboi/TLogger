@@ -52,10 +52,18 @@ def login_required(f):
     return decorated_function
 
 
+def is_htmx_request():
+    """Check if current request is from HTMX."""
+    return request.headers.get("HX-Request") == "true"
+
+
 @web_bp.route("/")
 @login_required
 def dashboard():
     """Render dashboard."""
+    if is_htmx_request():
+        # Return only content for HTMX requests (no base template wrapper)
+        return render_template("dashboard.html", htmx_request=True)
     return render_template("dashboard.html")
 
 
@@ -63,6 +71,8 @@ def dashboard():
 @login_required
 def trades():
     """Render trades list."""
+    if is_htmx_request():
+        return render_template("trades.html", htmx_request=True)
     return render_template("trades.html")
 
 
@@ -70,6 +80,8 @@ def trades():
 @login_required
 def favorites():
     """Render favorites page."""
+    if is_htmx_request():
+        return render_template("favorites.html", htmx_request=True)
     return render_template("favorites.html")
 
 
@@ -77,6 +89,11 @@ def favorites():
 @login_required
 def accounts():
     """Render accounts page."""
+    if is_htmx_request():
+        accounts_list = get_accounts_for_template()
+        return render_template(
+            "accounts.html", htmx_request=True, accounts=accounts_list
+        )
     return render_template("accounts.html")
 
 

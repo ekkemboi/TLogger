@@ -57,13 +57,38 @@ def is_htmx_request():
     return request.headers.get("HX-Request") == "true"
 
 
+def render_for_htmx(template_name, **context):
+    """Render template and extract content block for HTMX requests.
+
+    For HTMX requests, renders the child template content only.
+    """
+    from jinja2 import Environment, BaseLoader, DictLoader
+    import re
+
+    # First render the full template to get the HTML
+    full_html = render_template(template_name, **context)
+
+    # Extract content between {% block content %} and {% endblock %}
+    # This is a simple regex extraction - might need refinement
+    pattern = r"{%\s*block\s+content\s*%}(.*?){%\s*endblock\s*%}"
+    match = re.search(pattern, full_html, re.DOTALL)
+
+    if match:
+        content = match.group(1).strip()
+        # Now render base.html with just the content_block variable
+        return render_template("base.html", htmx_request=True, content_block=content)
+
+    # Fallback: return full HTML
+    return full_html
+
+
 @web_bp.route("/")
 @login_required
 def dashboard():
     """Render dashboard."""
     if is_htmx_request():
         # Return only content for HTMX requests (no base template wrapper)
-        return render_template("dashboard.html", htmx_request=True)
+        return render_for_htmx("dashboard.html")
     return render_template("dashboard.html")
 
 

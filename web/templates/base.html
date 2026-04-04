@@ -360,8 +360,7 @@
     {% block head %}{% endblock %}
 </head>
 {% if htmx_request %}
-<!-- HTMX Request: Return only content block -->
-{% block content %}{% endblock %}
+{{ content_block|safe }}
 {% else %}
 <body class="flex">
     <!-- Sidebar -->

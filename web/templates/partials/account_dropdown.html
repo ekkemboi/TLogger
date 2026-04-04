@@ -1,0 +1,18 @@
+<!-- Account Dropdown Partial for HTMX OOB Updates -->
+<div id="account-switcher-container" hx-swap-oob="true">
+    <div class="account-switcher">
+        <i data-lucide="building-2" class="w-4 h-4 text-text-light"></i>
+        <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-text-light ml-auto"></i>
+        <select id="account-switcher">
+            <option value="">All Accounts</option>
+            {% for account in accounts %}
+            <option value="{{ account.id }}">{{ account.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<script>
+    if (window.lucide) lucide.createIcons();
+    if (window.initAccountSwitcher) initAccountSwitcher();
+</script>

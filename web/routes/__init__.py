@@ -7,11 +7,14 @@ from flask import (
     Blueprint,
     current_app,
     g,
+    jsonify,
     redirect,
     render_template,
     request,
     url_for,
 )
+
+from src.models import Account
 
 web_bp = Blueprint("web", __name__)
 
@@ -99,3 +102,19 @@ def login():
             pass  # Invalid token, show login page
 
     return render_template("login.html")
+
+
+@web_bp.route("/partials/account-dropdown")
+@login_required
+def account_dropdown_partial():
+    """Return account dropdown partial for HTMX OOB updates."""
+    accounts = Account.query.all()
+    return render_template("partials/account_dropdown.html", accounts=accounts)
+
+
+def get_accounts_for_template():
+    """Helper to get accounts for OOB updates."""
+    try:
+        return Account.query.all()
+    except Exception:
+        return []

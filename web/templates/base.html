@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -375,19 +376,39 @@
 
         <!-- Navigation -->
         <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-            <a href="/" class="sidebar-link {% if request.path == '/' %}active{% endif %}">
+            <a href="/" 
+               hx-get="/" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/' %}active{% endif %}">
                 <i data-lucide="layout-dashboard"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="/trades" class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
+            <a href="/trades" 
+               hx-get="/trades" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
                 <i data-lucide="trending-up"></i>
                 <span>Trades</span>
             </a>
-            <a href="/favorites" class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
+            <a href="/favorites" 
+               hx-get="/favorites" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
                 <i data-lucide="star"></i>
                 <span>Favorites</span>
             </a>
-            <a href="/accounts" class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
+            <a href="/accounts" 
+               hx-get="/accounts" 
+               hx-target="main" 
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
                 <i data-lucide="wallet"></i>
                 <span>Accounts</span>
             </a>
@@ -515,6 +536,45 @@
         initAccountSwitcher();
         if (window.lucide) lucide.createIcons();
     }
+
+    // HTMX Event Handlers
+    document.addEventListener('htmx:afterSwap', function(evt) {
+        // Re-initialize Lucide icons after content swap
+        if (window.lucide) lucide.createIcons();
+        
+        // Update active sidebar link based on current URL
+        updateActiveSidebarLink();
+        
+        // Re-initialize page-specific scripts
+        if (window.initPageScripts) {
+            window.initPageScripts();
+        }
+    });
+
+    // Update active sidebar link
+    function updateActiveSidebarLink() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            // Remove active class logic - compare href with current path
+            const linkPath = link.getAttribute('href');
+            if (linkPath === currentPath || (currentPath === '/' && linkPath === '/')) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // HTMX Error Handler - Fallback to full page reload
+    document.addEventListener('htmx:error', function(evt) {
+        console.warn('HTMX request failed, falling back to full page load:', evt.detail.error);
+        // Let the default link behavior handle it (full page reload)
+    });
+
+    // Handle OOB account dropdown updates
+    document.addEventListener('accountDropdownUpdated', function() {
+        // Re-initialize account switcher after OOB update
+        loadAccountSwitcher();
+    });
     </script>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>

@@ -14,8 +14,8 @@ from src.utils.jwt_utils import generate_access_token
 class TestDesktopAuthFlow:
     """Test desktop authentication via direct redirect from login."""
 
-    def test_login_desktop_redirect(self, client, default_user):
-        """Test login with source=desktop redirects to tradelogger:// protocol."""
+    def test_login_desktop_returns_protocol_url(self, client, default_user):
+        """Test login with source=desktop returns JSON with tradelogger:// URL."""
         with client.application.app_context():
             user = User.query.get(default_user)
 
@@ -32,12 +32,15 @@ class TestDesktopAuthFlow:
             content_type="application/json",
         )
 
-        # Should redirect to tradelogger:// protocol
-        assert response.status_code == 302
-        assert "tradelogger://auth?status=success" in response.location
-        assert "access_token=" in response.location
-        assert "refresh_token=" in response.location
-        assert "remember_me=true" in response.location
+        # Should return JSON with redirect_url
+        assert response.status_code == 200
+        assert response.content_type == "application/json"
+        data = json.loads(response.data)
+        assert "redirect_url" in data
+        assert "tradelogger://auth?status=success" in data["redirect_url"]
+        assert "access_token=" in data["redirect_url"]
+        assert "refresh_token=" in data["redirect_url"]
+        assert "remember_me=true" in data["redirect_url"]
 
     def test_login_web_returns_json(self, client, default_user):
         """Test login without source returns JSON (web flow)."""

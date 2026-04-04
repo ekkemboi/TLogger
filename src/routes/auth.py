@@ -108,7 +108,7 @@ def register():
 def login():
     """Login with email and password.
 
-    For desktop: redirects to tradelogger:// protocol with tokens.
+    For desktop: returns JSON with redirect_url to tradelogger:// protocol.
     For web: returns JSON with cookies.
 
     ---
@@ -135,7 +135,7 @@ def login():
               example: true
     responses:
       200:
-        description: Login successful (web)
+        description: Login successful
         schema:
           type: object
           properties:
@@ -143,13 +143,12 @@ def login():
               type: string
             user:
               type: object
-      302:
-        description: Redirect to tradelogger:// protocol (desktop)
+            redirect_url:
+              type: string
+              description: Protocol URL for desktop login
       401:
         description: Invalid credentials
     """
-    from flask import redirect
-
     data = request.get_json()
     if not data:
         return jsonify({"error": "Request body required"}), 400
@@ -169,14 +168,15 @@ def login():
     source = data.get("source")
 
     if source == "desktop":
-        # For desktop: redirect directly to protocol with tokens
+        # For desktop: return JSON with protocol redirect URL
         remember_me = data.get("remember_me", False)
-        return redirect(
+        protocol_url = (
             f"tradelogger://auth?status=success"
             f"&access_token={access_token}"
             f"&refresh_token={refresh_token}"
             f"&remember_me={str(remember_me).lower()}"
         )
+        return jsonify({"message": "Login successful", "redirect_url": protocol_url})
 
     # For web: return JSON and set cookies
     response = jsonify({"message": "Login successful", "user": user.to_dict()})
@@ -219,18 +219,26 @@ def google_login():
 def google_callback():
     """Handle Google OAuth callback.
 
-    For desktop: redirects to tradelogger:// protocol with tokens.
+    For desktop: returns JSON with redirect_url to tradelogger:// protocol.
     For web: returns JSON with cookies.
 
     ---
     tags:
       - Authentication
     responses:
-      302:
-        description: Redirect to dashboard or tradelogger:// protocol
+      200:
+        description: Login successful
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            user:
+              type: object
+            redirect_url:
+              type: string
+              description: Protocol URL for desktop login
     """
-    from flask import redirect
-
     google = get_google_client()
     if not google:
         return jsonify({"error": "Google OAuth not configured"}), 503
@@ -270,12 +278,15 @@ def google_callback():
         refresh_token = generate_refresh_token(user.id)
 
         if source == "desktop":
-            # For desktop: redirect directly to protocol with tokens
-            return redirect(
+            # For desktop: return JSON with protocol redirect URL
+            protocol_url = (
                 f"tradelogger://auth?status=success"
                 f"&access_token={access_token}"
                 f"&refresh_token={refresh_token}"
                 f"&remember_me=true"
+            )
+            return jsonify(
+                {"message": "Login successful", "redirect_url": protocol_url}
             )
 
         # For web: return JSON and set cookies

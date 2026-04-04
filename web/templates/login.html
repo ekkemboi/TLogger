@@ -268,16 +268,16 @@
                     })
                 });
 
-                // Check if response is a redirect (desktop flow)
-                if (response.redirected && source === 'desktop') {
-                    // Desktop flow: browser follows redirect to tradelogger://
-                    window.location.href = response.url;
-                    return;
-                }
-
                 const data = await response.json();
 
                 if (response.ok) {
+                    // Check if this is desktop flow with redirect_url
+                    if (data.redirect_url && source === 'desktop') {
+                        // Desktop flow: redirect to tradelogger:// protocol
+                        window.location.href = data.redirect_url;
+                        return;
+                    }
+                    
                     // Web flow: redirect to dashboard
                     const redirect = urlParams.get('redirect') || '/';
                     window.location.href = redirect;
@@ -285,6 +285,7 @@
                     showError(data.error || 'Login failed. Please check your credentials.');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showError('Network error. Please try again.');
             } finally {
                 setLoading('login-submit', false);

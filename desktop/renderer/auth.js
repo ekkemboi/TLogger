@@ -58,15 +58,6 @@ class WidgetAuthManager {
         this.logout();
       });
     }
-
-    // Manual check button
-    const checkAuthBtn = document.getElementById('check-auth-btn');
-    if (checkAuthBtn) {
-      checkAuthBtn.addEventListener('click', () => {
-        console.log('Check auth button clicked!');
-        this.checkAuthStatus();
-      });
-    }
   }
 
   /**

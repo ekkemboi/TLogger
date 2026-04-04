@@ -360,6 +360,12 @@
     {% block head %}{% endblock %}
 </head>
 <body class="flex">
+    <script>
+        // HTMX Configuration: Include credentials (cookies) with all requests
+        document.body.addEventListener('htmx:configRequest', function(evt) {
+            evt.detail.withCredentials = true;
+        });
+    </script>
     <!-- Sidebar -->
     <aside class="sidebar flex flex-col h-screen">
         <!-- Logo -->

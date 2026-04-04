@@ -32,8 +32,10 @@ class Config:
     )
 
     # Cookie Security
-    JWT_COOKIE_SECURE = False  # Set to True in production (HTTPS only)
-    JWT_COOKIE_SAMESITE = "Lax"
+    # For desktop widget support, use Secure=True + SameSite=None
+    # Localhost is treated as secure by modern browsers, so this works for dev
+    JWT_COOKIE_SECURE = True  # Required for SameSite=None
+    JWT_COOKIE_SAMESITE = "None"  # Allows desktop widget cross-origin requests
 
 
 class DevelopmentConfig(Config):

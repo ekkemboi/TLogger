@@ -1,5 +1,6 @@
 """Authentication routes for TradeLogger."""
 
+import jwt
 from authlib.integrations.flask_client import OAuth
 from flask import Blueprint, current_app, jsonify, request, session, url_for
 
@@ -347,3 +348,33 @@ def auth_status():
                 return jsonify({"authenticated": True, "user": user.to_dict()})
 
     return jsonify({"authenticated": False, "user": None})
+
+
+@auth_bp.route("/auth/desktop-callback")
+def desktop_auth_callback():
+    """Redirect endpoint for desktop app authentication.
+
+    After browser login, redirects to custom protocol URL to notify widget.
+
+    ---
+    tags:
+      - Authentication
+    responses:
+      302:
+        description: Redirect to tradelogger:// protocol URL
+    """
+    from flask import redirect
+
+    token = request.cookies.get("access_token")
+    if token:
+        try:
+            from src.utils.jwt_utils import decode_token
+
+            decode_token(token)
+            return redirect("tradelogger://auth?status=success")
+        except jwt.ExpiredSignatureError:
+            return redirect("tradelogger://auth?status=expired")
+        except jwt.InvalidTokenError:
+            return redirect("tradelogger://auth?status=invalid")
+
+    return redirect("tradelogger://auth?status=unauthenticated")

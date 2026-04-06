@@ -1,5 +1,6 @@
 """Test fixtures for TradeLogger."""
 
+import os
 import pytest
 from src.app import create_app
 from src.models import Account, User, db as _db
@@ -7,10 +8,32 @@ from src.utils.jwt_utils import generate_access_token
 from src.utils.password_utils import hash_password
 
 
+def get_db_uri():
+    """Get database URI based on TEST_DB environment variable."""
+    test_db = os.environ.get("TEST_DB", "").lower()
+
+    if test_db == "postgres":
+        # Use PostgreSQL with test account
+        return os.environ.get(
+            "DATABASE_URL", "postgresql://user:pass@localhost/tradelogger"
+        )
+    elif test_db == "docker":
+        # Use Docker PostgreSQL
+        return "postgresql://postgres:postgres@localhost:5432/tradelogger"
+    else:
+        # Default: SQLite in-memory
+        return "sqlite:///:memory:"
+
+
 @pytest.fixture(scope="function")
 def app():
     """Create application for testing."""
+    db_uri = get_db_uri()
     app = create_app("testing")
+
+    # Override the database URI
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+
     with app.app_context():
         _db.create_all()
         yield app
@@ -27,16 +50,35 @@ def client(app):
 @pytest.fixture
 def default_user(app):
     """Create a default user for testing."""
+    test_db = os.environ.get("TEST_DB", "").lower()
+
     with app.app_context():
-        user = User(
-            email="test@example.com",
-            name="Test User",
-            password_hash=hash_password("TestPassword123!"),
-            auth_provider="email",
-        )
-        _db.session.add(user)
-        _db.session.commit()
-        return user.id
+        if test_db in ("postgres", "docker"):
+            # For PostgreSQL, use existing test account or create one
+            user = User.query.filter_by(email="test@example.com").first()
+            if user:
+                return user.id
+
+            user = User(
+                email="test@example.com",
+                name="Test User",
+                password_hash=hash_password("TestPassword123!"),
+                auth_provider="email",
+            )
+            _db.session.add(user)
+            _db.session.commit()
+            return user.id
+        else:
+            # For SQLite, create fresh user
+            user = User(
+                email="test@example.com",
+                name="Test User",
+                password_hash=hash_password("TestPassword123!"),
+                auth_provider="email",
+            )
+            _db.session.add(user)
+            _db.session.commit()
+            return user.id
 
 
 @pytest.fixture
@@ -58,11 +100,27 @@ def auth_client(client, auth_token):
 @pytest.fixture
 def default_account(app, default_user):
     """Create a default account for testing."""
+    test_db = os.environ.get("TEST_DB", "").lower()
+
     with app.app_context():
-        account = Account(name="Test Account", user_id=default_user)
-        _db.session.add(account)
-        _db.session.commit()
-        return account.id
+        if test_db in ("postgres", "docker"):
+            # For PostgreSQL, use existing test account or create one
+            account = Account.query.filter_by(
+                name="Test Account", user_id=default_user
+            ).first()
+            if account:
+                return account.id
+
+            account = Account(name="Test Account", user_id=default_user)
+            _db.session.add(account)
+            _db.session.commit()
+            return account.id
+        else:
+            # For SQLite, create fresh account
+            account = Account(name="Test Account", user_id=default_user)
+            _db.session.add(account)
+            _db.session.commit()
+            return account.id
 
 
 @pytest.fixture

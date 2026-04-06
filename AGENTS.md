@@ -3,6 +3,7 @@
 TradeLogger is a trade journaling system with a Flask backend, PostgreSQL database, and Electron desktop widget for manual trade entry. The web dashboard displays metrics and trade history using a **v2 sidebar design with HTMX for SPA-like navigation**.
 
 ### Recent Updates (v2 Sidebar Redesign)
+
 - **Layout**: Left sidebar (260px) instead of top navbar
 - **Colors**: Green primary (#22C55E) instead of amber
 - **Font**: System font stack (Inter removed)
@@ -56,11 +57,17 @@ tests/
   conftest.py         # Fixtures (app, client, sample_trade_data)
   test_trades.py      # Trade API tests
   test_metrics.py     # Metrics API tests
+  e2e/                # End-to-end tests (Playwright)
+plans/
+  features/           # Feature/testing plan files (FEA-*.md)
+  fixes/               # Bug fix plan files (FIX-*.md)
+  debugs/              # Debug investigation plans (DBG-*.md)
 ```
 
 ## HTMX Navigation
 
 The v2 redesign uses HTMX for SPA-like navigation:
+
 - Sidebar persists across page transitions (no full reloads)
 - `hx-get` attributes on sidebar links trigger AJAX requests
 - `hx-target="main"` swaps only the content area
@@ -68,55 +75,61 @@ The v2 redesign uses HTMX for SPA-like navigation:
 - `withCredentials: true` ensures authentication cookies are sent
 
 ### Template Structure
+
 ```html
 <!-- base.html - Single content block definition -->
 {% if not htmx_request %}
-  <!-- Sidebar, scripts, global handlers -->
+<!-- Sidebar, scripts, global handlers -->
 {% endif %}
-<main>
-  {% block content %}{% endblock %}
-</main>
+<main>{% block content %}{% endblock %}</main>
 {% if not htmx_request %}
-  <!-- Footer scripts -->
+<!-- Footer scripts -->
 {% endif %}
 ```
 
 ## Code Style
 
 ### Imports
+
 - Standard library first, then third-party, then local
 - Use absolute imports: `from src.models import Trade`
 - Alphabetize within groups
 
 ### Naming
+
 - **snake_case** for functions, variables, methods
 - **PascalCase** for classes (e.g., `TradeService`, `TradeDirection`)
 - **UPPER_SNAKE_CASE** for enum values and constants
 - Blueprints named with `_bp` suffix: `trades_bp`
 
 ### Types & Documentation
+
 - All public functions require docstrings (one-line `"""Summary."""`)
 - Use `Decimal` for monetary values (never float in calculations)
 - Convert Decimal to float only in `to_dict()` for JSON serialization
 
 ### Error Handling
+
 - Return `(jsonify({"error": "message"}), 400)` for client errors
 - Return `jsonify({"error": "Not found"}), 404` for missing resources
 - Validate required fields at route level before calling services
 
 ### Models
+
 - UUID primary keys: `db.Column(db.String(36), default=lambda: str(uuid.uuid4()))`
 - Enum columns: `db.Column(db.Enum(TradeDirection))`
 - JSON columns for arrays/objects: `db.Column(db.JSON)`
 - Always implement `to_dict()` and `__repr__()`
 
 ### Routes
+
 - Use Blueprint pattern: `bp = Blueprint("name", __name__)`
 - Services contain business logic, routes handle HTTP
 - Accept both JSON (`request.get_json()`) and multipart (`request.form`)
 - Swagger docstrings on route functions (YAML after `---`)
 
 ### Testing
+
 - Use pytest fixtures defined in `conftest.py`
 - Each test function gets a fresh database (function-scoped `app` fixture)
 - Test class per endpoint: `TestCreateTrade`, `TestGetTrades`
@@ -125,6 +138,7 @@ The v2 redesign uses HTMX for SPA-like navigation:
 ## API Patterns
 
 ### Create resource
+
 ```python
 @bp.route("/resources", methods=["POST"])
 def create_resource():
@@ -136,6 +150,7 @@ def create_resource():
 ```
 
 ### List with filters
+
 ```python
 filters = {k: v for k, v in request.args.items() if v is not None}
 pagination = Service.get_all(filters, page, per_page)
@@ -149,3 +164,25 @@ return jsonify({"items": [i.to_dict() for i in pagination.items], "total": pagin
 - `take_profit` field serves as the exit price for closed trades
 - `exit_transactions` array tracks partial exits with qty, exit_price, fees
 - Trade status: `CONFIRMED` (open) → `CLOSED` (has take_profit or exit_transactions)
+
+## Testing Plans
+
+User journey testing plans are stored in `.opencode/plans/features/`:
+
+```bash
+# List all test plans
+ls .opencode/plans/features/FEA-*.md
+
+# Desktop Widget Testing Sessions (5 total)
+FEA-001-test-session-1.md   # Login + Add Trade (Basic)
+FEA-002-test-session-2.md   # Window Controls + Screenshot
+FEA-003-test-session-3.md  # Logout + Settings Menu
+FEA-004-test-session-4.md  # Partial Exits + View All
+FEA-005-test-session-5.md  # Auto-Save + Final Review
+
+# Run tests by keyword
+python -m pytest tests/ -k "create_trade" -v
+
+# Run E2E tests
+python -m pytest tests/e2e/ -v
+```

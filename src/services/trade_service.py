@@ -9,7 +9,6 @@ from src.models import (
     TradeDirection,
     TradeOutcome,
     TradePartialExit,
-    TradeStatus,
     db,
 )
 
@@ -130,8 +129,9 @@ class TradeService:
         take_profit = data.get("take_profit")
         exit_price = data.get("exit_price")
         symbol = data.get("symbol").upper()
-        outcome = data.get("outcome", "win")
-        # Convert to uppercase to match enum values
+        outcome = data.get("outcome")
+
+        # Only uppercase if outcome was provided (not None)
         if outcome:
             outcome = outcome.upper()
 
@@ -171,8 +171,9 @@ class TradeService:
                 if data.get("position_size")
                 else None
             ),
-            status=TradeStatus.CLOSED if is_closed else TradeStatus.CONFIRMED,
-            outcome=TradeOutcome(outcome) if outcome else TradeOutcome.WIN,
+            outcome=TradeOutcome(outcome)
+            if outcome
+            else (TradeOutcome.WIN if is_closed else None),
             fees=fees,
             notes=data.get("notes"),
             tags=data.get("tags"),
@@ -226,10 +227,14 @@ class TradeService:
                 query = query.filter(Trade.symbol == filters["symbol"].upper())
             if filters.get("direction"):
                 query = query.filter(
-                    Trade.direction == TradeDirection(filters["direction"])
+                    Trade.direction == TradeDirection(filters["direction"].lower())
                 )
             if filters.get("status"):
-                query = query.filter(Trade.status == TradeStatus(filters["status"]))
+                # Check if outcome is not null to determine if trade is closed
+                if filters["status"].lower() == "closed":
+                    query = query.filter(Trade.outcome.isnot(None))
+                elif filters["status"].lower() == "confirmed":
+                    query = query.filter(Trade.outcome.is_(None))
             if filters.get("account_id"):
                 query = query.filter(Trade.account_id == filters["account_id"])
             if filters.get("start_date"):
@@ -260,13 +265,14 @@ class TradeService:
             )
             if data["take_profit"]:
                 trade.exited_at = datetime.utcnow()
-                trade.status = TradeStatus.CLOSED
+                # Set outcome to WIN when closing with take_profit
+                trade.outcome = TradeOutcome.WIN
 
         if "exit_transactions" in data:
             trade.exit_transactions = data["exit_transactions"]
             if data["exit_transactions"]:
-                trade.status = TradeStatus.CLOSED
                 trade.exited_at = datetime.utcnow()
+                trade.outcome = TradeOutcome.WIN
 
         if "symbol" in data:
             trade.symbol = data["symbol"].upper()
@@ -325,9 +331,7 @@ class TradeService:
     @staticmethod
     def get_pending_trades(user_id=None):
         """Get trades without exit price (open positions)."""
-        query = Trade.query.filter(
-            Trade.status == TradeStatus.CONFIRMED, Trade.take_profit.is_(None)
-        )
+        query = Trade.query.filter(Trade.outcome.is_(None), Trade.take_profit.is_(None))
         if user_id:
             query = query.filter(Trade.user_id == user_id)
         return query.all()

@@ -153,6 +153,10 @@ def login():
     if not data:
         return jsonify({"error": "Request body required"}), 400
 
+    current_app.logger.info(
+        f"Login request: email={data.get('email')}, source={data.get('source')}"
+    )
+
     email = data.get("email", "").strip()
     password = data.get("password", "")
 
@@ -168,7 +172,9 @@ def login():
     source = data.get("source")
 
     if source == "desktop":
-        # For desktop: return JSON with protocol redirect URL
+        current_app.logger.info("Desktop login detected, returning protocol URL")
+        # For desktop: return JSON with redirect URL
+        # Always use protocol URL - the OAuth flow handles the callback
         remember_me = data.get("remember_me", False)
         protocol_url = (
             f"tradelogger://auth?status=success"
@@ -176,6 +182,7 @@ def login():
             f"&refresh_token={refresh_token}"
             f"&remember_me={str(remember_me).lower()}"
         )
+        current_app.logger.info(f"Returning redirect_url: {protocol_url[:50]}...")
         return jsonify({"message": "Login successful", "redirect_url": protocol_url})
 
     # For web: return JSON and set cookies

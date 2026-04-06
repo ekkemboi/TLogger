@@ -2,6 +2,9 @@ const { app, BrowserWindow, ipcMain, screen, shell, safeStorage } = require("ele
 const path = require("path");
 const fs = require("fs");
 const { promisify } = require("util");
+const express = require("express");
+const http = require("http");
+const crypto = require("crypto");
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
@@ -9,6 +12,12 @@ const mkdir = promisify(fs.mkdir);
 
 // Token storage path
 const TOKEN_FILE = path.join(app.getPath('userData'), 'auth_tokens.enc');
+
+// OAuth flow state
+let oauthCallbackServer = null;
+let oauthCallbackPort = null;
+let pendingOAuthCallback = null;
+let oauthRedirectUri = null; // Track which redirect_uri was used
 
 // Register tradelogger:// protocol
 if (process.platform === 'linux') {
@@ -162,7 +171,7 @@ app.on('open-url', (event, url) => {
 
 /**
  * Handle deep link from protocol URL
- * @param {string} url - The protocol URL (e.g., tradelogger://auth?status=success)
+ * @param {string} url - The protocol URL (e.g., tradelogger://auth?code=abc123&state=xyz789)
  */
 async function handleDeepLink(url) {
   console.log('=== Handling deep link ===');
@@ -173,44 +182,88 @@ async function handleDeepLink(url) {
     console.log('Parsed URL:', urlObj.pathname, urlObj.searchParams.toString());
 
     if (urlObj.pathname === '/auth') {
-      const status = urlObj.searchParams.get('status');
-      console.log('Auth callback status:', status);
+      const code = urlObj.searchParams.get('code');
+      const state = urlObj.searchParams.get('state');
+      const error = urlObj.searchParams.get('error');
+      
+      console.log('OAuth callback received:', { hasCode: !!code, hasState: !!state, hasError: !!error });
 
-      // Extract tokens from URL if status is success
-      let tokenData = null;
-      if (status === 'success') {
-        const accessToken = urlObj.searchParams.get('access_token');
-        const refreshToken = urlObj.searchParams.get('refresh_token');
-        const rememberMe = urlObj.searchParams.get('remember_me') === 'true';
-
-        if (accessToken && refreshToken) {
-          console.log('Received tokens from auth callback');
-          tokenData = {
-            accessToken,
-            refreshToken,
-            rememberMe,
-          };
-
-          // Store tokens securely
-          await storeTokens(accessToken, refreshToken, rememberMe);
+      if (error) {
+        console.error('OAuth error from protocol:', error);
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { status: 'error', error });
         }
-      }
-
-      // If window isn't ready yet, store the URL and tokens for later
-      if (!mainWindow || !mainWindow.webContents) {
-        console.log('Window not ready, storing pending auth URL');
-        pendingAuthUrl = url;
-        pendingTokens = tokenData;
         return;
       }
 
-      // Notify renderer process with full data
-      console.log('Sending auth-callback to renderer');
-      const messageData = { status };
-      if (tokenData) {
-        messageData.tokens = tokenData;
+      if (!code) {
+        console.error('No authorization code in callback');
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { status: 'error', error: 'No authorization code' });
+        }
+        return;
       }
-      mainWindow.webContents.send('auth-callback', messageData);
+
+      // Close localhost callback server if it's still running (protocol won the race)
+      if (oauthCallbackServer) {
+        console.log('Protocol callback received, closing localhost server');
+        oauthCallbackServer.close();
+        oauthCallbackServer = null;
+      }
+
+      // Verify state parameter (CSRF protection)
+      if (state && state !== global.oauthState) {
+        console.error('State mismatch - possible CSRF attack');
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'error', 
+            error: 'Security validation failed' 
+          });
+        }
+        return;
+      }
+
+      try {
+        // Exchange code for tokens
+        const tokenData = await exchangeCodeForTokens(code, global.oauthCodeVerifier);
+        
+        // Store tokens
+        await storeTokens(tokenData.access_token, tokenData.refresh_token, true);
+        
+        // Create token data for renderer
+        const rendererTokenData = {
+          accessToken: tokenData.access_token,
+          refreshToken: tokenData.refresh_token,
+          rememberMe: true
+        };
+
+        // If window isn't ready yet, store the tokens for later
+        if (!mainWindow || !mainWindow.webContents) {
+          console.log('Window not ready, storing pending tokens');
+          pendingTokens = rendererTokenData;
+          return;
+        }
+
+        // Notify renderer process
+        console.log('Sending auth-callback to renderer');
+        mainWindow.webContents.send('auth-callback', { 
+          status: 'success',
+          tokens: rendererTokenData
+        });
+        
+        // Clear temporary PKCE parameters
+        global.oauthCodeVerifier = null;
+        global.oauthState = null;
+        
+      } catch (error) {
+        console.error('Token exchange failed:', error);
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'error', 
+            error: error.message 
+          });
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to handle deep link:', error);
@@ -267,19 +320,13 @@ function createWindow() {
       }
     }
     
-    // Handle any pending auth URL from second-instance
-    if (pendingAuthUrl) {
-      console.log('Processing pending auth URL:', pendingAuthUrl);
-      const urlObj = new URL(pendingAuthUrl);
-      const status = urlObj.searchParams.get('status');
-      
-      const messageData = { status };
-      if (pendingTokens && status === 'success') {
-        messageData.tokens = pendingTokens;
-      }
-      
-      mainWindow.webContents.send('auth-callback', messageData);
-      pendingAuthUrl = null;
+    // Handle any pending tokens from protocol callback
+    if (pendingTokens) {
+      console.log('Processing pending tokens');
+      mainWindow.webContents.send('auth-callback', { 
+        status: 'success',
+        tokens: pendingTokens
+      });
       pendingTokens = null;
     }
   });
@@ -358,12 +405,290 @@ ipcMain.handle("minimize-window", () => {
   return { success: true };
 });
 
+// OAuth 2.0 with PKCE helpers
+function generatePKCE() {
+  // Generate PKCE code verifier and challenge.
+  const codeVerifier = crypto.randomBytes(32).toString('base64url');
+  const codeChallenge = crypto.createHash('sha256')
+    .update(codeVerifier)
+    .digest('base64url');
+  return { codeVerifier, codeChallenge };
+}
+
+function generateState() {
+  // Generate random state parameter for CSRF protection.
+  return crypto.randomBytes(32).toString('base64url');
+}
+
+async function findAvailablePort(startPort = 45678) {
+  // Find an available port for the callback server.
+  return new Promise((resolve, reject) => {
+    const server = http.createServer();
+    server.listen(startPort, () => {
+      const port = server.address().port;
+      server.close(() => resolve(port));
+    });
+    server.on('error', () => {
+      // Port in use, try next one
+      resolve(findAvailablePort(startPort + 1));
+    });
+  });
+}
+
+function startOAuthCallbackServer(port, onCodeReceived) {
+  // Start Express server to receive OAuth callback.
+  const app = express();
+  
+  app.get('/callback', (req, res) => {
+    const { code, state, error, status, access_token, refresh_token, remember_me } = req.query;
+    
+    console.log('=== Localhost callback received ===');
+    console.log('Query params:', req.query);
+    console.log('Full URL:', req.originalUrl);
+    
+    const htmlTemplate = (title, message, icon, color) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-gray-800 rounded-2xl p-8 text-center shadow-2xl">
+        <div class="w-20 h-20 ${color} rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-4xl">${icon}</span>
+        </div>
+        <h1 class="text-2xl font-bold text-white mb-2">${title}</h1>
+        <p class="text-gray-400 mb-6">${message}</p>
+        <div class="text-sm text-gray-500">
+            <p>You can close this window</p>
+        </div>
+    </div>
+</body>
+</html>`;
+    
+    // Handle OAuth code flow (normal OAuth)
+    if (code) {
+      console.log('OAuth callback received with code');
+      res.send(htmlTemplate(
+        'Authentication Successful',
+        'You are now signed in to TradeLogger.',
+        '✓',
+        'bg-green-500'
+      ));
+      onCodeReceived(code, state, null);
+    }
+    // Handle direct token passing (development mode shortcut)
+    else if (status === 'success' && access_token) {
+      console.log('Direct token received (development mode)');
+      res.send(htmlTemplate(
+        'Authentication Successful',
+        'You are now signed in to TradeLogger.',
+        '✓',
+        'bg-green-500'
+      ));
+      onCodeReceived(null, null, null, { access_token, refresh_token, remember_me });
+    }
+    else if (error) {
+      console.error('OAuth callback error:', error);
+      res.send(htmlTemplate(
+        'Authentication Failed',
+        error || 'An error occurred during authentication.',
+        '✗',
+        'bg-red-500'
+      ));
+      onCodeReceived(null, null, error);
+    } else {
+      console.log('OAuth callback - no code or error');
+      res.send(htmlTemplate(
+        'Invalid Request',
+        'Missing authorization code.',
+        '⚠',
+        'bg-yellow-500'
+      ));
+      onCodeReceived(null, null, 'Missing authorization code');
+    }
+    
+    // Close server after handling callback
+    setTimeout(() => {
+      if (oauthCallbackServer) {
+        oauthCallbackServer.close();
+        oauthCallbackServer = null;
+        console.log('OAuth callback server closed');
+      }
+    }, 1000);
+  });
+  
+  oauthCallbackServer = app.listen(port, () => {
+    console.log(`OAuth callback server listening on port ${port}`);
+    console.log(`Callback URL: http://127.0.0.1:${port}/callback`);
+  });
+  
+  oauthCallbackPort = port;
+  return port;
+}
+
+async function exchangeCodeForTokens(code, codeVerifier) {
+  // Exchange authorization code for access and refresh tokens.
+  // Use the redirect_uri that was used during authorization (stored in oauthRedirectUri)
+  const redirectUri = oauthRedirectUri || `http://127.0.0.1:${oauthCallbackPort}/callback`;
+  
+  try {
+    const response = await fetch('http://localhost:5000/api/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        code_verifier: codeVerifier,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Token exchange failed');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Token exchange error:', error);
+    throw error;
+  }
+}
+
 // Auth IPC handlers
 ipcMain.handle("open-browser-login", async () => {
-  console.log('Opening browser for login...');
-  const loginUrl = 'http://localhost:5000/login?source=desktop';
-  await shell.openExternal(loginUrl);
-  return { success: true };
+  console.log('Opening browser for OAuth login...');
+  
+  try {
+    // Generate PKCE parameters
+    const { codeVerifier, codeChallenge } = generatePKCE();
+    const state = generateState();
+    
+    // Start localhost callback server
+    const port = await findAvailablePort();
+    const localhostUrl = `http://127.0.0.1:${port}/callback`;
+    
+    // Store PKCE parameters temporarily
+    global.oauthCodeVerifier = codeVerifier;
+    global.oauthState = state;
+    
+    // Start callback server
+    startOAuthCallbackServer(port, async (code, returnedState, error, directTokens) => {
+      // Handle direct token passing (development mode shortcut)
+      if (directTokens) {
+        console.log('Direct tokens received:', directTokens);
+        await storeTokens(directTokens.access_token, directTokens.refresh_token, directTokens.remember_me);
+        
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'success',
+            tokens: {
+              accessToken: directTokens.access_token,
+              refreshToken: directTokens.refresh_token,
+              rememberMe: directTokens.remember_me
+            }
+          });
+        }
+        return;
+      }
+      
+      if (error) {
+        console.error('OAuth callback error:', error);
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'error', 
+            error: error 
+          });
+        }
+        return;
+      }
+      
+      // Verify state parameter (CSRF protection)
+      if (returnedState !== global.oauthState) {
+        console.error('State mismatch - possible CSRF attack');
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'error', 
+            error: 'Security validation failed' 
+          });
+        }
+        return;
+      }
+      
+      try {
+        // Exchange code for tokens
+        const tokenData = await exchangeCodeForTokens(code, global.oauthCodeVerifier);
+        
+        // Store tokens
+        await storeTokens(tokenData.access_token, tokenData.refresh_token, true);
+        
+        // Notify renderer
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'success',
+            tokens: {
+              accessToken: tokenData.access_token,
+              refreshToken: tokenData.refresh_token,
+              rememberMe: true
+            }
+          });
+        }
+        
+        // Clear temporary PKCE parameters
+        global.oauthCodeVerifier = null;
+        global.oauthState = null;
+        
+      } catch (error) {
+        console.error('Token exchange failed:', error);
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('auth-callback', { 
+            status: 'error', 
+            error: error.message 
+          });
+        }
+      }
+    });
+    
+    // Build authorization URL
+    // Use localhost callback for development, protocol for packaged app
+    let redirectUri;
+    console.log('app.isPackaged:', app.isPackaged);
+    if (app.isPackaged) {
+      redirectUri = 'tradelogger://auth';
+    } else {
+      redirectUri = localhostUrl;
+    }
+
+    // Store redirect URI for token exchange
+    oauthRedirectUri = redirectUri;
+
+    const authUrl = `http://localhost:5000/api/oauth/authorize?` +
+      `redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&fallback_uri=${encodeURIComponent(localhostUrl)}` +
+      `&code_challenge=${encodeURIComponent(codeChallenge)}` +
+      `&state=${encodeURIComponent(state)}` +
+      `&response_type=code`;
+    
+    console.log('Opening browser with OAuth URL');
+    console.log('Development mode (localhost callback):', !app.isPackaged);
+    console.log('Redirect URI:', redirectUri);
+    await shell.openExternal(authUrl);
+    
+    return { success: true, port };
+  } catch (error) {
+    console.error('Failed to start OAuth flow:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Legacy handler - kept for backward compatibility
+ipcMain.handle("start-oauth-flow", async () => {
+  // Start OAuth 2.0 flow with PKCE and dual callback support.
+  return await ipcMain.handlers.get("open-browser-login")();
 });
 
 // Token storage IPC handlers

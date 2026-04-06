@@ -111,6 +111,7 @@ def create_app(config_name=None):
     Swagger(app, config=swagger_config, template=swagger_template)
 
     from src.routes.auth import auth_bp, oauth
+    from src.routes.oauth import oauth_bp
     from src.routes.trades import trades_bp
     from src.routes.metrics import metrics_bp
     from src.routes.favorites import favorites_bp
@@ -122,6 +123,7 @@ def create_app(config_name=None):
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix="/api")
+    app.register_blueprint(oauth_bp, url_prefix="/api")
     app.register_blueprint(trades_bp, url_prefix="/api")
     app.register_blueprint(metrics_bp, url_prefix="/api")
     app.register_blueprint(favorites_bp, url_prefix="/api")
@@ -130,6 +132,7 @@ def create_app(config_name=None):
 
     # Exempt API routes from CSRF (they use JWT tokens)
     csrf.exempt(auth_bp)
+    csrf.exempt(oauth_bp)
     csrf.exempt(trades_bp)
     csrf.exempt(metrics_bp)
     csrf.exempt(favorites_bp)

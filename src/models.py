@@ -153,16 +153,36 @@ class Trade(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=False)
     symbol = db.Column(db.String(50), nullable=False)
-    direction = db.Column(db.Enum(TradeDirection), nullable=False)
+    direction = db.Column(
+        db.Enum(
+            TradeDirection,
+            native_mode=False,
+            values_callable=lambda x: [e.value for e in TradeDirection],
+        ),
+        nullable=False,
+    )
     entry_price = db.Column(db.Numeric(18, 8), nullable=False)
     exit_price = db.Column(db.Numeric(18, 8), nullable=True)
     stop_loss = db.Column(db.Numeric(18, 8), nullable=True)
     take_profit = db.Column(db.Numeric(18, 8), nullable=True)
     position_size = db.Column(db.Numeric(18, 8), nullable=True)
     status = db.Column(
-        db.Enum(TradeStatus), nullable=False, default=TradeStatus.CONFIRMED
+        db.Enum(
+            TradeStatus,
+            native_mode=False,
+            values_callable=lambda x: [e.value for e in TradeStatus],
+        ),
+        nullable=False,
+        default=TradeStatus.CONFIRMED,
     )
-    outcome = db.Column(db.Enum(TradeOutcome), nullable=True, default=TradeOutcome.WIN)
+    outcome = db.Column(
+        db.Enum(
+            TradeOutcome,
+            native_mode=False,
+            values_callable=lambda x: [e.value for e in TradeOutcome],
+        ),
+        nullable=True,
+    )
     pnl = db.Column(db.Numeric(18, 8), nullable=True)
     fees = db.Column(db.Numeric(18, 8), nullable=True, default=0)
     trade_duration = db.Column(db.Interval, nullable=True)
@@ -201,7 +221,7 @@ class Trade(db.Model):
             "stop_loss": float(self.stop_loss) if self.stop_loss else None,
             "take_profit": float(self.take_profit) if self.take_profit else None,
             "position_size": float(self.position_size) if self.position_size else None,
-            "status": self.status.value if self.status else None,
+            "status": "closed" if self.outcome else "confirmed",
             "outcome": self.outcome.value.lower() if self.outcome else "win",
             "pnl": float(self.pnl) if self.pnl else None,
             "fees": float(self.fees) if self.fees else None,

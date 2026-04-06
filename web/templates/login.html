@@ -152,13 +152,17 @@
     </div>
 
     <script>
+        // Debug logging for OAuth flow
+        console.log('=== Login Page Loaded ===');
+        console.log('URL:', window.location.href);
+        console.log('Hostname:', window.location.hostname);
+
         // Check if already authenticated
         async function checkAuth() {
             try {
                 const response = await fetch('/api/auth/status', { credentials: 'include' });
                 const data = await response.json();
                 if (data.authenticated) {
-                    // Already logged in, redirect to dashboard
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect') || '/';
                     window.location.href = redirect;
@@ -194,7 +198,6 @@
             const themeIcon = document.getElementById('theme-icon');
             if (!themeIcon) return;
             
-            // Sun icon for dark mode, Moon icon for light mode
             if (isDark) {
                 themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
             } else {
@@ -249,13 +252,27 @@
             hideError();
             setLoading('login-submit', true);
 
+            console.log('=== handleLogin called ===');
+
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const rememberMe = document.getElementById('remember-me').checked;
             const urlParams = new URLSearchParams(window.location.search);
-            const source = urlParams.get('source'); // 'desktop' or null
+            const source = urlParams.get('source');
+            const oauthFlow = urlParams.get('oauth_flow');
+
+            console.log('URL params:', { source, oauthFlow });
+
+            // For OAuth flow, always use desktop source
+            const effectiveSource = oauthFlow === 'true' ? 'desktop' : source;
+            console.log('Effective source:', effectiveSource);
+
+            // Check if we're in development mode
+            const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            console.log('Is dev:', isDev);
 
             try {
+                console.log('Sending login request to /api/auth/login');
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -263,39 +280,51 @@
                     body: JSON.stringify({ 
                         email, 
                         password, 
-                        source,
+                        source: effectiveSource,
                         remember_me: rememberMe 
                     })
                 });
 
                 const data = await response.json();
+                console.log('Login response:', data);
 
                 if (response.ok) {
-                    // Check if this is desktop flow with redirect_url
-                    if (data.redirect_url && source === 'desktop') {
-                        // Desktop flow: redirect to tradelogger:// protocol
-                        console.log('Redirecting to protocol:', data.redirect_url);
+                    if (data.redirect_url && effectiveSource === 'desktop') {
+                        console.log('Desktop flow detected');
                         
-                        // Show a message in case protocol doesn't work
-                        const loginBox = document.querySelector('.login-box');
+                        // In development mode (localhost/127.0.0.1), use localhost callback
+                        let redirectUrl = data.redirect_url;
+                        
+                        if (isDev) {
+                            console.log('Converting protocol URL to localhost callback');
+                            // Replace protocol URL with localhost callback URL
+                            const port = 45678;
+                            const params = redirectUrl.replace('tradelogger://auth?', '');
+                            redirectUrl = `http://127.0.0.1:${port}/callback?${params}`;
+                        }
+                        
+                        console.log('Redirecting to:', redirectUrl);
+                        
+                        // Show success message
+                        const loginForm = document.getElementById('login-form');
                         const msg = document.createElement('div');
                         msg.innerHTML = `
                             <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; text-align: center;">
                                 <p style="margin: 0 0 10px 0; color: #2e7d32; font-weight: 600;">✓ Login successful!</p>
-                                <p style="margin: 0; color: #555; font-size: 14px;">Opening TradeLogger app...</p>
+                                <p style="margin: 0; color: #555; font-size: 14px;">Returning to TradeLogger...</p>
                                 <p style="margin: 10px 0 0 0; font-size: 12px; color: #777;">
-                                    If app doesn't open, <a href="${data.redirect_url}" style="color: #22C55E;">click here</a>
+                                    If nothing happens, <a href="${redirectUrl}" style="color: #22C55E;">click here</a>
                                 </p>
                             </div>
                         `;
-                        loginBox.appendChild(msg);
+                        loginForm.appendChild(msg);
                         
-                        // Try to open the protocol
-                        window.location.href = data.redirect_url;
+                        window.location.href = redirectUrl;
                         return;
                     }
                     
                     // Web flow: redirect to dashboard
+                    console.log('Web flow, redirecting to /');
                     const redirect = urlParams.get('redirect') || '/';
                     window.location.href = redirect;
                 } else {
@@ -319,7 +348,6 @@
             const password = document.getElementById('register-password').value;
             const passwordConfirm = document.getElementById('register-password-confirm').value;
 
-            // Validate password match
             if (password !== passwordConfirm) {
                 showError('Passwords do not match.');
                 setLoading('register-submit', false);
@@ -350,7 +378,6 @@
         }
 
         function loginWithGoogle() {
-            // Redirect to Google OAuth login
             const urlParams = new URLSearchParams(window.location.search);
             const source = urlParams.get('source');
             const redirectUrl = source 

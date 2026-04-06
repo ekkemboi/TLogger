@@ -10,9 +10,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setAlwaysOnTop: (enabled) => ipcRenderer.invoke('set-always-on-top', enabled),
     openExternal: (url) => ipcRenderer.invoke('open-external', url),
 
-    // Auth APIs
+    // Auth APIs - OAuth 2.0 with PKCE
     openBrowserLogin: () => ipcRenderer.invoke('open-browser-login'),
+    startOAuthFlow: () => ipcRenderer.invoke('start-oauth-flow'),
     onAuthCallback: (callback) => ipcRenderer.on('auth-callback', (event, ...args) => callback(event, ...args)),
+    removeAuthCallback: (callback) => ipcRenderer.removeListener('auth-callback', callback),
 
     // Token storage APIs (for secure encrypted token management)
     getStoredTokens: () => ipcRenderer.invoke('get-stored-tokens'),

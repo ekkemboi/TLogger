@@ -3,7 +3,7 @@
 {% block title %}TradeLogger - Dashboard{% endblock %}
 
 {% block content %}
-<div class="h-full flex flex-col gap-6">
+<div class="flex flex-col gap-6">
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
@@ -81,134 +81,134 @@
 
 {% block scripts %}
 <script>
-let equityChart, pnlChart;
+    let equityChart, pnlChart;
 
-async function loadMetrics() {
-    try {
-        const accountId = document.getElementById('account-switcher')?.value || '';
-        const startDate = document.getElementById('filter-start').value;
-        const endDate = document.getElementById('filter-end').value;
-        
-        let params = [];
-        if (accountId) params.push(`account_id=${accountId}`);
-        if (startDate) params.push(`start_date=${startDate}`);
-        if (endDate) params.push(`end_date=${endDate}`);
-        const queryParams = params.length ? '?' + params.join('&') : '';
-        
-        const metricsRes = await fetch(`/api/metrics${queryParams}`);
-        const metrics = await metricsRes.json();
+    async function loadMetrics() {
+        try {
+            const accountId = document.getElementById('account-switcher')?.value || '';
+            const startDate = document.getElementById('filter-start').value;
+            const endDate = document.getElementById('filter-end').value;
 
-        document.getElementById('total-trades').textContent = metrics.total_trades;
-        document.getElementById('win-rate').textContent = (metrics.win_rate * 100).toFixed(1) + '%';
-        document.getElementById('total-pnl').textContent = '$' + metrics.total_pnl.toFixed(2);
-        document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-2 pnl-positive' : 'metric-value text-3xl mt-2 pnl-negative';
-        document.getElementById('profit-factor').textContent = metrics.profit_factor.toFixed(2);
-        
-        document.getElementById('avg-win').textContent = '$' + metrics.avg_win.toFixed(2);
-        document.getElementById('avg-loss').textContent = '$' + metrics.avg_loss.toFixed(2);
-        document.getElementById('best-trade').textContent = '$' + metrics.best_trade.toFixed(2);
-        document.getElementById('worst-trade').textContent = '$' + metrics.worst_trade.toFixed(2);
+            let params = [];
+            if (accountId) params.push(`account_id=${accountId}`);
+            if (startDate) params.push(`start_date=${startDate}`);
+            if (endDate) params.push(`end_date=${endDate}`);
+            const queryParams = params.length ? '?' + params.join('&') : '';
 
-        // Equity Curve
-        let tradesParams = ['status=closed', 'per_page=100'];
-        if (accountId) tradesParams.push(`account_id=${accountId}`);
-        if (startDate) tradesParams.push(`start_date=${startDate}`);
-        if (endDate) tradesParams.push(`end_date=${endDate}`);
-        const tradesUrl = `/api/trades?${tradesParams.join('&')}`;
-        const tradesRes = await fetch(tradesUrl);
-        const tradesData = await tradesRes.json();
-        const trades = tradesData.trades || [];
+            const metricsRes = await fetch(`/api/metrics${queryParams}`);
+            const metrics = await metricsRes.json();
 
-        let equity = 0;
-        const equityData = [];
-        const labels = [];
-        trades.forEach((t, i) => {
-            if (t.pnl !== null) {
-                equity += t.pnl;
-                equityData.push(equity);
-                labels.push(i + 1);
-            }
-        });
+            document.getElementById('total-trades').textContent = metrics.total_trades;
+            document.getElementById('win-rate').textContent = (metrics.win_rate * 100).toFixed(1) + '%';
+            document.getElementById('total-pnl').textContent = '$' + metrics.total_pnl.toFixed(2);
+            document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-2 pnl-positive' : 'metric-value text-3xl mt-2 pnl-negative';
+            document.getElementById('profit-factor').textContent = metrics.profit_factor.toFixed(2);
 
-        // Theme-aware chart colors
-        const isDark = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? '#334155' : '#E2E8F0';
-        const tickColor = '#64748B';
+            document.getElementById('avg-win').textContent = '$' + metrics.avg_win.toFixed(2);
+            document.getElementById('avg-loss').textContent = '$' + metrics.avg_loss.toFixed(2);
+            document.getElementById('best-trade').textContent = '$' + metrics.best_trade.toFixed(2);
+            document.getElementById('worst-trade').textContent = '$' + metrics.worst_trade.toFixed(2);
 
-        // Destroy existing charts
-        if (equityChart) equityChart.destroy();
-        if (pnlChart) pnlChart.destroy();
+            // Equity Curve
+            let tradesParams = ['status=closed', 'per_page=100'];
+            if (accountId) tradesParams.push(`account_id=${accountId}`);
+            if (startDate) tradesParams.push(`start_date=${startDate}`);
+            if (endDate) tradesParams.push(`end_date=${endDate}`);
+            const tradesUrl = `/api/trades?${tradesParams.join('&')}`;
+            const tradesRes = await fetch(tradesUrl);
+            const tradesData = await tradesRes.json();
+            const trades = tradesData.trades || [];
 
-        // Equity Curve Chart
-        const equityCtx = document.getElementById('equity-chart').getContext('2d');
-        equityChart = new Chart(equityCtx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Equity',
-                    data: equityData,
-                    borderColor: '#22C55E',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    fill: true,
-                    tension: 0.1,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        grid: { color: gridColor, lineWidth: 0.5 },
-                        ticks: { color: tickColor, font: { size: 10 }, callback: (v) => '$' + v.toFixed(0) }
-                    },
-                    x: {
-                        grid: { color: gridColor, lineWidth: 0.5 },
-                        ticks: { color: tickColor, font: { size: 10 } }
+            let equity = 0;
+            const equityData = [];
+            const labels = [];
+            trades.forEach((t, i) => {
+                if (t.pnl !== null) {
+                    equity += t.pnl;
+                    equityData.push(equity);
+                    labels.push(i + 1);
+                }
+            });
+
+            // Theme-aware chart colors
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? '#334155' : '#E2E8F0';
+            const tickColor = '#64748B';
+
+            // Destroy existing charts
+            if (equityChart) equityChart.destroy();
+            if (pnlChart) pnlChart.destroy();
+
+            // Equity Curve Chart
+            const equityCtx = document.getElementById('equity-chart').getContext('2d');
+            equityChart = new Chart(equityCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Equity',
+                        data: equityData,
+                        borderColor: '#22C55E',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: gridColor, lineWidth: 0.5 },
+                            ticks: { color: tickColor, font: { size: 10 }, callback: (v) => '$' + v.toFixed(0) }
+                        },
+                        x: {
+                            grid: { color: gridColor, lineWidth: 0.5 },
+                            ticks: { color: tickColor, font: { size: 10 } }
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        // PnL Chart
-        const pnlCtx = document.getElementById('pnl-chart').getContext('2d');
-        pnlChart = new Chart(pnlCtx, {
-            type: 'bar',
-            data: {
-                labels: metrics.recent_pnl.map((_, i) => i + 1),
-                datasets: [{
-                    label: 'P&L',
-                    data: metrics.recent_pnl,
-                    backgroundColor: metrics.recent_pnl.map(v => v >= 0 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
-                    borderColor: metrics.recent_pnl.map(v => v >= 0 ? '#22C55E' : '#EF4444'),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } },
-                    x: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } }
+            // PnL Chart
+            const pnlCtx = document.getElementById('pnl-chart').getContext('2d');
+            pnlChart = new Chart(pnlCtx, {
+                type: 'bar',
+                data: {
+                    labels: metrics.recent_pnl.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'P&L',
+                        data: metrics.recent_pnl,
+                        backgroundColor: metrics.recent_pnl.map(v => v >= 0 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
+                        borderColor: metrics.recent_pnl.map(v => v >= 0 ? '#22C55E' : '#EF4444'),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } },
+                        x: { grid: { color: gridColor, lineWidth: 0.5 }, ticks: { color: tickColor, font: { size: 10 } } }
+                    }
                 }
-            }
-        });
+            });
         } catch (error) {
-        console.error('Failed to load metrics:', error);
+            console.error('Failed to load metrics:', error);
+        }
     }
-}
 
-loadMetrics();
+    loadMetrics();
 
-// Re-render charts when theme changes
-window.addEventListener('themeChanged', () => loadMetrics());
+    // Re-render charts when theme changes
+    window.addEventListener('themeChanged', () => loadMetrics());
 
-// Listen for account changes from global switcher
-window.addEventListener('accountChanged', () => loadMetrics());
-document.getElementById('filter-start').addEventListener('change', () => loadMetrics());
-document.getElementById('filter-end').addEventListener('change', () => loadMetrics());
+    // Listen for account changes from global switcher
+    window.addEventListener('accountChanged', () => loadMetrics());
+    document.getElementById('filter-start').addEventListener('change', () => loadMetrics());
+    document.getElementById('filter-end').addEventListener('change', () => loadMetrics());
 </script>
 {% endblock %}

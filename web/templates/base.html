@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,17 +81,17 @@
         * {
             font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
-        
-        html, body {
+
+        html,
+        body {
             height: 100%;
-            overflow: hidden;
         }
-        
+
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
         }
-        
+
         .sidebar-link {
             font-size: 14px;
             font-weight: 500;
@@ -102,29 +103,29 @@
             align-items: center;
             gap: 12px;
         }
-        
+
         .sidebar-link:hover {
             color: var(--text-primary);
             background-color: var(--bg-surface);
         }
-        
+
         .sidebar-link svg {
             stroke: currentColor;
             width: 18px;
             height: 18px;
         }
-        
+
         .sidebar-link.active {
             color: var(--accent-primary);
             background-color: rgba(34, 197, 94, 0.1);
         }
-        
+
         .card {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-default);
             border-radius: 12px;
         }
-        
+
         .btn-primary {
             background-color: var(--accent-primary);
             color: #FFFFFF;
@@ -136,11 +137,11 @@
             transition: all 0.2s;
             border-radius: 8px;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--accent-primary-hover);
         }
-        
+
         .btn-secondary {
             background-color: transparent;
             color: var(--text-primary);
@@ -152,11 +153,11 @@
             transition: all 0.2s;
             border-radius: 8px;
         }
-        
+
         .btn-secondary:hover {
             background-color: var(--bg-surface);
         }
-        
+
         .btn-danger {
             background-color: var(--error);
             color: #FFFFFF;
@@ -168,11 +169,11 @@
             transition: all 0.2s;
             border-radius: 8px;
         }
-        
+
         .btn-danger:hover {
             background-color: #dc2626;
         }
-        
+
         .label {
             font-size: 11px;
             font-weight: 600;
@@ -180,7 +181,7 @@
             text-transform: uppercase;
             color: var(--text-light);
         }
-        
+
         .input {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-default);
@@ -191,17 +192,17 @@
             border-radius: 8px;
             transition: all 0.2s;
         }
-        
+
         .input:focus {
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
         }
-        
+
         .input::placeholder {
             color: var(--text-tertiary);
         }
-        
+
         .account-switcher {
             height: 40px;
             background-color: var(--bg-surface);
@@ -215,22 +216,22 @@
             transition: all 0.2s;
             position: relative;
         }
-        
+
         .account-switcher:hover {
             border-color: var(--accent-primary);
         }
-        
+
         .account-switcher-name {
             font-size: 14px;
             font-weight: 500;
             color: var(--accent-primary);
         }
-        
+
         .account-switcher-arrow {
             font-size: 10px;
             color: var(--text-light);
         }
-        
+
         .account-switcher select {
             position: absolute;
             inset: 0;
@@ -238,7 +239,7 @@
             cursor: pointer;
             width: 100%;
         }
-        
+
         .table-header {
             font-size: 11px;
             font-weight: 600;
@@ -246,12 +247,12 @@
             text-transform: uppercase;
             color: var(--text-light);
         }
-        
+
         .table-cell {
             font-size: 14px;
             color: var(--text-primary);
         }
-        
+
         .badge-success {
             background-color: rgba(34, 197, 94, 0.15);
             color: var(--success);
@@ -262,7 +263,7 @@
             padding: 4px 8px;
             border-radius: 6px;
         }
-        
+
         .badge-warning {
             background-color: rgba(245, 158, 11, 0.15);
             color: var(--warning);
@@ -273,7 +274,7 @@
             padding: 4px 8px;
             border-radius: 6px;
         }
-        
+
         .badge-error {
             background-color: rgba(239, 68, 68, 0.15);
             color: var(--error);
@@ -284,7 +285,7 @@
             padding: 4px 8px;
             border-radius: 6px;
         }
-        
+
         .pagination-btn {
             width: 36px;
             height: 36px;
@@ -300,52 +301,51 @@
             border-radius: 8px;
             background-color: var(--bg-secondary);
         }
-        
+
         .pagination-btn:hover {
             background-color: var(--bg-surface);
         }
-        
+
         .pagination-btn.active {
             background-color: var(--accent-primary);
             color: #FFFFFF;
             border-color: var(--accent-primary);
         }
-        
+
         .metric-value {
             font-weight: 700;
             color: var(--text-primary);
         }
-        
+
         .pnl-positive {
             color: var(--success);
         }
-        
+
         .pnl-negative {
             color: var(--error);
         }
-        
+
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: var(--bg-secondary);
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: var(--border-default);
             border-radius: 3px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-tertiary);
         }
 
         /* Sidebar specific */
         .sidebar {
-            width: 260px;
             background-color: var(--bg-secondary);
             border-right: 1px solid var(--border-default);
         }
@@ -359,84 +359,59 @@
     </style>
     {% block head %}{% endblock %}
 </head>
-<body class="flex">
+
+<body class="">
     {% if not htmx_request %}
     <!-- Sidebar - only for normal page loads -->
-    <aside class="sidebar flex flex-col h-screen">
+    <div class="border-b border-border-default">
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+            </div>
+            <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
+        </a>
+    </div>
+    <aside class="sidebar">
         <!-- Logo -->
-        <div class="p-5 border-b border-border-default">
-            <a href="/" class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                </div>
-                <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
-            </a>
-        </div>
+
 
         <!-- Navigation -->
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-            <a href="/" 
-               hx-get="/" 
-               hx-target="main" 
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/' %}active{% endif %}">
+        <nav class="overflow-y-auto">
+            <a href="/" hx-get="/" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/' %}active{% endif %}">
                 <i data-lucide="layout-dashboard"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="/trades" 
-               hx-get="/trades" 
-               hx-target="main" 
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
+            <a href="/trades" hx-get="/trades" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
                 <i data-lucide="trending-up"></i>
                 <span>Trades</span>
             </a>
-            <a href="/favorites" 
-               hx-get="/favorites" 
-               hx-target="main" 
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
+            <a href="/favorites" hx-get="/favorites" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
                 <i data-lucide="star"></i>
                 <span>Favorites</span>
             </a>
-            <a href="/accounts" 
-               hx-get="/accounts" 
-               hx-target="main" 
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
+            <a href="/accounts" hx-get="/accounts" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
                 <i data-lucide="wallet"></i>
                 <span>Accounts</span>
             </a>
-            <a href="/backtest"
-               hx-get="/backtest"
-               hx-target="main"
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/backtest' %}active{% endif %}">
+            <a href="/backtest" hx-get="/backtest" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/backtest' %}active{% endif %}">
                 <i data-lucide="play-circle"></i>
                 <span>Backtest</span>
             </a>
-            <a href="/import"
-               hx-get="/import"
-               hx-target="main"
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/import' %}active{% endif %}">
+            <a href="/import" hx-get="/import" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/import' %}active{% endif %}">
                 <i data-lucide="upload"></i>
                 <span>Import</span>
             </a>
-            <a href="/analytics"
-               hx-get="/analytics"
-               hx-target="main"
-               hx-push-url="true"
-               hx-swap="innerHTML"
-               class="sidebar-link {% if request.path == '/analytics' %}active{% endif %}">
+            <a href="/analytics" hx-get="/analytics" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                class="sidebar-link {% if request.path == '/analytics' %}active{% endif %}">
                 <i data-lucide="bar-chart-3"></i>
                 <span>Analytics</span>
             </a>
@@ -455,9 +430,11 @@
             </div>
 
             <!-- Theme Toggle -->
-            <button id="theme-toggle" onclick="toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors">
+            <button id="theme-toggle" onclick="toggleTheme()"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors">
                 <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
                 <span class="text-sm font-medium">Toggle Theme</span>
             </button>
@@ -477,143 +454,144 @@
 
     {% if not htmx_request %}
     <script>
-    // Theme Toggle
-    function initTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
+        // Theme Toggle
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+
+            updateThemeIcon();
         }
-        
-        updateThemeIcon();
-    }
 
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        updateThemeIcon();
-        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { isDark } }));
-    }
-
-    function updateThemeIcon() {
-        const isDark = document.documentElement.classList.contains('dark');
-        const themeIcon = document.getElementById('theme-icon');
-        if (!themeIcon) return;
-        
-        // Sun icon for dark mode, Moon icon for light mode
-        if (isDark) {
-            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        } else {
-            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { isDark } }));
         }
-    }
 
-    // Global Account Switcher
-    async function loadAccountSwitcher() {
-        try {
-            const response = await fetch('/api/accounts');
-            const data = await response.json();
-            const select = document.getElementById('account-switcher');
-            if (!select) return;
-            
-            select.innerHTML = '<option value="">All Accounts</option>';
-            (data.accounts || []).forEach(account => {
-                const option = document.createElement('option');
-                option.value = account.id;
-                option.textContent = account.name;
-                select.appendChild(option);
-            });
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const themeIcon = document.getElementById('theme-icon');
+            if (!themeIcon) return;
 
-            // Restore selection from localStorage
-            const savedAccountId = localStorage.getItem('selectedAccountId');
-            if (savedAccountId) {
-                select.value = savedAccountId;
-                // Update label to match
+            // Sun icon for dark mode, Moon icon for light mode
+            if (isDark) {
+                themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+            } else {
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+            }
+        }
+
+        // Global Account Switcher
+        async function loadAccountSwitcher() {
+            try {
+                const response = await fetch('/api/accounts');
+                const data = await response.json();
+                const select = document.getElementById('account-switcher');
+                if (!select) return;
+
+                select.innerHTML = '<option value="">All Accounts</option>';
+                (data.accounts || []).forEach(account => {
+                    const option = document.createElement('option');
+                    option.value = account.id;
+                    option.textContent = account.name;
+                    select.appendChild(option);
+                });
+
+                // Restore selection from localStorage
+                const savedAccountId = localStorage.getItem('selectedAccountId');
+                if (savedAccountId) {
+                    select.value = savedAccountId;
+                    // Update label to match
+                    const label = document.getElementById('account-switcher-label');
+                    if (label) {
+                        label.textContent = select.options[select.selectedIndex].text;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load accounts:', error);
+            }
+        }
+
+        function initAccountSwitcher() {
+            loadAccountSwitcher();
+            document.getElementById('account-switcher').addEventListener('change', function () {
+                localStorage.setItem('selectedAccountId', this.value);
+                // Update label
                 const label = document.getElementById('account-switcher-label');
                 if (label) {
-                    label.textContent = select.options[select.selectedIndex].text;
+                    label.textContent = this.options[this.selectedIndex].text;
                 }
-            }
-        } catch (error) {
-            console.error('Failed to load accounts:', error);
+                // Trigger custom event so pages can react
+                window.dispatchEvent(new CustomEvent('accountChanged', { detail: { accountId: this.value } }));
+            });
         }
-    }
 
-    function initAccountSwitcher() {
-        loadAccountSwitcher();
-        document.getElementById('account-switcher').addEventListener('change', function() {
-            localStorage.setItem('selectedAccountId', this.value);
-            // Update label
-            const label = document.getElementById('account-switcher-label');
-            if (label) {
-                label.textContent = this.options[this.selectedIndex].text;
-            }
-            // Trigger custom event so pages can react
-            window.dispatchEvent(new CustomEvent('accountChanged', { detail: { accountId: this.value } }));
-        });
-    }
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                initTheme();
+                initAccountSwitcher();
+                if (window.lucide) lucide.createIcons();
+            });
+        } else {
             initTheme();
             initAccountSwitcher();
             if (window.lucide) lucide.createIcons();
-        });
-    } else {
-        initTheme();
-        initAccountSwitcher();
-        if (window.lucide) lucide.createIcons();
-    }
-
-    // HTMX Event Handlers
-    document.addEventListener('htmx:afterSwap', function(evt) {
-        // Re-initialize Lucide icons after content swap
-        if (window.lucide) lucide.createIcons();
-        
-        // Update active sidebar link based on current URL
-        updateActiveSidebarLink();
-        
-        // Re-initialize page-specific scripts
-        if (window.initPageScripts) {
-            window.initPageScripts();
         }
-    });
 
-    // Update active sidebar link
-    function updateActiveSidebarLink() {
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.classList.remove('active');
-            // Remove active class logic - compare href with current path
-            const linkPath = link.getAttribute('href');
-            if (linkPath === currentPath || (currentPath === '/' && linkPath === '/')) {
-                link.classList.add('active');
+        // HTMX Event Handlers
+        document.addEventListener('htmx:afterSwap', function (evt) {
+            // Re-initialize Lucide icons after content swap
+            if (window.lucide) lucide.createIcons();
+
+            // Update active sidebar link based on current URL
+            updateActiveSidebarLink();
+
+            // Re-initialize page-specific scripts
+            if (window.initPageScripts) {
+                window.initPageScripts();
             }
         });
-    }
 
-    // HTMX Error Handler - Fallback to full page reload
-    document.addEventListener('htmx:error', function(evt) {
-        console.warn('HTMX request failed, falling back to full page load:', evt.detail.error);
-        // Let the default link behavior handle it (full page reload)
-    });
+        // Update active sidebar link
+        function updateActiveSidebarLink() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                // Remove active class logic - compare href with current path
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath || (currentPath === '/' && linkPath === '/')) {
+                    link.classList.add('active');
+                }
+            });
+        }
 
-    // Handle OOB account dropdown updates
-    document.addEventListener('accountDropdownUpdated', function() {
-        // Re-initialize account switcher after OOB update
-        loadAccountSwitcher();
-    });
+        // HTMX Error Handler - Fallback to full page reload
+        document.addEventListener('htmx:error', function (evt) {
+            console.warn('HTMX request failed, falling back to full page load:', evt.detail.error);
+            // Let the default link behavior handle it (full page reload)
+        });
 
-    // HTMX Configuration: Include credentials (cookies) with all requests
-    document.body.addEventListener('htmx:configRequest', function(evt) {
-        evt.detail.withCredentials = true;
-    });
+        // Handle OOB account dropdown updates
+        document.addEventListener('accountDropdownUpdated', function () {
+            // Re-initialize account switcher after OOB update
+            loadAccountSwitcher();
+        });
+
+        // HTMX Configuration: Include credentials (cookies) with all requests
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            evt.detail.withCredentials = true;
+        });
     </script>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     {% endif %}
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Import - TradeLogger{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold text-text-primary">Import</h1>
+
+    <!-- Trade Import -->
+    <div class="card p-6">
+        <h2 class="font-bold text-text-primary mb-2">Import Trades</h2>
+        <p class="text-sm text-text-light mb-4">Upload a CSV file exported from your broker. Supported formats: MT4/5, Tradovate, cTrader, NinjaTrader.</p>
+
+        <div id="drop-zone" class="border-2 border-dashed border-border-default rounded-xl p-12 text-center cursor-pointer hover:border-accent-primary transition-colors">
+            <i data-lucide="upload" class="w-12 h-12 mx-auto text-text-light mb-4"></i>
+            <p class="text-text-primary font-medium">Drop your CSV file here</p>
+            <p class="text-text-light text-sm mt-1">or click to browse</p>
+        </div>
+        <input type="file" id="file-input" accept=".csv" class="hidden">
+
+        <div class="mt-4">
+            <label class="label mb-1 block">Target Account</label>
+            <select id="import-account" class="input"></select>
+        </div>
+
+        <button onclick="importCSV()" class="btn-primary mt-4" disabled id="import-btn">
+            Import Trades
+        </button>
+
+        <div class="mt-4 flex gap-3 flex-wrap" id="template-links"></div>
+    </div>
+
+    <!-- Price Data Import -->
+    <div class="card p-6">
+        <h2 class="font-bold text-text-primary mb-2">Import Historical Price Data</h2>
+        <p class="text-sm text-text-light mb-4">
+            Upload OHLCV candle data for backtesting. 
+            <a href="/api/import/price-data/template" class="text-accent-primary underline">Download template</a>
+        </p>
+
+        <div id="pd-drop-zone" class="border-2 border-dashed border-border-default rounded-xl p-12 text-center cursor-pointer hover:border-accent-primary transition-colors">
+            <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto text-text-light mb-4"></i>
+            <p class="text-text-primary font-medium">Drop your OHLCV CSV file here</p>
+            <p class="text-text-light text-sm mt-1">or click to browse</p>
+        </div>
+        <input type="file" id="pd-file-input" accept=".csv" class="hidden">
+
+        <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+                <label class="label mb-1 block">Symbol</label>
+                <input id="pd-symbol" class="input" placeholder="EURUSD">
+            </div>
+            <div>
+                <label class="label mb-1 block">Timeframe</label>
+                <select id="pd-timeframe" class="input">
+                    <option value="1m">1 Minute</option>
+                    <option value="5m">5 Minutes</option>
+                    <option value="15m">15 Minutes</option>
+                    <option value="1h" selected>1 Hour</option>
+                    <option value="4h">4 Hours</option>
+                    <option value="1d">1 Day</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="importPriceData()" class="btn-primary mt-4" disabled id="pd-import-btn">
+            Import Price Data
+        </button>
+
+        <div id="pd-preview" class="mt-4 overflow-x-auto hidden">
+            <h3 class="font-bold text-text-primary mb-2 text-sm">Preview</h3>
+            <table class="w-full text-left text-sm">
+                <thead><tr class="table-header border-b border-border-default" id="pd-preview-head"></tr></thead>
+                <tbody id="pd-preview-body"></tbody>
+            </table>
+        </div>
+
+        <div id="pd-result" class="mt-4 hidden"></div>
+    </div>
+
+    <!-- Preview -->
+    <div id="preview-section" class="card p-4 hidden">
+        <h3 class="font-bold text-text-primary mb-3">Preview</h3>
+        <div class="text-sm text-text-light mb-2" id="preview-info"></div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left" id="preview-table">
+                <thead class="border-b border-border-default">
+                    <tr class="table-header"></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result-section" class="card p-4 hidden">
+        <h3 class="font-bold text-text-primary mb-3">Import Result</h3>
+        <div id="result-content"></div>
+    </div>
+
+    <!-- Templates -->
+    <div class="card p-4">
+        <h3 class="font-bold text-text-primary mb-3">CSV Templates</h3>
+        <div class="flex gap-3 flex-wrap" id="template-links"></div>
+    </div>
+</div>
+
+<script>
+let selectedFile = null;
+let pdSelectedFile = null;
+
+// === Trade CSV Import ===
+document.getElementById('drop-zone').addEventListener('click', () => document.getElementById('file-input').click());
+document.getElementById('drop-zone').addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.classList.add('border-accent-primary'); });
+document.getElementById('drop-zone').addEventListener('dragleave', (e) => { e.currentTarget.classList.remove('border-accent-primary'); });
+document.getElementById('drop-zone').addEventListener('drop', (e) => {
+    e.preventDefault(); e.currentTarget.classList.remove('border-accent-primary');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+});
+document.getElementById('file-input').addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+async function handleFile(file) {
+    selectedFile = file;
+    document.getElementById('import-btn').disabled = false;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/import/preview', {method: 'POST', body: formData});
+    const data = await res.json();
+
+    document.getElementById('preview-section').classList.remove('hidden');
+    document.getElementById('preview-info').textContent =
+        `Format: ${data.format || 'Generic'} | ${data.total_rows} rows found`;
+
+    const thead = document.querySelector('#preview-table thead tr');
+    thead.innerHTML = data.columns.map(c => `<th class="p-2 text-text-light text-xs font-semibold uppercase">${c}</th>`).join('');
+
+    const tbody = document.querySelector('#preview-table tbody');
+    tbody.innerHTML = data.rows.map(row =>
+        `<tr class="border-b border-border-default">${row.map(c => `<td class="p-2 text-sm text-text-primary">${c}</td>`).join('')}</tr>`
+    ).join('');
+}
+
+async function importCSV() {
+    if (!selectedFile) return;
+    const accountId = document.getElementById('import-account').value;
+    if (!accountId) { alert('Please select an account'); return; }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('account_id', accountId);
+
+    const res = await fetch('/api/import/csv', {method: 'POST', body: formData});
+    const result = await res.json();
+    document.getElementById('result-section').classList.remove('hidden');
+    const icon = result.imported > 0 ? 'check-circle' : 'alert-circle';
+    const color = result.imported > 0 ? 'text-success' : 'text-warning';
+    document.getElementById('result-content').innerHTML = `
+        <div class="flex items-center gap-3 ${color}">
+            <i data-lucide="${icon}" class="w-6 h-6"></i>
+            <div>
+                <p class="font-medium">${result.imported} trades imported</p>
+                <p class="text-sm text-text-light">${result.skipped} skipped (duplicates) | ${result.errors} errors</p>
+            </div>
+        </div>`;
+    if (window.lucide) lucide.createIcons();
+}
+
+// === Price Data Import ===
+document.getElementById('pd-drop-zone').addEventListener('click', () => document.getElementById('pd-file-input').click());
+document.getElementById('pd-drop-zone').addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.classList.add('border-accent-primary'); });
+document.getElementById('pd-drop-zone').addEventListener('dragleave', (e) => { e.currentTarget.classList.remove('border-accent-primary'); });
+document.getElementById('pd-drop-zone').addEventListener('drop', (e) => {
+    e.preventDefault(); e.currentTarget.classList.remove('border-accent-primary');
+    const file = e.dataTransfer.files[0];
+    if (file) handlePriceFile(file);
+});
+document.getElementById('pd-file-input').addEventListener('change', (e) => {
+    if (e.target.files[0]) handlePriceFile(e.target.files[0]);
+});
+
+async function handlePriceFile(file) {
+    pdSelectedFile = file;
+    document.getElementById('pd-import-btn').disabled = false;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/import/price-data/preview', {method: 'POST', body: formData});
+    const data = await res.json();
+
+    const preview = document.getElementById('pd-preview');
+    if (data.valid) {
+        preview.classList.remove('hidden');
+        document.getElementById('pd-preview-head').innerHTML = data.headers.map(c => `<th class="p-2 text-text-light text-xs font-semibold uppercase">${c}</th>`).join('');
+        document.getElementById('pd-preview-body').innerHTML = data.rows.slice(0, 5).map(row =>
+            `<tr class="border-b border-border-default">${row.map(c => `<td class="p-2 text-sm text-text-primary">${c}</td>`).join('')}</tr>`
+        ).join('');
+    } else {
+        preview.classList.add('hidden');
+        alert(data.error || 'Invalid CSV format. Use OHLCV columns: timestamp, open, high, low, close');
+    }
+}
+
+async function importPriceData() {
+    if (!pdSelectedFile) return;
+    const symbol = document.getElementById('pd-symbol').value;
+    const timeframe = document.getElementById('pd-timeframe').value;
+    if (!symbol) { alert('Please enter a symbol'); return; }
+
+    const formData = new FormData();
+    formData.append('file', pdSelectedFile);
+    formData.append('symbol', symbol.toUpperCase());
+    formData.append('timeframe', timeframe);
+
+    const res = await fetch('/api/import/price-data', {method: 'POST', body: formData});
+    const result = await res.json();
+
+    const el = document.getElementById('pd-result');
+    el.classList.remove('hidden');
+    el.innerHTML = result.error
+        ? `<div class="text-error flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> ${result.error}</div>`
+        : `<div class="text-success flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i>
+            ${result.imported} candles imported | ${result.skipped} skipped | ${result.errors} errors</div>`;
+    if (window.lucide) lucide.createIcons();
+}
+
+// Load accounts and templates
+async function initImport() {
+    const res = await fetch('/api/accounts');
+    const data = await res.json();
+    const select = document.getElementById('import-account');
+    select.innerHTML = data.accounts.map(a =>
+        `<option value="${a.id}">${a.name}${a.is_backtest ? ' (Backtest)' : ''}</option>`
+    ).join('');
+
+    const templateRes = await fetch('/api/import/templates');
+    const templates = await templateRes.json();
+    document.getElementById('template-links').innerHTML = templates.templates.map(t =>
+        `<a href="/api/import/templates/${t.id}" class="btn-secondary text-sm" download>${t.name} Template</a>`
+    ).join('');
+}
+
+initImport();
+</script>
+{% endblock %}

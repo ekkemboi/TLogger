@@ -1,0 +1,5048 @@
+{
+  "symbol": "BTCUSD",
+  "summary": {
+    "initial_balance": 10000.0,
+    "final_balance": 8682.230000000018,
+    "total_return_pct": -13.18,
+    "total_trades": 73,
+    "winning_trades": 35,
+    "losing_trades": 38,
+    "win_rate_pct": 47.95,
+    "total_pnl": -1322.77,
+    "avg_win": 189.32,
+    "avg_loss": -209.18,
+    "profit_factor": 0.83,
+    "max_drawdown_pct": 22.83,
+    "sharpe_ratio": -0.28
+  },
+  "trades": [
+    {
+      "entry_time": "2026-04-18T04:55:15.511248",
+      "exit_time": "2026-04-18T05:13:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64263.21,
+      "exit_price": 64512.36,
+      "position_size": 1,
+      "pnl": -254.15,
+      "fees": 5.0,
+      "duration_seconds": 1080.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T05:17:15.511248",
+      "exit_time": "2026-04-18T05:22:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64495.01,
+      "exit_price": 64345.07,
+      "position_size": 1,
+      "pnl": -154.94,
+      "fees": 5.0,
+      "duration_seconds": 300.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T05:22:15.511248",
+      "exit_time": "2026-04-18T05:33:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64345.07,
+      "exit_price": 64493.23,
+      "position_size": 1,
+      "pnl": -153.16,
+      "fees": 5.0,
+      "duration_seconds": 660.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T05:33:15.511248",
+      "exit_time": "2026-04-18T05:37:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64493.23,
+      "exit_price": 64307.41,
+      "position_size": 1,
+      "pnl": -190.82,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T05:37:15.511248",
+      "exit_time": "2026-04-18T05:44:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64307.41,
+      "exit_price": 64188.49,
+      "position_size": 1,
+      "pnl": 113.92,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T05:47:15.511248",
+      "exit_time": "2026-04-18T05:55:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64152.58,
+      "exit_price": 64333.88,
+      "position_size": 1,
+      "pnl": -186.3,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T05:55:15.511248",
+      "exit_time": "2026-04-18T06:04:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64333.88,
+      "exit_price": 64468.16,
+      "position_size": 1,
+      "pnl": -139.28,
+      "fees": 5.0,
+      "duration_seconds": 540.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T06:04:15.511248",
+      "exit_time": "2026-04-18T06:14:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64468.16,
+      "exit_price": 64266.71,
+      "position_size": 1,
+      "pnl": -206.45,
+      "fees": 5.0,
+      "duration_seconds": 600.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T06:14:15.511248",
+      "exit_time": "2026-04-18T06:47:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64266.71,
+      "exit_price": 64398.96,
+      "position_size": 1,
+      "pnl": -137.25,
+      "fees": 5.0,
+      "duration_seconds": 1980.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T06:47:15.511248",
+      "exit_time": "2026-04-18T06:49:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64398.96,
+      "exit_price": 64574.29,
+      "position_size": 1,
+      "pnl": 170.33,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T06:51:15.511248",
+      "exit_time": "2026-04-18T07:01:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64509.8,
+      "exit_price": 64741.46,
+      "position_size": 1,
+      "pnl": 226.66,
+      "fees": 5.0,
+      "duration_seconds": 600.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T07:04:15.511248",
+      "exit_time": "2026-04-18T07:31:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64657.2,
+      "exit_price": 64868.98,
+      "position_size": 1,
+      "pnl": 206.78,
+      "fees": 5.0,
+      "duration_seconds": 1620.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T07:37:15.511248",
+      "exit_time": "2026-04-18T07:42:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65113.06,
+      "exit_price": 65171.79,
+      "position_size": 1,
+      "pnl": 53.73,
+      "fees": 5.0,
+      "duration_seconds": 300.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T07:42:15.511248",
+      "exit_time": "2026-04-18T08:25:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65171.79,
+      "exit_price": 64787.66,
+      "position_size": 1,
+      "pnl": -389.13,
+      "fees": 5.0,
+      "duration_seconds": 2580.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T08:25:15.511248",
+      "exit_time": "2026-04-18T09:08:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64787.66,
+      "exit_price": 64979.07,
+      "position_size": 1,
+      "pnl": -196.41,
+      "fees": 5.0,
+      "duration_seconds": 2580.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T09:08:15.511248",
+      "exit_time": "2026-04-18T09:15:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64979.07,
+      "exit_price": 65126.96,
+      "position_size": 1,
+      "pnl": 142.89,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T09:15:15.511248",
+      "exit_time": "2026-04-18T09:25:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65126.96,
+      "exit_price": 65378.74,
+      "position_size": 1,
+      "pnl": 246.78,
+      "fees": 5.0,
+      "duration_seconds": 600.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T09:27:15.511248",
+      "exit_time": "2026-04-18T09:31:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65233.75,
+      "exit_price": 65442.98,
+      "position_size": 1,
+      "pnl": 204.23,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T09:43:15.511248",
+      "exit_time": "2026-04-18T09:48:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65275.72,
+      "exit_price": 65148.62,
+      "position_size": 1,
+      "pnl": -132.1,
+      "fees": 5.0,
+      "duration_seconds": 300.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T09:48:15.511248",
+      "exit_time": "2026-04-18T10:14:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65148.62,
+      "exit_price": 65310.41,
+      "position_size": 1,
+      "pnl": -166.79,
+      "fees": 5.0,
+      "duration_seconds": 1560.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T10:22:15.511248",
+      "exit_time": "2026-04-18T10:26:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65568.41,
+      "exit_price": 65306.13,
+      "position_size": 1,
+      "pnl": -267.28,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T10:26:15.511248",
+      "exit_time": "2026-04-18T11:02:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65306.13,
+      "exit_price": 65677.17,
+      "position_size": 1,
+      "pnl": 366.04,
+      "fees": 5.0,
+      "duration_seconds": 2160.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T11:11:15.511248",
+      "exit_time": "2026-04-18T11:26:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65908.29,
+      "exit_price": 65525.95,
+      "position_size": 1,
+      "pnl": -387.34,
+      "fees": 5.0,
+      "duration_seconds": 900.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T11:26:15.511248",
+      "exit_time": "2026-04-18T11:40:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65525.95,
+      "exit_price": 65258.82,
+      "position_size": 1,
+      "pnl": 262.13,
+      "fees": 5.0,
+      "duration_seconds": 840.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T11:41:15.511248",
+      "exit_time": "2026-04-18T12:00:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65180.7,
+      "exit_price": 65447.41,
+      "position_size": 1,
+      "pnl": -271.71,
+      "fees": 5.0,
+      "duration_seconds": 1140.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T12:00:15.511248",
+      "exit_time": "2026-04-18T12:07:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65447.41,
+      "exit_price": 65215.78,
+      "position_size": 1,
+      "pnl": 226.63,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T12:07:15.511248",
+      "exit_time": "2026-04-18T12:09:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65215.78,
+      "exit_price": 65103.18,
+      "position_size": 1,
+      "pnl": 107.6,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T12:09:15.511248",
+      "exit_time": "2026-04-18T12:13:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65103.18,
+      "exit_price": 65366.78,
+      "position_size": 1,
+      "pnl": -268.6,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T12:13:15.511248",
+      "exit_time": "2026-04-18T12:31:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65366.78,
+      "exit_price": 65132.89,
+      "position_size": 1,
+      "pnl": -238.89,
+      "fees": 5.0,
+      "duration_seconds": 1080.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T12:31:15.511248",
+      "exit_time": "2026-04-18T12:35:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65132.89,
+      "exit_price": 65072.59,
+      "position_size": 1,
+      "pnl": 55.3,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T12:35:15.511248",
+      "exit_time": "2026-04-18T12:48:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 65072.59,
+      "exit_price": 64757.03,
+      "position_size": 1,
+      "pnl": 310.56,
+      "fees": 5.0,
+      "duration_seconds": 780.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T12:48:15.511248",
+      "exit_time": "2026-04-18T12:56:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64757.03,
+      "exit_price": 64527.66,
+      "position_size": 1,
+      "pnl": 224.37,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T12:56:15.511248",
+      "exit_time": "2026-04-18T14:20:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64527.66,
+      "exit_price": 64843.02,
+      "position_size": 1,
+      "pnl": -320.36,
+      "fees": 5.0,
+      "duration_seconds": 5040.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T14:20:15.511248",
+      "exit_time": "2026-04-18T14:21:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64843.02,
+      "exit_price": 64857.54,
+      "position_size": 1,
+      "pnl": 9.52,
+      "fees": 5.0,
+      "duration_seconds": 60.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T14:21:15.511248",
+      "exit_time": "2026-04-18T14:24:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64857.54,
+      "exit_price": 64958.99,
+      "position_size": 1,
+      "pnl": 96.45,
+      "fees": 5.0,
+      "duration_seconds": 180.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T14:24:15.511248",
+      "exit_time": "2026-04-18T14:41:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64958.99,
+      "exit_price": 64787.64,
+      "position_size": 1,
+      "pnl": -176.35,
+      "fees": 5.0,
+      "duration_seconds": 1020.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T14:41:15.511248",
+      "exit_time": "2026-04-18T14:48:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64787.64,
+      "exit_price": 64551.93,
+      "position_size": 1,
+      "pnl": -240.71,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T14:48:15.511248",
+      "exit_time": "2026-04-18T14:56:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64551.93,
+      "exit_price": 64848.54,
+      "position_size": 1,
+      "pnl": -301.61,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T14:56:15.511248",
+      "exit_time": "2026-04-18T15:10:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64848.54,
+      "exit_price": 64615.35,
+      "position_size": 1,
+      "pnl": -238.19,
+      "fees": 5.0,
+      "duration_seconds": 840.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T15:10:15.511248",
+      "exit_time": "2026-04-18T15:12:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64615.35,
+      "exit_price": 64766.58,
+      "position_size": 1,
+      "pnl": -156.23,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T15:12:15.511248",
+      "exit_time": "2026-04-18T15:14:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64766.58,
+      "exit_price": 64610.28,
+      "position_size": 1,
+      "pnl": 151.3,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T15:14:15.511248",
+      "exit_time": "2026-04-18T15:16:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64610.28,
+      "exit_price": 64495.45,
+      "position_size": 1,
+      "pnl": 109.83,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T15:16:15.511248",
+      "exit_time": "2026-04-18T15:22:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64495.45,
+      "exit_price": 64675.82,
+      "position_size": 1,
+      "pnl": -185.37,
+      "fees": 5.0,
+      "duration_seconds": 360.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T15:22:15.511248",
+      "exit_time": "2026-04-18T15:46:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64675.82,
+      "exit_price": 64427.59,
+      "position_size": 1,
+      "pnl": 243.23,
+      "fees": 5.0,
+      "duration_seconds": 1440.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T15:46:15.511248",
+      "exit_time": "2026-04-18T15:57:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64427.59,
+      "exit_price": 64539.09,
+      "position_size": 1,
+      "pnl": -116.5,
+      "fees": 5.0,
+      "duration_seconds": 660.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T15:57:15.511248",
+      "exit_time": "2026-04-18T16:04:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64539.09,
+      "exit_price": 64351.77,
+      "position_size": 1,
+      "pnl": 182.32,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T16:04:15.511248",
+      "exit_time": "2026-04-18T16:15:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64351.77,
+      "exit_price": 64204.01,
+      "position_size": 1,
+      "pnl": 142.76,
+      "fees": 5.0,
+      "duration_seconds": 660.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T16:15:15.511248",
+      "exit_time": "2026-04-18T16:19:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64204.01,
+      "exit_price": 64380.2,
+      "position_size": 1,
+      "pnl": -181.19,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T16:19:15.511248",
+      "exit_time": "2026-04-18T16:21:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64380.2,
+      "exit_price": 64552.96,
+      "position_size": 1,
+      "pnl": -177.76,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T16:21:15.511248",
+      "exit_time": "2026-04-18T16:23:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64552.96,
+      "exit_price": 64351.84,
+      "position_size": 1,
+      "pnl": -206.12,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T16:23:15.511248",
+      "exit_time": "2026-04-18T16:31:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64351.84,
+      "exit_price": 64133.83,
+      "position_size": 1,
+      "pnl": 213.01,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T16:44:15.511248",
+      "exit_time": "2026-04-18T16:51:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 64269.45,
+      "exit_price": 64480.04,
+      "position_size": 1,
+      "pnl": -215.59,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T16:51:15.511248",
+      "exit_time": "2026-04-18T17:44:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64480.04,
+      "exit_price": 64945.25,
+      "position_size": 1,
+      "pnl": 460.21,
+      "fees": 5.0,
+      "duration_seconds": 3180.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T17:44:15.511248",
+      "exit_time": "2026-04-18T17:55:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64945.25,
+      "exit_price": 64748.42,
+      "position_size": 1,
+      "pnl": -201.83,
+      "fees": 5.0,
+      "duration_seconds": 660.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T17:55:15.511248",
+      "exit_time": "2026-04-18T18:25:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 64748.42,
+      "exit_price": 65112.99,
+      "position_size": 1,
+      "pnl": 359.57,
+      "fees": 5.0,
+      "duration_seconds": 1800.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T18:25:15.511248",
+      "exit_time": "2026-04-18T18:31:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65112.99,
+      "exit_price": 65262.18,
+      "position_size": 1,
+      "pnl": 144.19,
+      "fees": 5.0,
+      "duration_seconds": 360.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T18:31:15.511248",
+      "exit_time": "2026-04-18T18:34:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65262.18,
+      "exit_price": 65108.7,
+      "position_size": 1,
+      "pnl": -158.48,
+      "fees": 5.0,
+      "duration_seconds": 180.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T18:34:15.511248",
+      "exit_time": "2026-04-18T18:42:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65108.7,
+      "exit_price": 65398.13,
+      "position_size": 1,
+      "pnl": 284.43,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T18:42:15.511248",
+      "exit_time": "2026-04-18T18:50:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65398.13,
+      "exit_price": 65618.75,
+      "position_size": 1,
+      "pnl": 215.62,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T18:51:15.511248",
+      "exit_time": "2026-04-18T19:00:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 65691.54,
+      "exit_price": 66138.49,
+      "position_size": 1,
+      "pnl": 441.95,
+      "fees": 5.0,
+      "duration_seconds": 540.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T19:10:15.511248",
+      "exit_time": "2026-04-18T19:11:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66187.12,
+      "exit_price": 66330.46,
+      "position_size": 1,
+      "pnl": 138.34,
+      "fees": 5.0,
+      "duration_seconds": 60.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T19:23:15.511248",
+      "exit_time": "2026-04-18T19:33:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66497.23,
+      "exit_price": 66613.62,
+      "position_size": 1,
+      "pnl": 111.39,
+      "fees": 5.0,
+      "duration_seconds": 600.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T19:34:15.511248",
+      "exit_time": "2026-04-18T19:35:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66517.23,
+      "exit_price": 66371.14,
+      "position_size": 1,
+      "pnl": -151.09,
+      "fees": 5.0,
+      "duration_seconds": 60.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T19:35:15.511248",
+      "exit_time": "2026-04-18T19:42:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66371.14,
+      "exit_price": 66240.15,
+      "position_size": 1,
+      "pnl": -135.99,
+      "fees": 5.0,
+      "duration_seconds": 420.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T19:42:15.511248",
+      "exit_time": "2026-04-18T19:46:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 66240.15,
+      "exit_price": 66457.12,
+      "position_size": 1,
+      "pnl": -221.97,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T19:47:15.511248",
+      "exit_time": "2026-04-18T19:49:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66386.04,
+      "exit_price": 66239.0,
+      "position_size": 1,
+      "pnl": -152.04,
+      "fees": 5.0,
+      "duration_seconds": 120.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T19:49:15.511248",
+      "exit_time": "2026-04-18T19:54:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 66239.0,
+      "exit_price": 66176.57,
+      "position_size": 1,
+      "pnl": 57.43,
+      "fees": 5.0,
+      "duration_seconds": 300.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T19:54:15.511248",
+      "exit_time": "2026-04-18T19:57:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 66176.57,
+      "exit_price": 66340.81,
+      "position_size": 1,
+      "pnl": -169.24,
+      "fees": 5.0,
+      "duration_seconds": 180.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T19:57:15.511248",
+      "exit_time": "2026-04-18T20:01:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 66340.81,
+      "exit_price": 66461.46,
+      "position_size": 1,
+      "pnl": -125.65,
+      "fees": 5.0,
+      "duration_seconds": 240.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T20:01:15.511248",
+      "exit_time": "2026-04-18T20:02:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66461.46,
+      "exit_price": 66504.19,
+      "position_size": 1,
+      "pnl": 37.73,
+      "fees": 5.0,
+      "duration_seconds": 60.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T20:02:15.511248",
+      "exit_time": "2026-04-18T20:07:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66504.19,
+      "exit_price": 66743.04,
+      "position_size": 1,
+      "pnl": 233.85,
+      "fees": 5.0,
+      "duration_seconds": 300.0,
+      "is_win": true,
+      "exit_reason": "take_profit"
+    },
+    {
+      "entry_time": "2026-04-18T20:11:15.511248",
+      "exit_time": "2026-04-18T20:19:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "long",
+      "entry_price": 66719.93,
+      "exit_price": 66348.88,
+      "position_size": 1,
+      "pnl": -376.05,
+      "fees": 5.0,
+      "duration_seconds": 480.0,
+      "is_win": false,
+      "exit_reason": "stop_loss"
+    },
+    {
+      "entry_time": "2026-04-18T20:19:15.511248",
+      "exit_time": "2026-04-18T20:41:15.511248",
+      "symbol": "BTCUSD",
+      "direction": "short",
+      "entry_price": 66348.88,
+      "exit_price": 66268.81,
+      "position_size": 1,
+      "pnl": 75.07,
+      "fees": 5.0,
+      "duration_seconds": 1320.0,
+      "is_win": true,
+      "exit_reason": "end_of_data"
+    }
+  ],
+  "equity_curve": [
+    {
+      "timestamp": "2026-04-18T04:02:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:02:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:03:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:04:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:05:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:06:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:07:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:08:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:09:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:10:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:11:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:12:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:13:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:14:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:15:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:16:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:17:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:18:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:19:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:20:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:21:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:22:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:23:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:24:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:25:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:26:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:27:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:28:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:29:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:30:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:31:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:32:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:33:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:34:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:35:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:36:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:37:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:38:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:39:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:40:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:41:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:42:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:43:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:44:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:45:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:46:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:47:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:48:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:49:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:50:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:51:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:52:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:53:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:54:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:55:15.511248",
+      "balance": 10000.0
+    },
+    {
+      "timestamp": "2026-04-18T04:56:15.511248",
+      "balance": 9933.71
+    },
+    {
+      "timestamp": "2026-04-18T04:57:15.511248",
+      "balance": 9873.769999999997
+    },
+    {
+      "timestamp": "2026-04-18T04:58:15.511248",
+      "balance": 9927.79
+    },
+    {
+      "timestamp": "2026-04-18T04:59:15.511248",
+      "balance": 9947.68
+    },
+    {
+      "timestamp": "2026-04-18T05:00:15.511248",
+      "balance": 9926.370000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:01:15.511248",
+      "balance": 9863.57
+    },
+    {
+      "timestamp": "2026-04-18T05:02:15.511248",
+      "balance": 9894.419999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:03:15.511248",
+      "balance": 9906.370000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:04:15.511248",
+      "balance": 9977.54
+    },
+    {
+      "timestamp": "2026-04-18T05:05:15.511248",
+      "balance": 10054.39
+    },
+    {
+      "timestamp": "2026-04-18T05:06:15.511248",
+      "balance": 10002.199999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:07:15.511248",
+      "balance": 9914.979999999996
+    },
+    {
+      "timestamp": "2026-04-18T05:08:15.511248",
+      "balance": 9919.620000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:09:15.511248",
+      "balance": 9855.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T05:10:15.511248",
+      "balance": 9831.720000000001
+    },
+    {
+      "timestamp": "2026-04-18T05:11:15.511248",
+      "balance": 9873.269999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:12:15.511248",
+      "balance": 9849.989999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:13:15.511248",
+      "balance": 9745.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:14:15.511248",
+      "balance": 9745.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:15:15.511248",
+      "balance": 9745.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:16:15.511248",
+      "balance": 9745.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:17:15.511248",
+      "balance": 9745.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:18:15.511248",
+      "balance": 9751.46
+    },
+    {
+      "timestamp": "2026-04-18T05:19:15.511248",
+      "balance": 9732.179999999993
+    },
+    {
+      "timestamp": "2026-04-18T05:20:15.511248",
+      "balance": 9738.099999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:21:15.511248",
+      "balance": 9610.049999999996
+    },
+    {
+      "timestamp": "2026-04-18T05:22:15.511248",
+      "balance": 9590.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T05:23:15.511248",
+      "balance": 9567.919999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:24:15.511248",
+      "balance": 9472.719999999994
+    },
+    {
+      "timestamp": "2026-04-18T05:25:15.511248",
+      "balance": 9506.119999999995
+    },
+    {
+      "timestamp": "2026-04-18T05:26:15.511248",
+      "balance": 9558.189999999995
+    },
+    {
+      "timestamp": "2026-04-18T05:27:15.511248",
+      "balance": 9590.489999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:28:15.511248",
+      "balance": 9531.559999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:29:15.511248",
+      "balance": 9510.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:30:15.511248",
+      "balance": 9544.499999999993
+    },
+    {
+      "timestamp": "2026-04-18T05:31:15.511248",
+      "balance": 9511.449999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:32:15.511248",
+      "balance": 9505.189999999995
+    },
+    {
+      "timestamp": "2026-04-18T05:33:15.511248",
+      "balance": 9437.749999999993
+    },
+    {
+      "timestamp": "2026-04-18T05:34:15.511248",
+      "balance": 9392.48999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:35:15.511248",
+      "balance": 9371.369999999988
+    },
+    {
+      "timestamp": "2026-04-18T05:36:15.511248",
+      "balance": 9346.119999999988
+    },
+    {
+      "timestamp": "2026-04-18T05:37:15.511248",
+      "balance": 9246.929999999993
+    },
+    {
+      "timestamp": "2026-04-18T05:38:15.511248",
+      "balance": 9227.879999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:39:15.511248",
+      "balance": 9211.089999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:40:15.511248",
+      "balance": 9210.759999999995
+    },
+    {
+      "timestamp": "2026-04-18T05:41:15.511248",
+      "balance": 9225.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:42:15.511248",
+      "balance": 9316.829999999994
+    },
+    {
+      "timestamp": "2026-04-18T05:43:15.511248",
+      "balance": 9343.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:44:15.511248",
+      "balance": 9360.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:45:15.511248",
+      "balance": 9360.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:46:15.511248",
+      "balance": 9360.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:47:15.511248",
+      "balance": 9360.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T05:48:15.511248",
+      "balance": 9239.730000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:49:15.511248",
+      "balance": 9228.510000000002
+    },
+    {
+      "timestamp": "2026-04-18T05:50:15.511248",
+      "balance": 9211.949999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:51:15.511248",
+      "balance": 9216.730000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:52:15.511248",
+      "balance": 9339.989999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:53:15.511248",
+      "balance": 9341.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T05:54:15.511248",
+      "balance": 9337.82
+    },
+    {
+      "timestamp": "2026-04-18T05:55:15.511248",
+      "balance": 9174.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T05:56:15.511248",
+      "balance": 9186.919999999998
+    },
+    {
+      "timestamp": "2026-04-18T05:57:15.511248",
+      "balance": 9167.519999999997
+    },
+    {
+      "timestamp": "2026-04-18T05:58:15.511248",
+      "balance": 9169.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T05:59:15.511248",
+      "balance": 9244.900000000001
+    },
+    {
+      "timestamp": "2026-04-18T06:00:15.511248",
+      "balance": 9171.419999999998
+    },
+    {
+      "timestamp": "2026-04-18T06:01:15.511248",
+      "balance": 9123.019999999997
+    },
+    {
+      "timestamp": "2026-04-18T06:02:15.511248",
+      "balance": 9072.07
+    },
+    {
+      "timestamp": "2026-04-18T06:03:15.511248",
+      "balance": 9130.64
+    },
+    {
+      "timestamp": "2026-04-18T06:04:15.511248",
+      "balance": 9035.269999999997
+    },
+    {
+      "timestamp": "2026-04-18T06:05:15.511248",
+      "balance": 8944.959999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:06:15.511248",
+      "balance": 8982.749999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:07:15.511248",
+      "balance": 9123.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:08:15.511248",
+      "balance": 9060.089999999997
+    },
+    {
+      "timestamp": "2026-04-18T06:09:15.511248",
+      "balance": 9023.579999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:10:15.511248",
+      "balance": 9029.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:11:15.511248",
+      "balance": 8997.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T06:12:15.511248",
+      "balance": 8897.719999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:13:15.511248",
+      "balance": 8902.12999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:14:15.511248",
+      "balance": 8828.819999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:15:15.511248",
+      "balance": 8798.369999999988
+    },
+    {
+      "timestamp": "2026-04-18T06:16:15.511248",
+      "balance": 8857.459999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:17:15.511248",
+      "balance": 8757.819999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:18:15.511248",
+      "balance": 8808.189999999995
+    },
+    {
+      "timestamp": "2026-04-18T06:19:15.511248",
+      "balance": 8828.889999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:20:15.511248",
+      "balance": 8776.58999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:21:15.511248",
+      "balance": 8855.709999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:22:15.511248",
+      "balance": 8841.099999999991
+    },
+    {
+      "timestamp": "2026-04-18T06:23:15.511248",
+      "balance": 8757.049999999988
+    },
+    {
+      "timestamp": "2026-04-18T06:24:15.511248",
+      "balance": 8860.389999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:25:15.511248",
+      "balance": 8848.529999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:26:15.511248",
+      "balance": 8831.829999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:27:15.511248",
+      "balance": 8781.569999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:28:15.511248",
+      "balance": 8861.069999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:29:15.511248",
+      "balance": 8945.83999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:30:15.511248",
+      "balance": 8912.349999999991
+    },
+    {
+      "timestamp": "2026-04-18T06:31:15.511248",
+      "balance": 8893.279999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:32:15.511248",
+      "balance": 8877.19999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:33:15.511248",
+      "balance": 8854.939999999995
+    },
+    {
+      "timestamp": "2026-04-18T06:34:15.511248",
+      "balance": 8898.619999999988
+    },
+    {
+      "timestamp": "2026-04-18T06:35:15.511248",
+      "balance": 8883.69999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:36:15.511248",
+      "balance": 8864.87999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:37:15.511248",
+      "balance": 8910.749999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:38:15.511248",
+      "balance": 8790.87999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:39:15.511248",
+      "balance": 8760.409999999989
+    },
+    {
+      "timestamp": "2026-04-18T06:40:15.511248",
+      "balance": 8836.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:41:15.511248",
+      "balance": 8794.799999999988
+    },
+    {
+      "timestamp": "2026-04-18T06:42:15.511248",
+      "balance": 8857.439999999995
+    },
+    {
+      "timestamp": "2026-04-18T06:43:15.511248",
+      "balance": 8806.859999999993
+    },
+    {
+      "timestamp": "2026-04-18T06:44:15.511248",
+      "balance": 8732.329999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:45:15.511248",
+      "balance": 8785.12999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:46:15.511248",
+      "balance": 8723.149999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:47:15.511248",
+      "balance": 8691.569999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:48:15.511248",
+      "balance": 8744.529999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:49:15.511248",
+      "balance": 8861.899999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:50:15.511248",
+      "balance": 8861.899999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:51:15.511248",
+      "balance": 8861.899999999994
+    },
+    {
+      "timestamp": "2026-04-18T06:52:15.511248",
+      "balance": 8804.549999999988
+    },
+    {
+      "timestamp": "2026-04-18T06:53:15.511248",
+      "balance": 8751.98999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:54:15.511248",
+      "balance": 8747.01999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:55:15.511248",
+      "balance": 8768.98999999999
+    },
+    {
+      "timestamp": "2026-04-18T06:56:15.511248",
+      "balance": 8786.819999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:57:15.511248",
+      "balance": 8840.139999999992
+    },
+    {
+      "timestamp": "2026-04-18T06:58:15.511248",
+      "balance": 8840.979999999989
+    },
+    {
+      "timestamp": "2026-04-18T06:59:15.511248",
+      "balance": 8934.779999999992
+    },
+    {
+      "timestamp": "2026-04-18T07:00:15.511248",
+      "balance": 8917.689999999988
+    },
+    {
+      "timestamp": "2026-04-18T07:01:15.511248",
+      "balance": 9088.55999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:02:15.511248",
+      "balance": 9088.55999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:03:15.511248",
+      "balance": 9088.55999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:04:15.511248",
+      "balance": 9088.55999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:05:15.511248",
+      "balance": 9119.759999999995
+    },
+    {
+      "timestamp": "2026-04-18T07:06:15.511248",
+      "balance": 9105.30999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:07:15.511248",
+      "balance": 9151.499999999993
+    },
+    {
+      "timestamp": "2026-04-18T07:08:15.511248",
+      "balance": 9182.139999999992
+    },
+    {
+      "timestamp": "2026-04-18T07:09:15.511248",
+      "balance": 9177.419999999991
+    },
+    {
+      "timestamp": "2026-04-18T07:10:15.511248",
+      "balance": 9122.619999999995
+    },
+    {
+      "timestamp": "2026-04-18T07:11:15.511248",
+      "balance": 9024.69999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:12:15.511248",
+      "balance": 8995.859999999993
+    },
+    {
+      "timestamp": "2026-04-18T07:13:15.511248",
+      "balance": 9051.179999999993
+    },
+    {
+      "timestamp": "2026-04-18T07:14:15.511248",
+      "balance": 9065.009999999995
+    },
+    {
+      "timestamp": "2026-04-18T07:15:15.511248",
+      "balance": 8984.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T07:16:15.511248",
+      "balance": 8995.729999999996
+    },
+    {
+      "timestamp": "2026-04-18T07:17:15.511248",
+      "balance": 9020.609999999993
+    },
+    {
+      "timestamp": "2026-04-18T07:18:15.511248",
+      "balance": 8963.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T07:19:15.511248",
+      "balance": 8973.469999999994
+    },
+    {
+      "timestamp": "2026-04-18T07:20:15.511248",
+      "balance": 8977.219999999994
+    },
+    {
+      "timestamp": "2026-04-18T07:21:15.511248",
+      "balance": 8903.48999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:22:15.511248",
+      "balance": 8926.55999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:23:15.511248",
+      "balance": 8962.73999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:24:15.511248",
+      "balance": 9032.669999999991
+    },
+    {
+      "timestamp": "2026-04-18T07:25:15.511248",
+      "balance": 9100.779999999992
+    },
+    {
+      "timestamp": "2026-04-18T07:26:15.511248",
+      "balance": 9011.749999999993
+    },
+    {
+      "timestamp": "2026-04-18T07:27:15.511248",
+      "balance": 8951.219999999994
+    },
+    {
+      "timestamp": "2026-04-18T07:28:15.511248",
+      "balance": 8984.44999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:29:15.511248",
+      "balance": 9017.62999999999
+    },
+    {
+      "timestamp": "2026-04-18T07:30:15.511248",
+      "balance": 9050.899999999994
+    },
+    {
+      "timestamp": "2026-04-18T07:31:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:32:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:33:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:34:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:35:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:36:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:37:15.511248",
+      "balance": 9295.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:38:15.511248",
+      "balance": 9245.04
+    },
+    {
+      "timestamp": "2026-04-18T07:39:15.511248",
+      "balance": 9229.629999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:40:15.511248",
+      "balance": 9198.07
+    },
+    {
+      "timestamp": "2026-04-18T07:41:15.511248",
+      "balance": 9203.39
+    },
+    {
+      "timestamp": "2026-04-18T07:42:15.511248",
+      "balance": 9349.07
+    },
+    {
+      "timestamp": "2026-04-18T07:43:15.511248",
+      "balance": 9227.489999999998
+    },
+    {
+      "timestamp": "2026-04-18T07:44:15.511248",
+      "balance": 9272.150000000001
+    },
+    {
+      "timestamp": "2026-04-18T07:45:15.511248",
+      "balance": 9167.25
+    },
+    {
+      "timestamp": "2026-04-18T07:46:15.511248",
+      "balance": 9136.589999999997
+    },
+    {
+      "timestamp": "2026-04-18T07:47:15.511248",
+      "balance": 9207.36
+    },
+    {
+      "timestamp": "2026-04-18T07:48:15.511248",
+      "balance": 9211.54
+    },
+    {
+      "timestamp": "2026-04-18T07:49:15.511248",
+      "balance": 9141.489999999998
+    },
+    {
+      "timestamp": "2026-04-18T07:50:15.511248",
+      "balance": 9095.04
+    },
+    {
+      "timestamp": "2026-04-18T07:51:15.511248",
+      "balance": 9139.169999999998
+    },
+    {
+      "timestamp": "2026-04-18T07:52:15.511248",
+      "balance": 9091.739999999998
+    },
+    {
+      "timestamp": "2026-04-18T07:53:15.511248",
+      "balance": 9105.799999999996
+    },
+    {
+      "timestamp": "2026-04-18T07:54:15.511248",
+      "balance": 9108.75
+    },
+    {
+      "timestamp": "2026-04-18T07:55:15.511248",
+      "balance": 9066.46
+    },
+    {
+      "timestamp": "2026-04-18T07:56:15.511248",
+      "balance": 9205.729999999996
+    },
+    {
+      "timestamp": "2026-04-18T07:57:15.511248",
+      "balance": 9246.96
+    },
+    {
+      "timestamp": "2026-04-18T07:58:15.511248",
+      "balance": 9115.32
+    },
+    {
+      "timestamp": "2026-04-18T07:59:15.511248",
+      "balance": 9127.43
+    },
+    {
+      "timestamp": "2026-04-18T08:00:15.511248",
+      "balance": 9084.46
+    },
+    {
+      "timestamp": "2026-04-18T08:01:15.511248",
+      "balance": 9139.809999999998
+    },
+    {
+      "timestamp": "2026-04-18T08:02:15.511248",
+      "balance": 9088.349999999999
+    },
+    {
+      "timestamp": "2026-04-18T08:03:15.511248",
+      "balance": 9080.900000000001
+    },
+    {
+      "timestamp": "2026-04-18T08:04:15.511248",
+      "balance": 9113.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:05:15.511248",
+      "balance": 9169.93
+    },
+    {
+      "timestamp": "2026-04-18T08:06:15.511248",
+      "balance": 9091.970000000001
+    },
+    {
+      "timestamp": "2026-04-18T08:07:15.511248",
+      "balance": 9070.260000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:08:15.511248",
+      "balance": 9039.440000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:09:15.511248",
+      "balance": 8997.080000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:10:15.511248",
+      "balance": 9111.619999999995
+    },
+    {
+      "timestamp": "2026-04-18T08:11:15.511248",
+      "balance": 9137.919999999998
+    },
+    {
+      "timestamp": "2026-04-18T08:12:15.511248",
+      "balance": 9056.059999999998
+    },
+    {
+      "timestamp": "2026-04-18T08:13:15.511248",
+      "balance": 9115.64
+    },
+    {
+      "timestamp": "2026-04-18T08:14:15.511248",
+      "balance": 9253.599999999999
+    },
+    {
+      "timestamp": "2026-04-18T08:15:15.511248",
+      "balance": 9320.82
+    },
+    {
+      "timestamp": "2026-04-18T08:16:15.511248",
+      "balance": 9221.919999999998
+    },
+    {
+      "timestamp": "2026-04-18T08:17:15.511248",
+      "balance": 9190.43
+    },
+    {
+      "timestamp": "2026-04-18T08:18:15.511248",
+      "balance": 9272.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T08:19:15.511248",
+      "balance": 9226.799999999996
+    },
+    {
+      "timestamp": "2026-04-18T08:20:15.511248",
+      "balance": 9255.669999999998
+    },
+    {
+      "timestamp": "2026-04-18T08:21:15.511248",
+      "balance": 9306.11
+    },
+    {
+      "timestamp": "2026-04-18T08:22:15.511248",
+      "balance": 9245.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:23:15.511248",
+      "balance": 9241.89
+    },
+    {
+      "timestamp": "2026-04-18T08:24:15.511248",
+      "balance": 9031.339999999997
+    },
+    {
+      "timestamp": "2026-04-18T08:25:15.511248",
+      "balance": 8959.940000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:26:15.511248",
+      "balance": 8976.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T08:27:15.511248",
+      "balance": 9057.070000000007
+    },
+    {
+      "timestamp": "2026-04-18T08:28:15.511248",
+      "balance": 8951.390000000007
+    },
+    {
+      "timestamp": "2026-04-18T08:29:15.511248",
+      "balance": 9043.990000000005
+    },
+    {
+      "timestamp": "2026-04-18T08:30:15.511248",
+      "balance": 9072.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:31:15.511248",
+      "balance": 9064.000000000007
+    },
+    {
+      "timestamp": "2026-04-18T08:32:15.511248",
+      "balance": 8970.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:33:15.511248",
+      "balance": 9063.650000000009
+    },
+    {
+      "timestamp": "2026-04-18T08:34:15.511248",
+      "balance": 8988.370000000003
+    },
+    {
+      "timestamp": "2026-04-18T08:35:15.511248",
+      "balance": 8987.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:36:15.511248",
+      "balance": 9051.230000000003
+    },
+    {
+      "timestamp": "2026-04-18T08:37:15.511248",
+      "balance": 9021.330000000009
+    },
+    {
+      "timestamp": "2026-04-18T08:38:15.511248",
+      "balance": 9008.440000000002
+    },
+    {
+      "timestamp": "2026-04-18T08:39:15.511248",
+      "balance": 9047.290000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:40:15.511248",
+      "balance": 9042.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:41:15.511248",
+      "balance": 9067.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:42:15.511248",
+      "balance": 9060.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:43:15.511248",
+      "balance": 9017.51000000001
+    },
+    {
+      "timestamp": "2026-04-18T08:44:15.511248",
+      "balance": 8914.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:45:15.511248",
+      "balance": 8994.970000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:46:15.511248",
+      "balance": 8856.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:47:15.511248",
+      "balance": 8983.250000000007
+    },
+    {
+      "timestamp": "2026-04-18T08:48:15.511248",
+      "balance": 8993.080000000009
+    },
+    {
+      "timestamp": "2026-04-18T08:49:15.511248",
+      "balance": 8954.970000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:50:15.511248",
+      "balance": 8936.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:51:15.511248",
+      "balance": 8977.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:52:15.511248",
+      "balance": 8990.590000000004
+    },
+    {
+      "timestamp": "2026-04-18T08:53:15.511248",
+      "balance": 9022.51000000001
+    },
+    {
+      "timestamp": "2026-04-18T08:54:15.511248",
+      "balance": 9060.640000000007
+    },
+    {
+      "timestamp": "2026-04-18T08:55:15.511248",
+      "balance": 9005.660000000003
+    },
+    {
+      "timestamp": "2026-04-18T08:56:15.511248",
+      "balance": 8982.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T08:57:15.511248",
+      "balance": 9027.400000000009
+    },
+    {
+      "timestamp": "2026-04-18T08:58:15.511248",
+      "balance": 8969.150000000009
+    },
+    {
+      "timestamp": "2026-04-18T08:59:15.511248",
+      "balance": 8949.250000000007
+    },
+    {
+      "timestamp": "2026-04-18T09:00:15.511248",
+      "balance": 8896.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T09:01:15.511248",
+      "balance": 8855.710000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:02:15.511248",
+      "balance": 8909.480000000003
+    },
+    {
+      "timestamp": "2026-04-18T09:03:15.511248",
+      "balance": 8945.790000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:04:15.511248",
+      "balance": 8897.350000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:05:15.511248",
+      "balance": 8857.750000000007
+    },
+    {
+      "timestamp": "2026-04-18T09:06:15.511248",
+      "balance": 8859.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:07:15.511248",
+      "balance": 8851.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T09:08:15.511248",
+      "balance": 8763.530000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:09:15.511248",
+      "balance": 8725.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:10:15.511248",
+      "balance": 8760.640000000007
+    },
+    {
+      "timestamp": "2026-04-18T09:11:15.511248",
+      "balance": 8747.51000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:12:15.511248",
+      "balance": 8733.37000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:13:15.511248",
+      "balance": 8804.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:14:15.511248",
+      "balance": 8858.460000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:15:15.511248",
+      "balance": 8906.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:16:15.511248",
+      "balance": 8991.500000000007
+    },
+    {
+      "timestamp": "2026-04-18T09:17:15.511248",
+      "balance": 8992.87000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:18:15.511248",
+      "balance": 9037.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:19:15.511248",
+      "balance": 9017.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:20:15.511248",
+      "balance": 9038.26000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:21:15.511248",
+      "balance": 9029.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:22:15.511248",
+      "balance": 9036.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:23:15.511248",
+      "balance": 9074.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:24:15.511248",
+      "balance": 9021.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T09:25:15.511248",
+      "balance": 9153.200000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:26:15.511248",
+      "balance": 9153.200000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:27:15.511248",
+      "balance": 9153.200000000004
+    },
+    {
+      "timestamp": "2026-04-18T09:28:15.511248",
+      "balance": 9228.79
+    },
+    {
+      "timestamp": "2026-04-18T09:29:15.511248",
+      "balance": 9280.510000000002
+    },
+    {
+      "timestamp": "2026-04-18T09:30:15.511248",
+      "balance": 9321.320000000007
+    },
+    {
+      "timestamp": "2026-04-18T09:31:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:32:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:33:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:34:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:35:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:36:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:37:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:38:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:39:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:40:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:41:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:42:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:43:15.511248",
+      "balance": 9357.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T09:44:15.511248",
+      "balance": 9373.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:45:15.511248",
+      "balance": 9340.330000000009
+    },
+    {
+      "timestamp": "2026-04-18T09:46:15.511248",
+      "balance": 9309.600000000006
+    },
+    {
+      "timestamp": "2026-04-18T09:47:15.511248",
+      "balance": 9324.740000000005
+    },
+    {
+      "timestamp": "2026-04-18T09:48:15.511248",
+      "balance": 9225.330000000009
+    },
+    {
+      "timestamp": "2026-04-18T09:49:15.511248",
+      "balance": 9316.960000000014
+    },
+    {
+      "timestamp": "2026-04-18T09:50:15.511248",
+      "balance": 9363.680000000015
+    },
+    {
+      "timestamp": "2026-04-18T09:51:15.511248",
+      "balance": 9377.560000000012
+    },
+    {
+      "timestamp": "2026-04-18T09:52:15.511248",
+      "balance": 9357.350000000013
+    },
+    {
+      "timestamp": "2026-04-18T09:53:15.511248",
+      "balance": 9261.350000000013
+    },
+    {
+      "timestamp": "2026-04-18T09:54:15.511248",
+      "balance": 9205.48000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:55:15.511248",
+      "balance": 9215.91000000001
+    },
+    {
+      "timestamp": "2026-04-18T09:56:15.511248",
+      "balance": 9217.150000000009
+    },
+    {
+      "timestamp": "2026-04-18T09:57:15.511248",
+      "balance": 9282.430000000015
+    },
+    {
+      "timestamp": "2026-04-18T09:58:15.511248",
+      "balance": 9283.640000000014
+    },
+    {
+      "timestamp": "2026-04-18T09:59:15.511248",
+      "balance": 9302.430000000015
+    },
+    {
+      "timestamp": "2026-04-18T10:00:15.511248",
+      "balance": 9281.420000000013
+    },
+    {
+      "timestamp": "2026-04-18T10:01:15.511248",
+      "balance": 9335.250000000015
+    },
+    {
+      "timestamp": "2026-04-18T10:02:15.511248",
+      "balance": 9301.460000000014
+    },
+    {
+      "timestamp": "2026-04-18T10:03:15.511248",
+      "balance": 9201.640000000014
+    },
+    {
+      "timestamp": "2026-04-18T10:04:15.511248",
+      "balance": 9208.73000000001
+    },
+    {
+      "timestamp": "2026-04-18T10:05:15.511248",
+      "balance": 9182.55000000001
+    },
+    {
+      "timestamp": "2026-04-18T10:06:15.511248",
+      "balance": 9137.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:07:15.511248",
+      "balance": 9163.710000000014
+    },
+    {
+      "timestamp": "2026-04-18T10:08:15.511248",
+      "balance": 9149.100000000013
+    },
+    {
+      "timestamp": "2026-04-18T10:09:15.511248",
+      "balance": 9148.280000000013
+    },
+    {
+      "timestamp": "2026-04-18T10:10:15.511248",
+      "balance": 9141.900000000009
+    },
+    {
+      "timestamp": "2026-04-18T10:11:15.511248",
+      "balance": 9192.310000000012
+    },
+    {
+      "timestamp": "2026-04-18T10:12:15.511248",
+      "balance": 9190.710000000014
+    },
+    {
+      "timestamp": "2026-04-18T10:13:15.511248",
+      "balance": 9158.240000000013
+    },
+    {
+      "timestamp": "2026-04-18T10:14:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:15:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:16:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:17:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:18:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:19:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:20:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:21:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:22:15.511248",
+      "balance": 9058.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:23:15.511248",
+      "balance": 9019.250000000007
+    },
+    {
+      "timestamp": "2026-04-18T10:24:15.511248",
+      "balance": 8880.220000000001
+    },
+    {
+      "timestamp": "2026-04-18T10:25:15.511248",
+      "balance": 8845.850000000006
+    },
+    {
+      "timestamp": "2026-04-18T10:26:15.511248",
+      "balance": 8791.260000000002
+    },
+    {
+      "timestamp": "2026-04-18T10:27:15.511248",
+      "balance": 8801.080000000002
+    },
+    {
+      "timestamp": "2026-04-18T10:28:15.511248",
+      "balance": 8823.410000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:29:15.511248",
+      "balance": 8946.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:30:15.511248",
+      "balance": 9008.350000000006
+    },
+    {
+      "timestamp": "2026-04-18T10:31:15.511248",
+      "balance": 8970.560000000005
+    },
+    {
+      "timestamp": "2026-04-18T10:32:15.511248",
+      "balance": 8911.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T10:33:15.511248",
+      "balance": 8943.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T10:34:15.511248",
+      "balance": 8857.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T10:35:15.511248",
+      "balance": 8977.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T10:36:15.511248",
+      "balance": 9054.710000000006
+    },
+    {
+      "timestamp": "2026-04-18T10:37:15.511248",
+      "balance": 9023.950000000012
+    },
+    {
+      "timestamp": "2026-04-18T10:38:15.511248",
+      "balance": 8911.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T10:39:15.511248",
+      "balance": 9000.410000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:40:15.511248",
+      "balance": 8992.910000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:41:15.511248",
+      "balance": 9074.050000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:42:15.511248",
+      "balance": 8969.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:43:15.511248",
+      "balance": 8930.310000000005
+    },
+    {
+      "timestamp": "2026-04-18T10:44:15.511248",
+      "balance": 8930.660000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:45:15.511248",
+      "balance": 8933.730000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:46:15.511248",
+      "balance": 8904.280000000006
+    },
+    {
+      "timestamp": "2026-04-18T10:47:15.511248",
+      "balance": 8945.040000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:48:15.511248",
+      "balance": 8875.190000000002
+    },
+    {
+      "timestamp": "2026-04-18T10:49:15.511248",
+      "balance": 8865.880000000005
+    },
+    {
+      "timestamp": "2026-04-18T10:50:15.511248",
+      "balance": 8873.750000000007
+    },
+    {
+      "timestamp": "2026-04-18T10:51:15.511248",
+      "balance": 8907.400000000001
+    },
+    {
+      "timestamp": "2026-04-18T10:52:15.511248",
+      "balance": 8953.970000000001
+    },
+    {
+      "timestamp": "2026-04-18T10:53:15.511248",
+      "balance": 8880.380000000005
+    },
+    {
+      "timestamp": "2026-04-18T10:54:15.511248",
+      "balance": 8780.130000000005
+    },
+    {
+      "timestamp": "2026-04-18T10:55:15.511248",
+      "balance": 8863.610000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:56:15.511248",
+      "balance": 8885.340000000004
+    },
+    {
+      "timestamp": "2026-04-18T10:57:15.511248",
+      "balance": 8836.410000000003
+    },
+    {
+      "timestamp": "2026-04-18T10:58:15.511248",
+      "balance": 8937.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T10:59:15.511248",
+      "balance": 8945.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T11:00:15.511248",
+      "balance": 9022.669999999998
+    },
+    {
+      "timestamp": "2026-04-18T11:01:15.511248",
+      "balance": 9027.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T11:02:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:03:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:04:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:05:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:06:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:07:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:08:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:09:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:10:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:11:15.511248",
+      "balance": 9157.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:12:15.511248",
+      "balance": 9079.360000000015
+    },
+    {
+      "timestamp": "2026-04-18T11:13:15.511248",
+      "balance": 8945.250000000015
+    },
+    {
+      "timestamp": "2026-04-18T11:14:15.511248",
+      "balance": 8927.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:15:15.511248",
+      "balance": 8974.700000000012
+    },
+    {
+      "timestamp": "2026-04-18T11:16:15.511248",
+      "balance": 9073.51000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:17:15.511248",
+      "balance": 9078.390000000014
+    },
+    {
+      "timestamp": "2026-04-18T11:18:15.511248",
+      "balance": 9185.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T11:19:15.511248",
+      "balance": 9094.750000000015
+    },
+    {
+      "timestamp": "2026-04-18T11:20:15.511248",
+      "balance": 8982.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T11:21:15.511248",
+      "balance": 8979.040000000008
+    },
+    {
+      "timestamp": "2026-04-18T11:22:15.511248",
+      "balance": 9004.290000000008
+    },
+    {
+      "timestamp": "2026-04-18T11:23:15.511248",
+      "balance": 9002.140000000014
+    },
+    {
+      "timestamp": "2026-04-18T11:24:15.511248",
+      "balance": 8866.340000000011
+    },
+    {
+      "timestamp": "2026-04-18T11:25:15.511248",
+      "balance": 8860.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T11:26:15.511248",
+      "balance": 8769.960000000006
+    },
+    {
+      "timestamp": "2026-04-18T11:27:15.511248",
+      "balance": 8726.070000000007
+    },
+    {
+      "timestamp": "2026-04-18T11:28:15.511248",
+      "balance": 8702.029999999999
+    },
+    {
+      "timestamp": "2026-04-18T11:29:15.511248",
+      "balance": 8763.650000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:30:15.511248",
+      "balance": 8797.310000000005
+    },
+    {
+      "timestamp": "2026-04-18T11:31:15.511248",
+      "balance": 8866.650000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:32:15.511248",
+      "balance": 8870.75
+    },
+    {
+      "timestamp": "2026-04-18T11:33:15.511248",
+      "balance": 8808.230000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:34:15.511248",
+      "balance": 8872.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T11:35:15.511248",
+      "balance": 8839.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T11:36:15.511248",
+      "balance": 8874.470000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:37:15.511248",
+      "balance": 8926.320000000007
+    },
+    {
+      "timestamp": "2026-04-18T11:38:15.511248",
+      "balance": 8933.320000000007
+    },
+    {
+      "timestamp": "2026-04-18T11:39:15.511248",
+      "balance": 9000.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T11:40:15.511248",
+      "balance": 9032.090000000004
+    },
+    {
+      "timestamp": "2026-04-18T11:41:15.511248",
+      "balance": 9032.090000000004
+    },
+    {
+      "timestamp": "2026-04-18T11:42:15.511248",
+      "balance": 8903.910000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:43:15.511248",
+      "balance": 8901.599999999999
+    },
+    {
+      "timestamp": "2026-04-18T11:44:15.511248",
+      "balance": 8947.29
+    },
+    {
+      "timestamp": "2026-04-18T11:45:15.511248",
+      "balance": 8933.32
+    },
+    {
+      "timestamp": "2026-04-18T11:46:15.511248",
+      "balance": 8940.650000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:47:15.511248",
+      "balance": 8955.07
+    },
+    {
+      "timestamp": "2026-04-18T11:48:15.511248",
+      "balance": 8914.980000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:49:15.511248",
+      "balance": 8865.5
+    },
+    {
+      "timestamp": "2026-04-18T11:50:15.511248",
+      "balance": 8900.160000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:51:15.511248",
+      "balance": 8937.75
+    },
+    {
+      "timestamp": "2026-04-18T11:52:15.511248",
+      "balance": 8955.71
+    },
+    {
+      "timestamp": "2026-04-18T11:53:15.511248",
+      "balance": 9105.75
+    },
+    {
+      "timestamp": "2026-04-18T11:54:15.511248",
+      "balance": 9204.32
+    },
+    {
+      "timestamp": "2026-04-18T11:55:15.511248",
+      "balance": 9115.410000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:56:15.511248",
+      "balance": 9008.230000000003
+    },
+    {
+      "timestamp": "2026-04-18T11:57:15.511248",
+      "balance": 9024.470000000001
+    },
+    {
+      "timestamp": "2026-04-18T11:58:15.511248",
+      "balance": 8986.879999999997
+    },
+    {
+      "timestamp": "2026-04-18T11:59:15.511248",
+      "balance": 8966.57
+    },
+    {
+      "timestamp": "2026-04-18T12:00:15.511248",
+      "balance": 8760.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T12:01:15.511248",
+      "balance": 8687.059999999998
+    },
+    {
+      "timestamp": "2026-04-18T12:02:15.511248",
+      "balance": 8695.440000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:03:15.511248",
+      "balance": 8758.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:04:15.511248",
+      "balance": 8863.07
+    },
+    {
+      "timestamp": "2026-04-18T12:05:15.511248",
+      "balance": 8849.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:06:15.511248",
+      "balance": 8899.190000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:07:15.511248",
+      "balance": 8987.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:08:15.511248",
+      "balance": 9029.160000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:09:15.511248",
+      "balance": 9094.61
+    },
+    {
+      "timestamp": "2026-04-18T12:10:15.511248",
+      "balance": 8984.68
+    },
+    {
+      "timestamp": "2026-04-18T12:11:15.511248",
+      "balance": 8927.160000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:12:15.511248",
+      "balance": 8927.68
+    },
+    {
+      "timestamp": "2026-04-18T12:13:15.511248",
+      "balance": 8826.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:14:15.511248",
+      "balance": 8831.07
+    },
+    {
+      "timestamp": "2026-04-18T12:15:15.511248",
+      "balance": 8774.79
+    },
+    {
+      "timestamp": "2026-04-18T12:16:15.511248",
+      "balance": 8874.350000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:17:15.511248",
+      "balance": 8909.61
+    },
+    {
+      "timestamp": "2026-04-18T12:18:15.511248",
+      "balance": 8841.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:19:15.511248",
+      "balance": 8829.310000000005
+    },
+    {
+      "timestamp": "2026-04-18T12:20:15.511248",
+      "balance": 8772.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:21:15.511248",
+      "balance": 8681.850000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:22:15.511248",
+      "balance": 8742.280000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:23:15.511248",
+      "balance": 8867.050000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:24:15.511248",
+      "balance": 8775.640000000007
+    },
+    {
+      "timestamp": "2026-04-18T12:25:15.511248",
+      "balance": 8812.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:26:15.511248",
+      "balance": 8769.910000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:27:15.511248",
+      "balance": 8738.11
+    },
+    {
+      "timestamp": "2026-04-18T12:28:15.511248",
+      "balance": 8699.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:29:15.511248",
+      "balance": 8643.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:30:15.511248",
+      "balance": 8646.270000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:31:15.511248",
+      "balance": 8587.120000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:32:15.511248",
+      "balance": 8569.5
+    },
+    {
+      "timestamp": "2026-04-18T12:33:15.511248",
+      "balance": 8572.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:34:15.511248",
+      "balance": 8588.340000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:35:15.511248",
+      "balance": 8642.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T12:36:15.511248",
+      "balance": 8679.940000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:37:15.511248",
+      "balance": 8630.800000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:38:15.511248",
+      "balance": 8598.190000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:39:15.511248",
+      "balance": 8661.810000000005
+    },
+    {
+      "timestamp": "2026-04-18T12:40:15.511248",
+      "balance": 8655.349999999999
+    },
+    {
+      "timestamp": "2026-04-18T12:41:15.511248",
+      "balance": 8606.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:42:15.511248",
+      "balance": 8715.050000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:43:15.511248",
+      "balance": 8679.720000000001
+    },
+    {
+      "timestamp": "2026-04-18T12:44:15.511248",
+      "balance": 8722.800000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:45:15.511248",
+      "balance": 8685.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:46:15.511248",
+      "balance": 8735.32
+    },
+    {
+      "timestamp": "2026-04-18T12:47:15.511248",
+      "balance": 8852.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T12:48:15.511248",
+      "balance": 8952.980000000003
+    },
+    {
+      "timestamp": "2026-04-18T12:49:15.511248",
+      "balance": 8949.86
+    },
+    {
+      "timestamp": "2026-04-18T12:50:15.511248",
+      "balance": 8933.04
+    },
+    {
+      "timestamp": "2026-04-18T12:51:15.511248",
+      "balance": 8991.590000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:52:15.511248",
+      "balance": 8950.25
+    },
+    {
+      "timestamp": "2026-04-18T12:53:15.511248",
+      "balance": 9057.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T12:54:15.511248",
+      "balance": 9062.029999999999
+    },
+    {
+      "timestamp": "2026-04-18T12:55:15.511248",
+      "balance": 9140.270000000004
+    },
+    {
+      "timestamp": "2026-04-18T12:56:15.511248",
+      "balance": 9177.349999999999
+    },
+    {
+      "timestamp": "2026-04-18T12:57:15.511248",
+      "balance": 9174.29
+    },
+    {
+      "timestamp": "2026-04-18T12:58:15.511248",
+      "balance": 9229.79
+    },
+    {
+      "timestamp": "2026-04-18T12:59:15.511248",
+      "balance": 9254.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:00:15.511248",
+      "balance": 9189.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:01:15.511248",
+      "balance": 9226.900000000001
+    },
+    {
+      "timestamp": "2026-04-18T13:02:15.511248",
+      "balance": 9172.990000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:03:15.511248",
+      "balance": 9245.849999999999
+    },
+    {
+      "timestamp": "2026-04-18T13:04:15.511248",
+      "balance": 9211.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:05:15.511248",
+      "balance": 9118.660000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:06:15.511248",
+      "balance": 9278.090000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:07:15.511248",
+      "balance": 9329.410000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:08:15.511248",
+      "balance": 9292.25
+    },
+    {
+      "timestamp": "2026-04-18T13:09:15.511248",
+      "balance": 9305.330000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:10:15.511248",
+      "balance": 9281.43
+    },
+    {
+      "timestamp": "2026-04-18T13:11:15.511248",
+      "balance": 9320.32
+    },
+    {
+      "timestamp": "2026-04-18T13:12:15.511248",
+      "balance": 9314.75
+    },
+    {
+      "timestamp": "2026-04-18T13:13:15.511248",
+      "balance": 9324.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:14:15.511248",
+      "balance": 9249.550000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:15:15.511248",
+      "balance": 9233.150000000001
+    },
+    {
+      "timestamp": "2026-04-18T13:16:15.511248",
+      "balance": 9211.380000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:17:15.511248",
+      "balance": 9237.93
+    },
+    {
+      "timestamp": "2026-04-18T13:18:15.511248",
+      "balance": 9269.36
+    },
+    {
+      "timestamp": "2026-04-18T13:19:15.511248",
+      "balance": 9297.230000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:20:15.511248",
+      "balance": 9271.82
+    },
+    {
+      "timestamp": "2026-04-18T13:21:15.511248",
+      "balance": 9298.940000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:22:15.511248",
+      "balance": 9280.270000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:23:15.511248",
+      "balance": 9146.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T13:24:15.511248",
+      "balance": 9090.160000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:25:15.511248",
+      "balance": 9111.220000000001
+    },
+    {
+      "timestamp": "2026-04-18T13:26:15.511248",
+      "balance": 9033.590000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:27:15.511248",
+      "balance": 9059.970000000001
+    },
+    {
+      "timestamp": "2026-04-18T13:28:15.511248",
+      "balance": 9191.590000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:29:15.511248",
+      "balance": 9256.590000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:30:15.511248",
+      "balance": 9377.050000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:31:15.511248",
+      "balance": 9399.660000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:32:15.511248",
+      "balance": 9398.470000000001
+    },
+    {
+      "timestamp": "2026-04-18T13:33:15.511248",
+      "balance": 9290.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:34:15.511248",
+      "balance": 9269.520000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:35:15.511248",
+      "balance": 9283.630000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:36:15.511248",
+      "balance": 9230.18
+    },
+    {
+      "timestamp": "2026-04-18T13:37:15.511248",
+      "balance": 9372.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T13:38:15.511248",
+      "balance": 9357.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T13:39:15.511248",
+      "balance": 9307.800000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:40:15.511248",
+      "balance": 9402.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:41:15.511248",
+      "balance": 9329.36
+    },
+    {
+      "timestamp": "2026-04-18T13:42:15.511248",
+      "balance": 9307.57
+    },
+    {
+      "timestamp": "2026-04-18T13:43:15.511248",
+      "balance": 9334.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:44:15.511248",
+      "balance": 9293.560000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:45:15.511248",
+      "balance": 9147.130000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:46:15.511248",
+      "balance": 9135.39
+    },
+    {
+      "timestamp": "2026-04-18T13:47:15.511248",
+      "balance": 9119.36
+    },
+    {
+      "timestamp": "2026-04-18T13:48:15.511248",
+      "balance": 9149.020000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:49:15.511248",
+      "balance": 9203.86
+    },
+    {
+      "timestamp": "2026-04-18T13:50:15.511248",
+      "balance": 9150.279999999999
+    },
+    {
+      "timestamp": "2026-04-18T13:51:15.511248",
+      "balance": 9205.520000000004
+    },
+    {
+      "timestamp": "2026-04-18T13:52:15.511248",
+      "balance": 9200.910000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:53:15.511248",
+      "balance": 9231.71
+    },
+    {
+      "timestamp": "2026-04-18T13:54:15.511248",
+      "balance": 9200.82
+    },
+    {
+      "timestamp": "2026-04-18T13:55:15.511248",
+      "balance": 9179.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T13:56:15.511248",
+      "balance": 9112.310000000005
+    },
+    {
+      "timestamp": "2026-04-18T13:57:15.511248",
+      "balance": 9145.25
+    },
+    {
+      "timestamp": "2026-04-18T13:58:15.511248",
+      "balance": 9162.670000000006
+    },
+    {
+      "timestamp": "2026-04-18T13:59:15.511248",
+      "balance": 9225.810000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:00:15.511248",
+      "balance": 9254.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T14:01:15.511248",
+      "balance": 9230.130000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:02:15.511248",
+      "balance": 9181.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T14:03:15.511248",
+      "balance": 9240.779999999999
+    },
+    {
+      "timestamp": "2026-04-18T14:04:15.511248",
+      "balance": 9184.690000000002
+    },
+    {
+      "timestamp": "2026-04-18T14:05:15.511248",
+      "balance": 9097.170000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:06:15.511248",
+      "balance": 9070.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T14:07:15.511248",
+      "balance": 8949.029999999999
+    },
+    {
+      "timestamp": "2026-04-18T14:08:15.511248",
+      "balance": 8999.120000000003
+    },
+    {
+      "timestamp": "2026-04-18T14:09:15.511248",
+      "balance": 9079.61
+    },
+    {
+      "timestamp": "2026-04-18T14:10:15.511248",
+      "balance": 9194.46
+    },
+    {
+      "timestamp": "2026-04-18T14:11:15.511248",
+      "balance": 9097.870000000003
+    },
+    {
+      "timestamp": "2026-04-18T14:12:15.511248",
+      "balance": 9055.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T14:13:15.511248",
+      "balance": 9059.18
+    },
+    {
+      "timestamp": "2026-04-18T14:14:15.511248",
+      "balance": 9041.07
+    },
+    {
+      "timestamp": "2026-04-18T14:15:15.511248",
+      "balance": 9113.810000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:16:15.511248",
+      "balance": 8955.64
+    },
+    {
+      "timestamp": "2026-04-18T14:17:15.511248",
+      "balance": 8947.279999999999
+    },
+    {
+      "timestamp": "2026-04-18T14:18:15.511248",
+      "balance": 8940.190000000002
+    },
+    {
+      "timestamp": "2026-04-18T14:19:15.511248",
+      "balance": 8893.170000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:20:15.511248",
+      "balance": 8856.990000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:21:15.511248",
+      "balance": 8866.51000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:22:15.511248",
+      "balance": 8815.26000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:23:15.511248",
+      "balance": 8845.820000000007
+    },
+    {
+      "timestamp": "2026-04-18T14:24:15.511248",
+      "balance": 8962.960000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:25:15.511248",
+      "balance": 9050.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:26:15.511248",
+      "balance": 9154.130000000012
+    },
+    {
+      "timestamp": "2026-04-18T14:27:15.511248",
+      "balance": 9120.840000000011
+    },
+    {
+      "timestamp": "2026-04-18T14:28:15.511248",
+      "balance": 9056.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:29:15.511248",
+      "balance": 9048.240000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:30:15.511248",
+      "balance": 9051.87000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:31:15.511248",
+      "balance": 9123.080000000009
+    },
+    {
+      "timestamp": "2026-04-18T14:32:15.511248",
+      "balance": 9012.960000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:33:15.511248",
+      "balance": 9112.48000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:34:15.511248",
+      "balance": 9102.19000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:35:15.511248",
+      "balance": 9074.41000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:36:15.511248",
+      "balance": 9008.580000000009
+    },
+    {
+      "timestamp": "2026-04-18T14:37:15.511248",
+      "balance": 8901.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:38:15.511248",
+      "balance": 8954.540000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:39:15.511248",
+      "balance": 8959.30000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:40:15.511248",
+      "balance": 8875.570000000007
+    },
+    {
+      "timestamp": "2026-04-18T14:41:15.511248",
+      "balance": 8786.610000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:42:15.511248",
+      "balance": 8764.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:43:15.511248",
+      "balance": 8873.040000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:44:15.511248",
+      "balance": 8856.200000000012
+    },
+    {
+      "timestamp": "2026-04-18T14:45:15.511248",
+      "balance": 8758.790000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:46:15.511248",
+      "balance": 8742.87000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:47:15.511248",
+      "balance": 8725.220000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:48:15.511248",
+      "balance": 8545.900000000009
+    },
+    {
+      "timestamp": "2026-04-18T14:49:15.511248",
+      "balance": 8549.41000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:50:15.511248",
+      "balance": 8564.310000000012
+    },
+    {
+      "timestamp": "2026-04-18T14:51:15.511248",
+      "balance": 8519.37000000001
+    },
+    {
+      "timestamp": "2026-04-18T14:52:15.511248",
+      "balance": 8399.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:53:15.511248",
+      "balance": 8326.930000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:54:15.511248",
+      "balance": 8344.340000000011
+    },
+    {
+      "timestamp": "2026-04-18T14:55:15.511248",
+      "balance": 8415.950000000012
+    },
+    {
+      "timestamp": "2026-04-18T14:56:15.511248",
+      "balance": 8244.290000000008
+    },
+    {
+      "timestamp": "2026-04-18T14:57:15.511248",
+      "balance": 8248.130000000005
+    },
+    {
+      "timestamp": "2026-04-18T14:58:15.511248",
+      "balance": 8249.030000000006
+    },
+    {
+      "timestamp": "2026-04-18T14:59:15.511248",
+      "balance": 8247.470000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:00:15.511248",
+      "balance": 8260.320000000007
+    },
+    {
+      "timestamp": "2026-04-18T15:01:15.511248",
+      "balance": 8250.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:02:15.511248",
+      "balance": 8213.76000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:03:15.511248",
+      "balance": 8178.320000000007
+    },
+    {
+      "timestamp": "2026-04-18T15:04:15.511248",
+      "balance": 8176.200000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:05:15.511248",
+      "balance": 8141.010000000009
+    },
+    {
+      "timestamp": "2026-04-18T15:06:15.511248",
+      "balance": 8094.87000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:07:15.511248",
+      "balance": 8101.760000000009
+    },
+    {
+      "timestamp": "2026-04-18T15:08:15.511248",
+      "balance": 8085.260000000009
+    },
+    {
+      "timestamp": "2026-04-18T15:09:15.511248",
+      "balance": 8182.62000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:10:15.511248",
+      "balance": 8006.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:11:15.511248",
+      "balance": 7935.530000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:12:15.511248",
+      "balance": 7849.870000000003
+    },
+    {
+      "timestamp": "2026-04-18T15:13:15.511248",
+      "balance": 7984.020000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:14:15.511248",
+      "balance": 8001.1700000000055
+    },
+    {
+      "timestamp": "2026-04-18T15:15:15.511248",
+      "balance": 8025.1600000000035
+    },
+    {
+      "timestamp": "2026-04-18T15:16:15.511248",
+      "balance": 8111.000000000007
+    },
+    {
+      "timestamp": "2026-04-18T15:17:15.511248",
+      "balance": 8161.1500000000015
+    },
+    {
+      "timestamp": "2026-04-18T15:18:15.511248",
+      "balance": 8232.680000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:19:15.511248",
+      "balance": 8119.780000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:20:15.511248",
+      "balance": 8059.4200000000055
+    },
+    {
+      "timestamp": "2026-04-18T15:21:15.511248",
+      "balance": 7977.290000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:22:15.511248",
+      "balance": 7925.630000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:23:15.511248",
+      "balance": 7998.610000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:24:15.511248",
+      "balance": 8032.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:25:15.511248",
+      "balance": 8000.880000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:26:15.511248",
+      "balance": 8079.780000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:27:15.511248",
+      "balance": 8033.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:28:15.511248",
+      "balance": 8049.280000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:29:15.511248",
+      "balance": 8073.470000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:30:15.511248",
+      "balance": 8027.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:31:15.511248",
+      "balance": 7998.880000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:32:15.511248",
+      "balance": 8022.200000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:33:15.511248",
+      "balance": 7947.290000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:34:15.511248",
+      "balance": 8017.140000000007
+    },
+    {
+      "timestamp": "2026-04-18T15:35:15.511248",
+      "balance": 7977.350000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:36:15.511248",
+      "balance": 7939.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:37:15.511248",
+      "balance": 7959.020000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:38:15.511248",
+      "balance": 7937.940000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:39:15.511248",
+      "balance": 8018.790000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:40:15.511248",
+      "balance": 7959.090000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:41:15.511248",
+      "balance": 7971.040000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:42:15.511248",
+      "balance": 8004.810000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:43:15.511248",
+      "balance": 7937.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:44:15.511248",
+      "balance": 7982.540000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:45:15.511248",
+      "balance": 8073.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:46:15.511248",
+      "balance": 8168.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:47:15.511248",
+      "balance": 8129.810000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:48:15.511248",
+      "balance": 8212.300000000003
+    },
+    {
+      "timestamp": "2026-04-18T15:49:15.511248",
+      "balance": 8099.220000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:50:15.511248",
+      "balance": 8233.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:51:15.511248",
+      "balance": 8124.070000000007
+    },
+    {
+      "timestamp": "2026-04-18T15:52:15.511248",
+      "balance": 8110.470000000001
+    },
+    {
+      "timestamp": "2026-04-18T15:53:15.511248",
+      "balance": 8116.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T15:54:15.511248",
+      "balance": 8151.830000000002
+    },
+    {
+      "timestamp": "2026-04-18T15:55:15.511248",
+      "balance": 8126.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:56:15.511248",
+      "balance": 8128.530000000006
+    },
+    {
+      "timestamp": "2026-04-18T15:57:15.511248",
+      "balance": 8052.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T15:58:15.511248",
+      "balance": 8044.990000000005
+    },
+    {
+      "timestamp": "2026-04-18T15:59:15.511248",
+      "balance": 8035.290000000001
+    },
+    {
+      "timestamp": "2026-04-18T16:00:15.511248",
+      "balance": 8058.760000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:01:15.511248",
+      "balance": 8062.430000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:02:15.511248",
+      "balance": 8042.570000000007
+    },
+    {
+      "timestamp": "2026-04-18T16:03:15.511248",
+      "balance": 8152.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:04:15.511248",
+      "balance": 8234.680000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:05:15.511248",
+      "balance": 8186.830000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:06:15.511248",
+      "balance": 8175.830000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:07:15.511248",
+      "balance": 8187.680000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:08:15.511248",
+      "balance": 8186.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T16:09:15.511248",
+      "balance": 8164.100000000006
+    },
+    {
+      "timestamp": "2026-04-18T16:10:15.511248",
+      "balance": 8198.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:11:15.511248",
+      "balance": 8248.960000000006
+    },
+    {
+      "timestamp": "2026-04-18T16:12:15.511248",
+      "balance": 8236.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:13:15.511248",
+      "balance": 8299.280000000006
+    },
+    {
+      "timestamp": "2026-04-18T16:14:15.511248",
+      "balance": 8273.030000000006
+    },
+    {
+      "timestamp": "2026-04-18T16:15:15.511248",
+      "balance": 8377.440000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:16:15.511248",
+      "balance": 8311.330000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:17:15.511248",
+      "balance": 8280.950000000004
+    },
+    {
+      "timestamp": "2026-04-18T16:18:15.511248",
+      "balance": 8264.480000000003
+    },
+    {
+      "timestamp": "2026-04-18T16:19:15.511248",
+      "balance": 8196.250000000007
+    },
+    {
+      "timestamp": "2026-04-18T16:20:15.511248",
+      "balance": 8088.930000000008
+    },
+    {
+      "timestamp": "2026-04-18T16:21:15.511248",
+      "balance": 8018.490000000005
+    },
+    {
+      "timestamp": "2026-04-18T16:22:15.511248",
+      "balance": 7899.770000000004
+    },
+    {
+      "timestamp": "2026-04-18T16:23:15.511248",
+      "balance": 7812.370000000003
+    },
+    {
+      "timestamp": "2026-04-18T16:24:15.511248",
+      "balance": 7852.559999999998
+    },
+    {
+      "timestamp": "2026-04-18T16:25:15.511248",
+      "balance": 7850.889999999999
+    },
+    {
+      "timestamp": "2026-04-18T16:26:15.511248",
+      "balance": 7817.580000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:27:15.511248",
+      "balance": 7864.269999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:28:15.511248",
+      "balance": 7852.260000000002
+    },
+    {
+      "timestamp": "2026-04-18T16:29:15.511248",
+      "balance": 7900.82
+    },
+    {
+      "timestamp": "2026-04-18T16:30:15.511248",
+      "balance": 7940.0999999999985
+    },
+    {
+      "timestamp": "2026-04-18T16:31:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:32:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:33:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:34:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:35:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:36:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:37:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:38:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:39:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:40:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:41:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:42:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:43:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:44:15.511248",
+      "balance": 8025.379999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:45:15.511248",
+      "balance": 8031.559999999998
+    },
+    {
+      "timestamp": "2026-04-18T16:46:15.511248",
+      "balance": 7957.659999999996
+    },
+    {
+      "timestamp": "2026-04-18T16:47:15.511248",
+      "balance": 8002.879999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:48:15.511248",
+      "balance": 8005.129999999997
+    },
+    {
+      "timestamp": "2026-04-18T16:49:15.511248",
+      "balance": 7891.189999999995
+    },
+    {
+      "timestamp": "2026-04-18T16:50:15.511248",
+      "balance": 7931.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T16:51:15.511248",
+      "balance": 7809.789999999994
+    },
+    {
+      "timestamp": "2026-04-18T16:52:15.511248",
+      "balance": 7855.439999999995
+    },
+    {
+      "timestamp": "2026-04-18T16:53:15.511248",
+      "balance": 7819.159999999996
+    },
+    {
+      "timestamp": "2026-04-18T16:54:15.511248",
+      "balance": 7859.94999999999
+    },
+    {
+      "timestamp": "2026-04-18T16:55:15.511248",
+      "balance": 7922.739999999991
+    },
+    {
+      "timestamp": "2026-04-18T16:56:15.511248",
+      "balance": 7962.919999999991
+    },
+    {
+      "timestamp": "2026-04-18T16:57:15.511248",
+      "balance": 7861.509999999995
+    },
+    {
+      "timestamp": "2026-04-18T16:58:15.511248",
+      "balance": 7814.599999999991
+    },
+    {
+      "timestamp": "2026-04-18T16:59:15.511248",
+      "balance": 7798.639999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:00:15.511248",
+      "balance": 7793.849999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:01:15.511248",
+      "balance": 7833.869999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:02:15.511248",
+      "balance": 7845.3299999999945
+    },
+    {
+      "timestamp": "2026-04-18T17:03:15.511248",
+      "balance": 7759.239999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:04:15.511248",
+      "balance": 7783.739999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:05:15.511248",
+      "balance": 7823.109999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:06:15.511248",
+      "balance": 7859.219999999994
+    },
+    {
+      "timestamp": "2026-04-18T17:07:15.511248",
+      "balance": 7928.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:08:15.511248",
+      "balance": 7982.889999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:09:15.511248",
+      "balance": 8012.589999999989
+    },
+    {
+      "timestamp": "2026-04-18T17:10:15.511248",
+      "balance": 8008.049999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:11:15.511248",
+      "balance": 7900.709999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:12:15.511248",
+      "balance": 7928.459999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:13:15.511248",
+      "balance": 7941.87999999999
+    },
+    {
+      "timestamp": "2026-04-18T17:14:15.511248",
+      "balance": 7959.419999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:15:15.511248",
+      "balance": 7876.959999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:16:15.511248",
+      "balance": 7807.219999999994
+    },
+    {
+      "timestamp": "2026-04-18T17:17:15.511248",
+      "balance": 7875.159999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:18:15.511248",
+      "balance": 7872.609999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:19:15.511248",
+      "balance": 7916.609999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:20:15.511248",
+      "balance": 7918.439999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:21:15.511248",
+      "balance": 7920.359999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:22:15.511248",
+      "balance": 7980.989999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:23:15.511248",
+      "balance": 7947.639999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:24:15.511248",
+      "balance": 7953.849999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:25:15.511248",
+      "balance": 7923.979999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:26:15.511248",
+      "balance": 7895.919999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:27:15.511248",
+      "balance": 7875.959999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:28:15.511248",
+      "balance": 7890.299999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:29:15.511248",
+      "balance": 7859.399999999994
+    },
+    {
+      "timestamp": "2026-04-18T17:30:15.511248",
+      "balance": 7940.489999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:31:15.511248",
+      "balance": 7882.709999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:32:15.511248",
+      "balance": 7870.649999999994
+    },
+    {
+      "timestamp": "2026-04-18T17:33:15.511248",
+      "balance": 7842.2699999999895
+    },
+    {
+      "timestamp": "2026-04-18T17:34:15.511248",
+      "balance": 7935.689999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:35:15.511248",
+      "balance": 7948.389999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:36:15.511248",
+      "balance": 8015.099999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:37:15.511248",
+      "balance": 7919.0799999999945
+    },
+    {
+      "timestamp": "2026-04-18T17:38:15.511248",
+      "balance": 7936.3299999999945
+    },
+    {
+      "timestamp": "2026-04-18T17:39:15.511248",
+      "balance": 7993.8299999999945
+    },
+    {
+      "timestamp": "2026-04-18T17:40:15.511248",
+      "balance": 7999.149999999994
+    },
+    {
+      "timestamp": "2026-04-18T17:41:15.511248",
+      "balance": 8068.089999999989
+    },
+    {
+      "timestamp": "2026-04-18T17:42:15.511248",
+      "balance": 8034.609999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:43:15.511248",
+      "balance": 8125.869999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:44:15.511248",
+      "balance": 8269.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:45:15.511248",
+      "balance": 8246.439999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:46:15.511248",
+      "balance": 8217.51999999999
+    },
+    {
+      "timestamp": "2026-04-18T17:47:15.511248",
+      "balance": 8311.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:48:15.511248",
+      "balance": 8414.639999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:49:15.511248",
+      "balance": 8380.609999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:50:15.511248",
+      "balance": 8353.279999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:51:15.511248",
+      "balance": 8334.959999999992
+    },
+    {
+      "timestamp": "2026-04-18T17:52:15.511248",
+      "balance": 8247.619999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:53:15.511248",
+      "balance": 8188.009999999995
+    },
+    {
+      "timestamp": "2026-04-18T17:54:15.511248",
+      "balance": 8122.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T17:55:15.511248",
+      "balance": 8068.169999999991
+    },
+    {
+      "timestamp": "2026-04-18T17:56:15.511248",
+      "balance": 8065.929999999993
+    },
+    {
+      "timestamp": "2026-04-18T17:57:15.511248",
+      "balance": 8081.089999999989
+    },
+    {
+      "timestamp": "2026-04-18T17:58:15.511248",
+      "balance": 8181.5799999999945
+    },
+    {
+      "timestamp": "2026-04-18T17:59:15.511248",
+      "balance": 8116.859999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:00:15.511248",
+      "balance": 8180.669999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:01:15.511248",
+      "balance": 8166.799999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:02:15.511248",
+      "balance": 8163.589999999989
+    },
+    {
+      "timestamp": "2026-04-18T18:03:15.511248",
+      "balance": 8207.359999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:04:15.511248",
+      "balance": 8134.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:05:15.511248",
+      "balance": 8159.339999999989
+    },
+    {
+      "timestamp": "2026-04-18T18:06:15.511248",
+      "balance": 8170.139999999992
+    },
+    {
+      "timestamp": "2026-04-18T18:07:15.511248",
+      "balance": 8202.079999999994
+    },
+    {
+      "timestamp": "2026-04-18T18:08:15.511248",
+      "balance": 8220.83999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:09:15.511248",
+      "balance": 8380.389999999992
+    },
+    {
+      "timestamp": "2026-04-18T18:10:15.511248",
+      "balance": 8338.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:11:15.511248",
+      "balance": 8304.399999999994
+    },
+    {
+      "timestamp": "2026-04-18T18:12:15.511248",
+      "balance": 8263.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:13:15.511248",
+      "balance": 8227.849999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:14:15.511248",
+      "balance": 8186.489999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:15:15.511248",
+      "balance": 8263.659999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:16:15.511248",
+      "balance": 8355.979999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:17:15.511248",
+      "balance": 8318.869999999995
+    },
+    {
+      "timestamp": "2026-04-18T18:18:15.511248",
+      "balance": 8264.789999999994
+    },
+    {
+      "timestamp": "2026-04-18T18:19:15.511248",
+      "balance": 8295.419999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:20:15.511248",
+      "balance": 8259.549999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:21:15.511248",
+      "balance": 8300.659999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:22:15.511248",
+      "balance": 8313.849999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:23:15.511248",
+      "balance": 8215.409999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:24:15.511248",
+      "balance": 8315.909999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:25:15.511248",
+      "balance": 8427.73999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:26:15.511248",
+      "balance": 8387.859999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:27:15.511248",
+      "balance": 8362.62999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:28:15.511248",
+      "balance": 8381.229999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:29:15.511248",
+      "balance": 8402.999999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:30:15.511248",
+      "balance": 8445.869999999995
+    },
+    {
+      "timestamp": "2026-04-18T18:31:15.511248",
+      "balance": 8571.929999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:32:15.511248",
+      "balance": 8560.37999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:33:15.511248",
+      "balance": 8508.319999999992
+    },
+    {
+      "timestamp": "2026-04-18T18:34:15.511248",
+      "balance": 8413.44999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:35:15.511248",
+      "balance": 8365.87999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:36:15.511248",
+      "balance": 8363.719999999994
+    },
+    {
+      "timestamp": "2026-04-18T18:37:15.511248",
+      "balance": 8480.579999999994
+    },
+    {
+      "timestamp": "2026-04-18T18:38:15.511248",
+      "balance": 8446.849999999991
+    },
+    {
+      "timestamp": "2026-04-18T18:39:15.511248",
+      "balance": 8461.429999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:40:15.511248",
+      "balance": 8460.359999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:41:15.511248",
+      "balance": 8537.83999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:42:15.511248",
+      "balance": 8697.87999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:43:15.511248",
+      "balance": 8663.179999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:44:15.511248",
+      "balance": 8631.189999999995
+    },
+    {
+      "timestamp": "2026-04-18T18:45:15.511248",
+      "balance": 8699.439999999995
+    },
+    {
+      "timestamp": "2026-04-18T18:46:15.511248",
+      "balance": 8744.05999999999
+    },
+    {
+      "timestamp": "2026-04-18T18:47:15.511248",
+      "balance": 8865.019999999997
+    },
+    {
+      "timestamp": "2026-04-18T18:48:15.511248",
+      "balance": 8903.32
+    },
+    {
+      "timestamp": "2026-04-18T18:49:15.511248",
+      "balance": 8879.749999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:50:15.511248",
+      "balance": 8913.499999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:51:15.511248",
+      "balance": 8913.499999999993
+    },
+    {
+      "timestamp": "2026-04-18T18:52:15.511248",
+      "balance": 8967.420000000006
+    },
+    {
+      "timestamp": "2026-04-18T18:53:15.511248",
+      "balance": 9000.780000000006
+    },
+    {
+      "timestamp": "2026-04-18T18:54:15.511248",
+      "balance": 9070.980000000003
+    },
+    {
+      "timestamp": "2026-04-18T18:55:15.511248",
+      "balance": 9148.030000000006
+    },
+    {
+      "timestamp": "2026-04-18T18:56:15.511248",
+      "balance": 9239.21
+    },
+    {
+      "timestamp": "2026-04-18T18:57:15.511248",
+      "balance": 9282.049999999996
+    },
+    {
+      "timestamp": "2026-04-18T18:58:15.511248",
+      "balance": 9271.010000000002
+    },
+    {
+      "timestamp": "2026-04-18T18:59:15.511248",
+      "balance": 9280.700000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:00:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:01:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:02:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:03:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:04:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:05:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:06:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:07:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:08:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:09:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:10:15.511248",
+      "balance": 9355.450000000004
+    },
+    {
+      "timestamp": "2026-04-18T19:11:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:12:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:13:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:14:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:15:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:16:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:17:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:18:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:19:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:20:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:21:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:22:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:23:15.511248",
+      "balance": 9493.790000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:24:15.511248",
+      "balance": 9502.640000000021
+    },
+    {
+      "timestamp": "2026-04-18T19:25:15.511248",
+      "balance": 9456.090000000018
+    },
+    {
+      "timestamp": "2026-04-18T19:26:15.511248",
+      "balance": 9535.56000000002
+    },
+    {
+      "timestamp": "2026-04-18T19:27:15.511248",
+      "balance": 9434.290000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:28:15.511248",
+      "balance": 9397.160000000025
+    },
+    {
+      "timestamp": "2026-04-18T19:29:15.511248",
+      "balance": 9422.220000000023
+    },
+    {
+      "timestamp": "2026-04-18T19:30:15.511248",
+      "balance": 9526.290000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:31:15.511248",
+      "balance": 9521.910000000025
+    },
+    {
+      "timestamp": "2026-04-18T19:32:15.511248",
+      "balance": 9484.990000000013
+    },
+    {
+      "timestamp": "2026-04-18T19:33:15.511248",
+      "balance": 9605.180000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:34:15.511248",
+      "balance": 9605.180000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:35:15.511248",
+      "balance": 9454.090000000018
+    },
+    {
+      "timestamp": "2026-04-18T19:36:15.511248",
+      "balance": 9483.300000000025
+    },
+    {
+      "timestamp": "2026-04-18T19:37:15.511248",
+      "balance": 9449.970000000023
+    },
+    {
+      "timestamp": "2026-04-18T19:38:15.511248",
+      "balance": 9382.230000000018
+    },
+    {
+      "timestamp": "2026-04-18T19:39:15.511248",
+      "balance": 9429.210000000014
+    },
+    {
+      "timestamp": "2026-04-18T19:40:15.511248",
+      "balance": 9445.380000000012
+    },
+    {
+      "timestamp": "2026-04-18T19:41:15.511248",
+      "balance": 9407.960000000014
+    },
+    {
+      "timestamp": "2026-04-18T19:42:15.511248",
+      "balance": 9318.100000000013
+    },
+    {
+      "timestamp": "2026-04-18T19:43:15.511248",
+      "balance": 9260.280000000006
+    },
+    {
+      "timestamp": "2026-04-18T19:44:15.511248",
+      "balance": 9217.16000000001
+    },
+    {
+      "timestamp": "2026-04-18T19:45:15.511248",
+      "balance": 9223.740000000013
+    },
+    {
+      "timestamp": "2026-04-18T19:46:15.511248",
+      "balance": 9096.130000000012
+    },
+    {
+      "timestamp": "2026-04-18T19:47:15.511248",
+      "balance": 9096.130000000012
+    },
+    {
+      "timestamp": "2026-04-18T19:48:15.511248",
+      "balance": 8994.930000000015
+    },
+    {
+      "timestamp": "2026-04-18T19:49:15.511248",
+      "balance": 8944.090000000018
+    },
+    {
+      "timestamp": "2026-04-18T19:50:15.511248",
+      "balance": 8947.110000000022
+    },
+    {
+      "timestamp": "2026-04-18T19:51:15.511248",
+      "balance": 8930.990000000013
+    },
+    {
+      "timestamp": "2026-04-18T19:52:15.511248",
+      "balance": 8946.970000000023
+    },
+    {
+      "timestamp": "2026-04-18T19:53:15.511248",
+      "balance": 8923.650000000016
+    },
+    {
+      "timestamp": "2026-04-18T19:54:15.511248",
+      "balance": 9001.520000000011
+    },
+    {
+      "timestamp": "2026-04-18T19:55:15.511248",
+      "balance": 8905.910000000025
+    },
+    {
+      "timestamp": "2026-04-18T19:56:15.511248",
+      "balance": 8911.360000000022
+    },
+    {
+      "timestamp": "2026-04-18T19:57:15.511248",
+      "balance": 8832.28000000002
+    },
+    {
+      "timestamp": "2026-04-18T19:58:15.511248",
+      "balance": 8809.53000000002
+    },
+    {
+      "timestamp": "2026-04-18T19:59:15.511248",
+      "balance": 8779.220000000023
+    },
+    {
+      "timestamp": "2026-04-18T20:00:15.511248",
+      "balance": 8741.380000000012
+    },
+    {
+      "timestamp": "2026-04-18T20:01:15.511248",
+      "balance": 8706.630000000012
+    },
+    {
+      "timestamp": "2026-04-18T20:02:15.511248",
+      "balance": 8744.360000000008
+    },
+    {
+      "timestamp": "2026-04-18T20:03:15.511248",
+      "balance": 8832.82
+    },
+    {
+      "timestamp": "2026-04-18T20:04:15.511248",
+      "balance": 8845.900000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:05:15.511248",
+      "balance": 8893.140000000007
+    },
+    {
+      "timestamp": "2026-04-18T20:06:15.511248",
+      "balance": 8887.16000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:07:15.511248",
+      "balance": 8978.21
+    },
+    {
+      "timestamp": "2026-04-18T20:08:15.511248",
+      "balance": 8978.21
+    },
+    {
+      "timestamp": "2026-04-18T20:09:15.511248",
+      "balance": 8978.21
+    },
+    {
+      "timestamp": "2026-04-18T20:10:15.511248",
+      "balance": 8978.21
+    },
+    {
+      "timestamp": "2026-04-18T20:11:15.511248",
+      "balance": 8978.21
+    },
+    {
+      "timestamp": "2026-04-18T20:12:15.511248",
+      "balance": 8986.750000000007
+    },
+    {
+      "timestamp": "2026-04-18T20:13:15.511248",
+      "balance": 8941.32
+    },
+    {
+      "timestamp": "2026-04-18T20:14:15.511248",
+      "balance": 8997.41000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:15:15.511248",
+      "balance": 8953.860000000008
+    },
+    {
+      "timestamp": "2026-04-18T20:16:15.511248",
+      "balance": 8924.110000000008
+    },
+    {
+      "timestamp": "2026-04-18T20:17:15.511248",
+      "balance": 8798.260000000002
+    },
+    {
+      "timestamp": "2026-04-18T20:18:15.511248",
+      "balance": 8768.170000000006
+    },
+    {
+      "timestamp": "2026-04-18T20:19:15.511248",
+      "balance": 8602.16000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:20:15.511248",
+      "balance": 8707.17000000002
+    },
+    {
+      "timestamp": "2026-04-18T20:21:15.511248",
+      "balance": 8656.78000000002
+    },
+    {
+      "timestamp": "2026-04-18T20:22:15.511248",
+      "balance": 8604.66000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:23:15.511248",
+      "balance": 8576.430000000015
+    },
+    {
+      "timestamp": "2026-04-18T20:24:15.511248",
+      "balance": 8640.580000000009
+    },
+    {
+      "timestamp": "2026-04-18T20:25:15.511248",
+      "balance": 8643.750000000022
+    },
+    {
+      "timestamp": "2026-04-18T20:26:15.511248",
+      "balance": 8643.980000000018
+    },
+    {
+      "timestamp": "2026-04-18T20:27:15.511248",
+      "balance": 8720.750000000022
+    },
+    {
+      "timestamp": "2026-04-18T20:28:15.511248",
+      "balance": 8621.100000000013
+    },
+    {
+      "timestamp": "2026-04-18T20:29:15.511248",
+      "balance": 8562.880000000012
+    },
+    {
+      "timestamp": "2026-04-18T20:30:15.511248",
+      "balance": 8577.55000000001
+    },
+    {
+      "timestamp": "2026-04-18T20:31:15.511248",
+      "balance": 8575.760000000017
+    },
+    {
+      "timestamp": "2026-04-18T20:32:15.511248",
+      "balance": 8561.930000000015
+    },
+    {
+      "timestamp": "2026-04-18T20:33:15.511248",
+      "balance": 8697.340000000018
+    },
+    {
+      "timestamp": "2026-04-18T20:34:15.511248",
+      "balance": 8713.720000000008
+    },
+    {
+      "timestamp": "2026-04-18T20:35:15.511248",
+      "balance": 8758.870000000017
+    },
+    {
+      "timestamp": "2026-04-18T20:36:15.511248",
+      "balance": 8825.140000000021
+    },
+    {
+      "timestamp": "2026-04-18T20:37:15.511248",
+      "balance": 8843.730000000018
+    },
+    {
+      "timestamp": "2026-04-18T20:38:15.511248",
+      "balance": 8724.78000000002
+    },
+    {
+      "timestamp": "2026-04-18T20:39:15.511248",
+      "balance": 8682.320000000014
+    },
+    {
+      "timestamp": "2026-04-18T20:40:15.511248",
+      "balance": 8720.17000000002
+    },
+    {
+      "timestamp": "2026-04-18T20:41:15.511248",
+      "balance": 8682.230000000018
+    }
+  ]
+}

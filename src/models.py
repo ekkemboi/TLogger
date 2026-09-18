@@ -90,6 +90,7 @@ class Account(db.Model):
     name = db.Column(db.String(100), nullable=False)
     opening_balance = db.Column(db.Numeric(18, 2), nullable=True, default=0)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    is_backtest = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(
         db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
     )
@@ -106,6 +107,7 @@ class Account(db.Model):
             if self.opening_balance
             else 0,
             "is_active": self.is_active,
+            "is_backtest": self.is_backtest,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
@@ -273,3 +275,150 @@ class TradePartialExit(db.Model):
 
     def __repr__(self):
         return f"<TradePartialExit trade={self.trade_id} qty={self.qty}>"
+
+
+class Asset(db.Model):
+    """Asset/symbol with metadata for backtesting."""
+
+    __tablename__ = "assets"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    symbol = db.Column(db.String(50), nullable=False, unique=True)
+    name = db.Column(db.String(200), nullable=True)
+    asset_type = db.Column(db.String(50), nullable=False)
+    point_value = db.Column(db.Numeric(18, 8), nullable=True, default=1)
+    tick_size = db.Column(db.Numeric(18, 8), nullable=True)
+    min_lot = db.Column(db.Numeric(18, 8), nullable=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "symbol": self.symbol,
+            "name": self.name,
+            "asset_type": self.asset_type,
+            "point_value": float(self.point_value) if self.point_value else 1,
+            "tick_size": float(self.tick_size) if self.tick_size else None,
+            "min_lot": float(self.min_lot) if self.min_lot else None,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f"<Asset {self.symbol} ({self.asset_type})>"
+
+
+class PriceCandle(db.Model):
+    """OHLCV candle data for backtesting."""
+
+    __tablename__ = "price_candles"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    asset_id = db.Column(db.String(36), db.ForeignKey("assets.id"), nullable=False)
+    symbol = db.Column(db.String(50), nullable=False)
+    timeframe = db.Column(db.String(10), nullable=False)
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=False)
+    open = db.Column(db.Numeric(18, 8), nullable=False)
+    high = db.Column(db.Numeric(18, 8), nullable=False)
+    low = db.Column(db.Numeric(18, 8), nullable=False)
+    close = db.Column(db.Numeric(18, 8), nullable=False)
+    volume = db.Column(db.Numeric(18, 2), nullable=True)
+
+    __table_args__ = (
+        db.Index("ix_candles_symbol_tf_ts", "symbol", "timeframe", "timestamp"),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "symbol": self.symbol,
+            "timeframe": self.timeframe,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "open": float(self.open) if self.open else None,
+            "high": float(self.high) if self.high else None,
+            "low": float(self.low) if self.low else None,
+            "close": float(self.close) if self.close else None,
+            "volume": float(self.volume) if self.volume else None,
+        }
+
+    def __repr__(self):
+        return f"<PriceCandle {self.symbol} {self.timeframe} {self.timestamp}>"
+
+
+class BacktestSession(db.Model):
+    """Backtesting replay session."""
+
+    __tablename__ = "backtest_sessions"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    account_id = db.Column(db.String(36), db.ForeignKey("accounts.id"), nullable=True)
+    symbol = db.Column(db.String(50), nullable=False)
+    timeframe = db.Column(db.String(10), nullable=False)
+    starting_balance = db.Column(db.Numeric(18, 2), nullable=False)
+    current_balance = db.Column(db.Numeric(18, 2), nullable=False, default=0)
+    start_date = db.Column(db.DateTime(timezone=True), nullable=True)
+    end_date = db.Column(db.DateTime(timezone=True), nullable=True)
+    status = db.Column(db.String(20), nullable=False, default="active")
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+    completed_at = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "account_id": self.account_id,
+            "symbol": self.symbol,
+            "timeframe": self.timeframe,
+            "starting_balance": float(self.starting_balance) if self.starting_balance else 0,
+            "current_balance": float(self.current_balance) if self.current_balance else float(self.starting_balance or 0),
+            "start_date": self.start_date.isoformat() if self.start_date else None,
+            "end_date": self.end_date.isoformat() if self.end_date else None,
+            "status": self.status,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
+        }
+
+    def __repr__(self):
+        return f"<BacktestSession {self.symbol} {self.timeframe} [{self.status}]>"
+
+
+class BrokerConnection(db.Model):
+    """Broker API connection configuration for live trade sync."""
+
+    __tablename__ = "broker_connections"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    broker = db.Column(db.String(50), nullable=False)
+    label = db.Column(db.String(100), nullable=True)
+    api_key = db.Column(db.Text, nullable=True)
+    api_secret = db.Column(db.Text, nullable=True)
+    account_id = db.Column(db.String(100), nullable=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    last_sync_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    sync_interval = db.Column(db.Integer, nullable=False, default=60)
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=datetime.utcnow
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "broker": self.broker,
+            "label": self.label,
+            "account_id": self.account_id,
+            "is_active": self.is_active,
+            "last_sync_at": self.last_sync_at.isoformat() if self.last_sync_at else None,
+            "sync_interval": self.sync_interval,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f"<BrokerConnection {self.broker} {self.label}>"

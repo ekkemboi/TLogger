@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Backtest - TradeLogger{% endblock %}
+
+{% block head %}
+<style>
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    height: 100vh;
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border-default);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+.side-panel.open {
+    transform: translateX(0);
+}
+.side-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 49;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.side-panel-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.chart-wrapper {
+    position: relative;
+    height: 500px;
+}
+.drawing-toolbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 44px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 2px;
+    z-index: 10;
+}
+.drawing-toolbar button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.15s;
+}
+.drawing-toolbar button:hover {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+.drawing-toolbar button.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--accent-primary);
+}
+.drawing-toolbar .separator {
+    width: 28px;
+    height: 1px;
+    background: var(--border-default);
+    margin: 4px 0;
+}
+.trade-panel {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 240px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 10;
+    display: none;
+}
+.trade-panel.visible {
+    display: block;
+}
+.trade-panel input {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 6px 8px;
+    width: 100%;
+    border-radius: 6px;
+}
+.trade-panel input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-text-primary">Backtesting</h1>
+        <button onclick="showSessionConfig()" class="btn-primary flex items-center gap-2">
+            <i data-lucide="settings-2" class="w-4 h-4"></i>
+            New Session
+        </button>
+    </div>
+
+    <!-- Backdrop -->
+    <div id="panel-backdrop" class="side-panel-backdrop" onclick="hideSessionConfig()"></div>
+
+    <!-- Session Config Side Panel -->
+    <div id="session-panel" class="side-panel">
+        <div class="flex items-center justify-between p-6 border-b border-border-default">
+            <h2 class="text-lg font-bold text-text-primary">New Backtest Session</h2>
+            <button onclick="hideSessionConfig()" class="text-text-light hover:text-text-primary transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-5">
+            <div>
+                <label class="label mb-1 block">Session Name</label>
+                <input id="bt-name" class="input" placeholder="e.g. London Breakout Test" value="Backtest Session">
+            </div>
+            <div>
+                <label class="label mb-1 block">Symbol</label>
+                <input id="bt-symbol" class="input" placeholder="EURUSD" list="symbol-list">
+                <datalist id="symbol-list"></datalist>
+            </div>
+            <div>
+                <label class="label mb-1 block">Timeframe</label>
+                <select id="bt-timeframe" class="input">
+                    <option value="1m">1 Minute</option>
+                    <option value="5m">5 Minutes</option>
+                    <option value="15m">15 Minutes</option>
+                    <option value="1h" selected>1 Hour</option>
+                    <option value="4h">4 Hours</option>
+                    <option value="1d">1 Day</option>
+                </select>
+            </div>
+            <div>
+                <label class="label mb-1 block">Starting Balance ($)</label>
+                <input id="bt-balance" class="input" type="number" value="10000">
+            </div>
+            <div class="pt-4 space-y-3">
+                <button onclick="startSession()" class="btn-primary w-full">Start Session</button>
+                <button onclick="hideSessionConfig()" class="btn-secondary w-full">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replay Controls -->
+    <div id="replay-controls" class="card p-4 flex items-center gap-4 hidden">
+        <button id="bt-play" onclick="togglePlay()" class="btn-primary p-2">
+            <i data-lucide="play" class="w-5 h-5"></i>
+        </button>
+        <div class="flex items-center gap-2 text-sm text-text-light">
+            <span>Speed:</span>
+            <select id="bt-speed" onchange="setSpeed(this.value)" class="input w-20">
+                <option value="1">1x</option>
+                <option value="2">2x</option>
+                <option value="5">5x</option>
+                <option value="10">10x</option>
+            </select>
+        </div>
+        <div class="flex-1 text-center text-sm text-text-light">
+            <span id="bt-candle-info">No session active</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="label">Balance:</span>
+            <span id="bt-balance-display" class="font-bold text-accent-primary">$0</span>
+            <span class="text-text-tertiary">|</span>
+            <span id="bt-positions-count" class="text-sm text-text-light">0 pos</span>
+        </div>
+    </div>
+
+    <!-- Chart + Drawing Toolbar + Trade Panel -->
+    <div class="card relative chart-wrapper" id="chart-container">
+        <p class="flex items-center justify-center h-full text-text-light" id="chart-placeholder">Create a new session to start backtesting</p>
+        <div id="chart-sub-container" style="width:100%;height:100%;display:none;"></div>
+        <!-- Drawing Toolbar (hidden until session starts) -->
+        <div id="drawing-toolbar" class="drawing-toolbar hidden">
+            <button onclick="setDrawingTool('cursor')" id="tool-cursor" class="active" title="Cursor (V)"><i data-lucide="mouse-pointer-2" class="w-4 h-4"></i></button>
+            <button onclick="setDrawingTool('hLine')" id="tool-hLine" title="Horizontal Line (H)"><i data-lucide="minus" class="w-4 h-4"></i></button>
+            <button onclick="setDrawingTool('trendLine')" id="tool-trendLine" title="Trend Line (T)"><i data-lucide="trending-up" class="w-4 h-4"></i></button>
+            <button onclick="setDrawingTool('fib')" id="tool-fib" title="Fib Retracement (F)"><i data-lucide="git-merge" class="w-4 h-4"></i></button>
+            <div class="separator"></div>
+            <button onclick="setDrawingTool('trade')" id="tool-trade" title="Place Trade (X)" class="text-accent-primary"><i data-lucide="target" class="w-4 h-4"></i></button>
+            <button onclick="clearDrawings()" title="Clear All"><i data-lucide="eraser" class="w-4 h-4"></i></button>
+        </div>
+        <!-- Trade Entry Panel -->
+        <div id="trade-panel" class="trade-panel">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-xs text-text-primary">New Trade</span>
+                <button onclick="hideTradePanel()" class="text-text-light hover:text-text-primary"><i data-lucide="x" class="w-3 h-3"></i></button>
+            </div>
+            <div class="space-y-2">
+                <div class="flex gap-2">
+                    <button id="tp-direction-long" onclick="setTradeDirection('long')" class="flex-1 text-xs font-semibold py-1.5 rounded bg-success/20 text-success border border-success/30">LONG</button>
+                    <button id="tp-direction-short" onclick="setTradeDirection('short')" class="flex-1 text-xs font-semibold py-1.5 rounded bg-error/20 text-error border border-error/30">SHORT</button>
+                </div>
+                <div><label class="text-xs text-text-light">Entry</label><input id="tp-entry" class="input mt-0.5 text-xs" onfocus="this.select()"></div>
+                <div class="flex gap-2">
+                    <div class="flex-1"><label class="text-xs text-text-light">Stop Loss</label><input id="tp-sl" class="input mt-0.5 text-xs"></div>
+                    <div class="flex-1"><label class="text-xs text-text-light">Take Profit</label><input id="tp-tp" class="input mt-0.5 text-xs"></div>
+                </div>
+                <div><label class="text-xs text-text-light">Quantity</label><input id="tp-qty" class="input mt-0.5 text-xs" value="1"></div>
+                <button onclick="submitTrade()" class="btn-primary w-full text-xs py-1.5">Place Trade</button>
+            </div>
+        </div>
+    </div>
+    <p id="chart-status" class="text-xs text-text-light text-center hidden">Cursor mode. Press <b>H</b> horizontal, <b>T</b> trend, <b>F</b> fib, <b>X</b> trade, <b>V</b> cursor, <b>Esc</b> cancel</p>
+
+    <!-- Active Positions -->
+    <div id="positions-panel" class="card p-4 hidden">
+        <h3 class="font-bold text-text-primary mb-3">Active Positions</h3>
+        <div id="positions-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Session History -->
+    <div class="card p-4">
+        <h3 class="font-bold text-text-primary mb-3">Session History</h3>
+        <div id="session-history" class="text-center text-text-light py-4">
+            <p>No sessions yet</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+let chart = null;
+let series = null;
+let candles = [];
+let currentCandleIndex = 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = 1;
+let currentSessionId = null;
+let backtestAccountId = null;
+
+// Drawing state
+let currentTool = 'cursor';
+let drawingLines = [];
+let fibLines = [];
+let tradeDirection = 'long';
+let clickCount = 0;
+let clickPoints = [];
+
+// Show/hide side panel
+function showSessionConfig() {
+    document.getElementById('session-panel').classList.add('open');
+    document.getElementById('panel-backdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    loadAssets();
+}
+function hideSessionConfig() {
+    document.getElementById('session-panel').classList.remove('open');
+    document.getElementById('panel-backdrop').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Load assets
+async function loadAssets() {
+    try {
+        const res = await fetch('/api/backtest/assets');
+        const data = await res.json();
+        document.getElementById('symbol-list').innerHTML = data.assets.map(a => `<option value="${a.symbol}">${a.symbol} - ${a.name || a.asset_type}</option>`).join('');
+    } catch (e) { console.error(e); }
+}
+
+// Drawing tools
+function setDrawingTool(tool) {
+    currentTool = tool;
+    document.querySelectorAll('.drawing-toolbar button').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById(`tool-${tool}`);
+    if (btn) btn.classList.add('active');
+    document.getElementById('chart-status').classList.remove('hidden');
+
+    if (tool === 'trade') {
+        document.getElementById('chart-status').innerHTML = 'Click chart to set entry price. Press <b>V</b> for cursor.';
+    } else if (tool === 'hLine') {
+        document.getElementById('chart-status').innerHTML = 'Click chart to place horizontal line. Press <b>V</b> for cursor.';
+    } else if (tool === 'trendLine') {
+        document.getElementById('chart-status').innerHTML = 'Click 2 points to draw trend line. Press <b>V</b> for cursor.';
+    } else if (tool === 'fib') {
+        document.getElementById('chart-status').innerHTML = 'Click 2 points for fib retracement. Press <b>V</b> for cursor.';
+    } else {
+        document.getElementById('chart-status').innerHTML = 'Cursor mode. Press <b>H</b> horizontal, <b>T</b> trend, <b>F</b> fib, <b>X</b> trade, <b>V</b> cursor, <b>Esc</b> cancel';
+    }
+    clickCount = 0;
+    clickPoints = [];
+}
+
+function clearDrawings() {
+    drawingLines.forEach(l => { try { chart.removeSeries(l); } catch(e) {} });
+    fibLines.forEach(l => { try { chart.removeSeries(l); } catch(e) {} });
+    drawingLines = [];
+    fibLines = [];
+}
+
+function clearFibLines() {
+    fibLines.forEach(l => { try { chart.removeSeries(l); } catch(e) {} });
+    fibLines = [];
+}
+
+// Chart click handler
+function onChartClick(param) {
+    if (!param.point || !param.time) return;
+    const price = param.point.y;
+
+    if (currentTool === 'hLine') {
+        const lineSeries = chart.addLineSeries({ color: '#F59E0B', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
+        lineSeries.setData([{ time: param.time, value: param.seriesData.get(series)?.close || param.seriesData.get(series)?.value || 0 }]);
+        const priceVal = param.seriesData.get(series)?.close || 0;
+        const line = series.createPriceLine({ price: priceVal, color: '#F59E0B', lineWidth: 1, axisLabelVisible: true, title: `${priceVal.toFixed(5)}` });
+        drawingLines.push(line);
+    } else if (currentTool === 'trendLine') {
+        clickPoints.push({ time: param.time, price: param.seriesData.get(series)?.close || 0 });
+        clickCount++;
+        if (clickCount >= 2) {
+            const ls = chart.addLineSeries({ color: '#818CF8', lineWidth: 1, lastValueVisible: false, priceLineVisible: false });
+            ls.setData([{ time: clickPoints[0].time, value: clickPoints[0].price }, { time: clickPoints[1].time, value: clickPoints[1].price }]);
+            drawingLines.push(ls);
+            clickCount = 0;
+            clickPoints = [];
+        }
+    } else if (currentTool === 'fib') {
+        clickPoints.push({ time: param.time, price: param.seriesData.get(series)?.close || 0 });
+        clickCount++;
+        if (clickCount >= 2) {
+            drawFibRetracement(clickPoints[0], clickPoints[1]);
+            clickCount = 0;
+            clickPoints = [];
+        }
+    } else if (currentTool === 'trade') {
+        const price = param.seriesData.get(series)?.close || 0;
+        document.getElementById('tp-entry').value = price.toFixed(5);
+        document.getElementById('trade-panel').classList.add('visible');
+    }
+}
+
+function drawFibRetracement(p1, p2) {
+    const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+    const high = Math.max(p1.price, p2.price);
+    const low = Math.min(p1.price, p2.price);
+    const diff = high - low;
+
+    clearFibLines();
+    levels.forEach((level, i) => {
+        const price = high - diff * level;
+        const colors = ['#787B86', '#F23645', '#FF9800', '#089981', '#089981', '#FF9800', '#F23645'];
+        const line = series.createPriceLine({
+            price: price,
+            color: colors[i % colors.length],
+            lineWidth: i === 0 || i === levels.length - 1 ? 1 : 1,
+            lineStyle: i === 0 || i === levels.length - 1 ? 0 : 2,
+            axisLabelVisible: true,
+            title: `${(level * 100).toFixed(1)}% (${price.toFixed(5)})`,
+        });
+        fibLines.push(line);
+    });
+}
+
+// Trade placement
+function setTradeDirection(dir) {
+    tradeDirection = dir;
+    document.getElementById('tp-direction-long').className = `flex-1 text-xs font-semibold py-1.5 rounded ${dir === 'long' ? 'bg-success/20 text-success border border-success/30' : 'bg-bg-surface text-text-light'}`;
+    document.getElementById('tp-direction-short').className = `flex-1 text-xs font-semibold py-1.5 rounded ${dir === 'short' ? 'bg-error/20 text-error border border-error/30' : 'bg-bg-surface text-text-light'}`;
+}
+
+function hideTradePanel() {
+    document.getElementById('trade-panel').classList.remove('visible');
+}
+
+async function submitTrade() {
+    const entry = parseFloat(document.getElementById('tp-entry').value);
+    const sl = parseFloat(document.getElementById('tp-sl').value) || null;
+    const tp = parseFloat(document.getElementById('tp-tp').value) || null;
+    const qty = parseFloat(document.getElementById('tp-qty').value) || 1;
+
+    if (isNaN(entry)) { alert('Enter a valid entry price'); return; }
+    if (!backtestAccountId) { alert('No backtest account'); return; }
+
+    try {
+        const res = await fetch(`/api/backtest/sessions/${currentSessionId}/trades`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                account_id: backtestAccountId,
+                symbol: document.getElementById('bt-symbol').value.toUpperCase() || candles[0]?.symbol,
+                direction: tradeDirection,
+                entry_price: entry,
+                stop_loss: sl,
+                take_profit: tp,
+                position_size: qty,
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(data.error || 'Trade failed'); return; }
+
+        // Add trade marker on chart
+        series.createPriceLine({ price: entry, color: '#22C55E', lineWidth: 1, lineStyle: 2, axisLabelVisible: false });
+        if (sl) series.createPriceLine({ price: sl, color: '#EF4444', lineWidth: 1, lineStyle: 2, axisLabelVisible: false });
+        if (tp) series.createPriceLine({ price: tp, color: '#22C55E', lineWidth: 1, lineStyle: 2, axisLabelVisible: false });
+
+        hideTradePanel();
+        updatePositions();
+        document.getElementById('bt-positions-count').textContent = `${parseInt(document.getElementById('bt-positions-count').textContent) + 1} pos`;
+    } catch (e) {
+        console.error('Trade failed:', e);
+    }
+}
+
+async function updatePositions() {
+    try {
+        const res = await fetch(`/api/trades?account_id=${backtestAccountId}&status=confirmed`);
+        const data = await res.json();
+        const panel = document.getElementById('positions-panel');
+        const list = document.getElementById('positions-list');
+        if (data.trades?.length > 0) {
+            panel.classList.remove('hidden');
+            list.innerHTML = data.trades.map(t => `
+                <div class="flex items-center justify-between text-sm p-2 bg-bg-surface rounded">
+                    <span class="font-medium text-text-primary">${t.symbol}</span>
+                    <span class="${t.direction === 'long' ? 'text-success' : 'text-error'}">${t.direction.toUpperCase()}</span>
+                    <span class="text-text-light">@ ${t.entry_price}</span>
+                    <span class="text-text-light">Qty: ${t.position_size || 1}</span>
+                </div>
+            `).join('');
+            document.getElementById('bt-positions-count').textContent = `${data.trades.length} pos`;
+        } else {
+            panel.classList.add('hidden');
+            document.getElementById('bt-positions-count').textContent = '0 pos';
+        }
+    } catch (e) { console.error(e); }
+}
+
+// Start a backtest session
+async function startSession() {
+    const name = document.getElementById('bt-name').value;
+    const symbol = document.getElementById('bt-symbol').value;
+    const timeframe = document.getElementById('bt-timeframe').value;
+    const balance = document.getElementById('bt-balance').value;
+
+    if (!name || !symbol) { alert('Please enter a session name and symbol'); return; }
+
+    try {
+        const res = await fetch('/api/backtest/sessions', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name: name.trim(), symbol: symbol.toUpperCase(), timeframe, starting_balance: parseFloat(balance) }),
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(data.error || 'Failed to start session'); return; }
+
+        currentSessionId = data.session.id;
+        backtestAccountId = data.account.id;
+
+        const candleRes = await fetch(`/api/backtest/candles?symbol=${symbol.toUpperCase()}&timeframe=${timeframe}&per_page=500`);
+        const candleData = await candleRes.json();
+        candles = candleData.candles;
+
+        if (candles.length === 0) { alert('No candle data available. Import historical data first.'); return; }
+
+        hideSessionConfig();
+        initChart();
+        document.getElementById('replay-controls').classList.remove('hidden');
+        document.getElementById('drawing-toolbar').classList.remove('hidden');
+        document.getElementById('chart-status').classList.add('hidden');
+        document.getElementById('bt-balance-display').textContent = `$${parseFloat(balance).toLocaleString()}`;
+        document.getElementById('bt-candle-info').textContent = `${symbol} ${timeframe} — 0 / ${candles.length} candles`;
+        if (window.lucide) lucide.createIcons();
+    } catch (e) { console.error('Failed to start session:', e); }
+}
+
+// Initialize Lightweight Chart
+function initChart() {
+    const container = document.getElementById('chart-sub-container');
+    container.innerHTML = '';
+    container.style.display = 'block';
+    document.getElementById('chart-placeholder').style.display = 'none';
+
+    chart = LightweightCharts.createChart(container, {
+        width: container.clientWidth,
+        height: 480,
+        layout: { background: { color: '#1E293B' }, textColor: '#94A3B8' },
+        grid: { vertLines: { color: '#334155' }, horzLines: { color: '#334155' } },
+        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+        rightPriceScale: { borderColor: '#334155' },
+        timeScale: { borderColor: '#334155', timeVisible: true, secondsVisible: false },
+        handleScroll: { vertTouchDrag: true },
+        handleScale: { axisPressedMouseMove: true },
+    });
+
+    series = chart.addCandlestickSeries({
+        upColor: '#22C55E', downColor: '#EF4444',
+        borderDownColor: '#EF4444', borderUpColor: '#22C55E',
+        wickDownColor: '#EF4444', wickUpColor: '#22C55E',
+        priceFormat: { type: 'price', precision: 5, minMove: 0.00001 },
+    });
+
+    const visible = candles.slice(0, 1);
+    currentCandleIndex = 1;
+    series.setData(visible.map(c => ({ time: new Date(c.timestamp).getTime() / 1000, open: c.open, high: c.high, low: c.low, close: c.close })));
+
+    chart.timeScale().fitContent();
+    chart.subscribeClick(onChartClick);
+
+    window.addEventListener('resize', () => {
+        chart.applyOptions({ width: container.clientWidth - 44 });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'v' || e.key === 'V') setDrawingTool('cursor');
+        else if (e.key === 'h' || e.key === 'H') setDrawingTool('hLine');
+        else if (e.key === 't' || e.key === 'T') setDrawingTool('trendLine');
+        else if (e.key === 'f' || e.key === 'F') setDrawingTool('fib');
+        else if (e.key === 'x' || e.key === 'X') setDrawingTool('trade');
+        else if (e.key === 'Escape') { setDrawingTool('cursor'); hideTradePanel(); }
+    });
+
+    updatePositions();
+}
+
+// Play/pause controls
+function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('bt-play').innerHTML = isPlaying ? '<i data-lucide="pause" class="w-5 h-5"></i>' : '<i data-lucide="play" class="w-5 h-5"></i>';
+    if (isPlaying) playInterval = setInterval(advanceCandle, 1000 / speed);
+    else clearInterval(playInterval);
+    if (window.lucide) lucide.createIcons();
+}
+
+function setSpeed(val) {
+    speed = parseInt(val);
+    if (isPlaying) { clearInterval(playInterval); playInterval = setInterval(advanceCandle, 1000 / speed); }
+}
+
+function advanceCandle() {
+    if (currentCandleIndex >= candles.length) {
+        clearInterval(playInterval);
+        isPlaying = false;
+        document.getElementById('bt-play').innerHTML = '<i data-lucide="play" class="w-5 h-5"></i>';
+        if (window.lucide) lucide.createIcons();
+        return;
+    }
+    const c = candles.slice(0, currentCandleIndex + 1);
+    series.setData(c.map(cd => ({ time: new Date(cd.timestamp).getTime() / 1000, open: cd.open, high: cd.high, low: cd.low, close: cd.close })));
+    currentCandleIndex++;
+    document.getElementById('bt-candle-info').textContent = `${candles[0].symbol} ${candles[0].timeframe} — ${currentCandleIndex} / ${candles.length} candles`;
+}
+
+// Session history
+async function loadSessionHistory() {
+    try {
+        const res = await fetch('/api/backtest/sessions');
+        const data = await res.json();
+        const container = document.getElementById('session-history');
+        if (data.sessions.length === 0) { container.innerHTML = '<p class="text-text-light">No sessions yet</p>'; return; }
+        container.innerHTML = data.sessions.map(s => `
+            <div class="flex items-center justify-between p-3 bg-bg-surface rounded-lg">
+                <div class="flex-1">
+                    <span class="font-medium text-text-primary">${s.symbol}</span>
+                    <span class="text-text-light text-sm ml-2">${s.timeframe}</span>
+                    <span class="text-xs ml-2 px-2 py-0.5 rounded-full ${s.status === 'active' ? 'bg-success/10 text-success' : s.status === 'paused' ? 'bg-warning/10 text-warning' : 'bg-bg-surface text-text-light'}">${s.status}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-text-light">$${s.current_balance.toLocaleString()}</span>
+                    <button onclick="resumeSession('${s.id}')" class="btn-primary text-xs px-2 py-1">Resume</button>
+                    <button onclick="deleteSession('${s.id}')" class="btn-danger text-xs px-2 py-1">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) { console.error(e); }
+}
+
+async function resumeSession(sessionId) {
+    try {
+        const res = await fetch(`/api/backtest/sessions/${sessionId}`);
+        const session = await res.json();
+        if (!session.id) { alert('Session not found'); return; }
+        currentSessionId = session.id;
+        backtestAccountId = session.account_id;
+        const candleRes = await fetch(`/api/backtest/candles?symbol=${session.symbol}&timeframe=${session.timeframe}&per_page=500`);
+        const candleData = await candleRes.json();
+        candles = candleData.candles;
+        if (candles.length === 0) { alert('No candle data available'); return; }
+        initChart();
+        document.getElementById('replay-controls').classList.remove('hidden');
+        document.getElementById('drawing-toolbar').classList.remove('hidden');
+        document.getElementById('chart-status').classList.add('hidden');
+        document.getElementById('bt-balance-display').textContent = `$${session.current_balance.toLocaleString()}`;
+        document.getElementById('bt-candle-info').textContent = `${session.symbol} ${session.timeframe} — 0 / ${candles.length} candles`;
+        if (window.lucide) lucide.createIcons();
+    } catch (e) { console.error(e); }
+}
+
+async function deleteSession(sessionId) {
+    if (!confirm('Delete this session?')) return;
+    const res = await fetch(`/api/backtest/sessions/${sessionId}`, {method: 'DELETE'});
+    if (!res.ok) { alert('Failed to delete session'); return; }
+    loadSessionHistory();
+}
+
+loadSessionHistory();
+</script>
+{% endblock %}

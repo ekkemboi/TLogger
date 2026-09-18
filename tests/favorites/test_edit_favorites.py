@@ -7,10 +7,10 @@ import pytest
 class TestEditFavorite:
     """Tests for editing favorites via PUT /api/favorites/<id>."""
 
-    def test_update_favorite_symbol(self, client, default_user):
+    def test_update_favorite_symbol(self, auth_client, default_user):
         """Update favorite symbol."""
         # Create a favorite first
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {
@@ -26,7 +26,7 @@ class TestEditFavorite:
         favorite_id = create_response.get_json()["id"]
 
         # Update the symbol
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"symbol": "ETHUSDT"}),
             content_type="application/json",
@@ -36,10 +36,10 @@ class TestEditFavorite:
         assert data["symbol"] == "ETHUSDT"
         assert data["id"] == favorite_id
 
-    def test_update_favorite_point_value(self, client, default_user):
+    def test_update_favorite_point_value(self, auth_client, default_user):
         """Update point value."""
         # Create a favorite first
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {
@@ -55,7 +55,7 @@ class TestEditFavorite:
         favorite_id = create_response.get_json()["id"]
 
         # Update point value
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"point_value": 10}),
             content_type="application/json",
@@ -64,10 +64,10 @@ class TestEditFavorite:
         data = update_response.get_json()
         assert data["point_value"] == 10
 
-    def test_update_favorite_fees(self, client, default_user):
+    def test_update_favorite_fees(self, auth_client, default_user):
         """Update fees."""
         # Create a favorite first
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {
@@ -83,7 +83,7 @@ class TestEditFavorite:
         favorite_id = create_response.get_json()["id"]
 
         # Update fees
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"fees": 5.5}),
             content_type="application/json",
@@ -92,10 +92,10 @@ class TestEditFavorite:
         data = update_response.get_json()
         assert data["fees"] == 5.5
 
-    def test_update_favorite_is_active(self, client, default_user):
+    def test_update_favorite_is_active(self, auth_client, default_user):
         """Toggle is_active status."""
         # Create a favorite first
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {
@@ -114,7 +114,7 @@ class TestEditFavorite:
         assert create_response.get_json()["is_active"] is True
 
         # Deactivate
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"is_active": False}),
             content_type="application/json",
@@ -124,7 +124,7 @@ class TestEditFavorite:
         assert data["is_active"] is False
 
         # Reactivate
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"is_active": True}),
             content_type="application/json",
@@ -133,9 +133,9 @@ class TestEditFavorite:
         data = update_response.get_json()
         assert data["is_active"] is True
 
-    def test_update_nonexistent_favorite(self, client):
+    def test_update_nonexistent_favorite(self, auth_client):
         """Updating non-existent returns 404."""
-        response = client.put(
+        response = auth_client.put(
             "/api/favorites/nonexistent-id",
             data=json.dumps({"symbol": "ETHUSDT"}),
             content_type="application/json",
@@ -144,10 +144,10 @@ class TestEditFavorite:
         data = response.get_json()
         assert "error" in data
 
-    def test_update_favorite_multiple_fields(self, client, default_user):
+    def test_update_favorite_multiple_fields(self, auth_client, default_user):
         """Update multiple fields at once."""
         # Create a favorite first
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {
@@ -163,7 +163,7 @@ class TestEditFavorite:
         favorite_id = create_response.get_json()["id"]
 
         # Update multiple fields
-        update_response = client.put(
+        update_response = auth_client.put(
             f"/api/favorites/{favorite_id}",
             data=json.dumps({"symbol": "SOLUSDT", "point_value": 5, "fees": 2.5}),
             content_type="application/json",

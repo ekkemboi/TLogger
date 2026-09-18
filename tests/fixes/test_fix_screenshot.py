@@ -19,7 +19,7 @@ class TestScreenshotFilename:
     """Tests that screenshot filename uses trade.id, not None."""
 
     def test_screenshot_filename_uses_trade_id_not_none(
-        self, app, client, sample_trade_data
+        self, app, auth_client, sample_trade_data
     ):
         """Test that screenshot is saved with trade.id, not 'None.png'."""
         # Create a fake image file
@@ -27,7 +27,7 @@ class TestScreenshotFilename:
         screenshot = (io.BytesIO(screenshot_data), "test.png")
 
         # Send multipart request with screenshot
-        response = client.post(
+        response = auth_client.post(
             "/api/trades",
             data={
                 **sample_trade_data,
@@ -53,7 +53,7 @@ class TestScreenshotFilename:
         )
 
     def test_screenshot_file_saved_with_correct_name(
-        self, app, client, sample_trade_data, tmp_path
+        self, app, auth_client, sample_trade_data, tmp_path
     ):
         """Test that the actual file on disk is named with trade.id.png."""
         # Override SCREENSHOT_DIR to use tmp_path for isolation
@@ -63,7 +63,7 @@ class TestScreenshotFilename:
         screenshot_data = b"fake_png_content"
         screenshot = (io.BytesIO(screenshot_data), "test.png")
 
-        response = client.post(
+        response = auth_client.post(
             "/api/trades",
             data={
                 **sample_trade_data,
@@ -95,7 +95,7 @@ class TestScreenshotPathFormat:
     """Tests that screenshot_path is a URL path, not a local filesystem path."""
 
     def test_screenshot_path_is_url_not_local_path(
-        self, app, client, sample_trade_data, tmp_path
+        self, app, auth_client, sample_trade_data, tmp_path
     ):
         """Test that screenshot_path is a URL like /api/screenshots/{id}.png."""
         with app.app_context():
@@ -104,7 +104,7 @@ class TestScreenshotPathFormat:
         screenshot_data = b"fake_png_content"
         screenshot = (io.BytesIO(screenshot_data), "test.png")
 
-        response = client.post(
+        response = auth_client.post(
             "/api/trades",
             data={
                 **sample_trade_data,
@@ -141,9 +141,9 @@ class TestScreenshotPathFormat:
             f"but got: {screenshot_path}"
         )
 
-    def test_trade_without_screenshot_has_null_path(self, client, sample_trade_data):
+    def test_trade_without_screenshot_has_null_path(self, auth_client, sample_trade_data):
         """Test that trades without screenshot have null screenshot_path."""
-        response = client.post(
+        response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -162,7 +162,7 @@ class TestScreenshotRetrieval:
     """Tests that screenshot can be retrieved after trade creation."""
 
     def test_screenshot_accessible_via_api(
-        self, app, client, sample_trade_data, tmp_path
+        self, app, auth_client, client, sample_trade_data, tmp_path
     ):
         """Test that uploaded screenshot can be retrieved via the API."""
         with app.app_context():
@@ -171,7 +171,7 @@ class TestScreenshotRetrieval:
         screenshot_content = b"fake_png_image_data_here"
         screenshot = (io.BytesIO(screenshot_content), "chart.png")
 
-        response = client.post(
+        response = auth_client.post(
             "/api/trades",
             data={
                 **sample_trade_data,

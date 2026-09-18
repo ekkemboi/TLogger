@@ -1,0 +1,161 @@
+//@version=5
+// =====================================================================
+// Order Block Strategy - Python Match
+// =====================================================================
+// Replicates Python logic:
+// 1. Detect bullish OB: Bear at [2], Bull at [1] closing above Bear's high
+// 2. Detect bearish OB: Bull at [2], Bear at [1] closing below Bull's low  
+// 3. Enter when price is within 10% of OB 50% level
+// 4. Trend filter: Long in uptrend (price > SMA50), Short in downtrend
+// 5. Exit: Swing high/low or 100% std dev
+// =====================================================================
+// IMPORTANT: This scans for OB pattern on EACH bar, like Python does
+// =====================================================================
+
+strategy("Order Block Strategy", 
+     overlay=true, 
+     default_qty_type=strategy.percent_of_equity,
+     default_qty_value=10,
+     commission_type=strategy.commission.percent,
+     commission_value=0.05)
+
+// =====================================================================
+// INPUTS - Match Python defaults
+// =====================================================================
+lookback = input.int(5, "OB Lookback")
+trendPeriod = input.int(50, "Trend SMA") 
+
+// =====================================================================
+// CALCULATIONS
+// =====================================================================
+trendSMA = ta.sma(close, trendPeriod)
+isUptrend = close > trendSMA
+isDowntrend = close < trendSMA
+
+// Std Dev and Swing for exits
+stdDev = ta.stdev(close, 20)
+swingHigh = ta.highest(high, 10)
+swingLow = ta.lowest(low, 10)
+
+// =====================================================================
+// ORDER BLOCK DETECTION - Check each bar for pattern
+// =====================================================================
+// Strategy: On each bar, check if there's a valid OB pattern anywhere in lookback
+// If yes, and price is near the 50% level, enter trade
+
+// Bullish OB detection (matches Python detect_bullish_order_blocks)
+var bool hasBullishOBNow = false
+var float bullishEntryNow = 0.0
+var float bullishRangeNow = 0.0
+
+// Scan lookback window for bullish OB pattern
+for i = 1 to lookback
+    // Bear candle at bar i
+    if close[i] < open[i]
+        bearHigh = high[i]
+        // Check if any subsequent candle closes above bear high
+        for j = i - 1 downto 0
+            if j >= 0 and close[j] > open[j] and close[j] > bearHigh
+                // Found bullish OB in lookback
+                hasBullishOBNow := true
+                // Calculate OB range
+                obHigh = 0.0
+                obLow = 1000000.0
+                for k = i to 0
+                    obHigh := math.max(obHigh, high[k])
+                    obLow := math.min(obLow, low[k])
+                bullishEntryNow := (obHigh + obLow) / 2
+                bullishRangeNow := obHigh - obLow
+                break
+        break
+
+// Bearish OB detection (matches Python detect_bearish_order_blocks)
+var bool hasBearishOBNow = false
+var float bearishEntryNow = 0.0
+var float bearishRangeNow = 0.0
+
+for i = 1 to lookback
+    // Bull candle at bar i
+    if close[i] > open[i]
+        bullLow = low[i]
+        for j = i - 1 downto 0
+            if j >= 0 and close[j] < open[j] and close[j] < bullLow
+                hasBearishOBNow := true
+                obHigh = 0.0
+                obLow = 1000000.0
+                for k = i to 0
+                    obHigh := math.max(obHigh, high[k])
+                    obLow := math.min(obLow, low[k])
+                bearishEntryNow := (obHigh + obLow) / 2
+                bearishRangeNow := obHigh - obLow
+                break
+        break
+
+// =====================================================================
+// ENTRY CONDITIONS - Match Python: enter when price near 50% level
+// =====================================================================
+longCondition = hasBullishOBNow and isUptrend and 
+     bullishRangeNow > 0 and 
+     math.abs(close - bullishEntryNow) <= bullishRangeNow * 0.10
+
+shortCondition = hasBearishOBNow and isDowntrend and 
+     bearishRangeNow > 0 and 
+     math.abs(close - bearishEntryNow) <= bearishRangeNow * 0.10
+
+// =====================================================================
+// EXECUTE TRADES
+// =====================================================================
+// Only enter if no position
+if (longCondition and strategy.position_size == 0)
+    strategy.entry("Long", strategy.long)
+
+if (shortCondition and strategy.position_size == 0)
+    strategy.entry("Short", strategy.short)
+
+// Close on opposite signal (like Python's backtest engine)
+if (shortCondition and strategy.position_size > 0)
+    strategy.close("Long")
+
+if (longCondition and strategy.position_size < 0)
+    strategy.close("Short")
+
+// =====================================================================
+// PLOTTING
+// =====================================================================
+// Trend line
+plot(trendPeriod, "SMA50", color=isUptrend ? color.green : color.red, linewidth=2)
+
+// Entry signals
+plotshape(longCondition, "Long", location=location.belowbar, 
+     color=color.lime, style=shape.triangleup, size=size.large)
+
+plotshape(shortCondition, "Short", location=location.abovebar, 
+     color=color.red, style=shape.triangledown, size=size.large)
+
+// Current OB indicator
+plotchar(hasBullishOBNow, "Bullish OB", "B", location=location.bottom, color=color.green)
+plotchar(hasBearishOBNow, "Bearish OB", "S", location=location.bottom, color=color.red)
+
+// =====================================================================
+// STATS TABLE
+// =====================================================================
+var table st = table.new(position.bottom_right, 2, 4, frame_color=color.gray)
+if barstate.islast
+    st.cell(0, 0, "Net P/L", bgcolor=color.gray, text_color=color.white)
+    st.cell(1, 0, "Trades", bgcolor=color.gray, text_color=color.white)
+    st.cell(0, 1, str.format("${0}", strategy.netprofit), 
+         bgcolor=strategy.netprofit >= 0 ? color.green : color.red)
+    st.cell(1, 1, str.format("{0}", strategy.closedtrades), bgcolor=color.blue)
+    
+    wr = strategy.closedtrades > 0 ? strategy.wintrades / strategy.closedtrades * 100 : 0
+    st.cell(0, 2, "Win Rate", bgcolor=color.gray, text_color=color.white)
+    st.cell(1, 2, str.format("{0}%", wr), bgcolor=wr >= 50 ? color.green : color.red)
+    
+    st.cell(0, 3, "Max DD", bgcolor=color.gray, text_color=color.white)
+    st.cell(1, 3, str.format("${0}", strategy.max_drawdown), bgcolor=color.orange)
+
+// =====================================================================
+// ALERTS
+// =====================================================================
+alertcondition(longCondition, "Long Signal", "Bullish OB - Go Long")
+alertcondition(shortCondition, "Short Signal", "Bearish OB - Go Short")

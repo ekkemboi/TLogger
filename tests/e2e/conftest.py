@@ -38,10 +38,9 @@ def cleanup_page(page):
     """Reset page state between tests."""
     yield
     try:
-        # Clear localStorage
         page.evaluate("() => { localStorage.clear(); }")
     except Exception:
-        pass  # Ignore if page is already closed
+        pass
 
 
 @pytest.fixture(scope="session")

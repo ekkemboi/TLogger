@@ -139,6 +139,42 @@ def accounts():
     return render_template("accounts.html")
 
 
+@web_bp.route("/backtest")
+@login_required
+def backtest():
+    """Render backtest page."""
+    if is_htmx_request():
+        return render_template("backtest.html", htmx_request=True)
+    return render_template("backtest.html")
+
+
+@web_bp.route("/import")
+@login_required
+def import_page():
+    """Render CSV import page."""
+    if is_htmx_request():
+        return render_template("import.html", htmx_request=True)
+    return render_template("import.html")
+
+
+@web_bp.route("/analytics")
+@login_required
+def analytics():
+    """Render analytics page."""
+    if is_htmx_request():
+        return render_template("analytics.html", htmx_request=True)
+    return render_template("analytics.html")
+
+
+@web_bp.route("/brokers")
+@login_required
+def brokers():
+    """Render broker connections page."""
+    if is_htmx_request():
+        return render_template("brokers.html", htmx_request=True)
+    return render_template("brokers.html")
+
+
 @web_bp.route("/login")
 def login():
     """Render login page.

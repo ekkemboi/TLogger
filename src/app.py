@@ -116,6 +116,10 @@ def create_app(config_name=None):
     from src.routes.metrics import metrics_bp
     from src.routes.favorites import favorites_bp
     from src.routes.accounts import accounts_bp
+    from src.routes.backtest import backtest_bp
+    from src.routes.import_routes import import_bp
+    from src.routes.analytics_routes import analytics_bp
+    from src.routes.broker_routes import brokers_bp
     from web.routes import web_bp
 
     # Initialize OAuth
@@ -128,6 +132,10 @@ def create_app(config_name=None):
     app.register_blueprint(metrics_bp, url_prefix="/api")
     app.register_blueprint(favorites_bp, url_prefix="/api")
     app.register_blueprint(accounts_bp, url_prefix="/api")
+    app.register_blueprint(backtest_bp, url_prefix="/api/backtest")
+    app.register_blueprint(import_bp, url_prefix="/api")
+    app.register_blueprint(analytics_bp, url_prefix="/api")
+    app.register_blueprint(brokers_bp, url_prefix="/api")
     app.register_blueprint(web_bp)
 
     # Exempt API routes from CSRF (they use JWT tokens)
@@ -137,6 +145,10 @@ def create_app(config_name=None):
     csrf.exempt(metrics_bp)
     csrf.exempt(favorites_bp)
     csrf.exempt(accounts_bp)
+    csrf.exempt(backtest_bp)
+    csrf.exempt(import_bp)
+    csrf.exempt(analytics_bp)
+    csrf.exempt(brokers_bp)
 
     with app.app_context():
         # Note: Database schema is managed by Alembic migrations

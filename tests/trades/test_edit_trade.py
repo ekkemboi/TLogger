@@ -215,10 +215,10 @@ class TestEditTradeStopLoss:
 class TestEditTradePositionSize:
     """Tests for editing trade position size."""
 
-    def test_edit_position_size_success(self, client, sample_trade_data):
+    def test_edit_position_size_success(self, auth_client, sample_trade_data):
         """Test updating position_size successfully."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -227,7 +227,7 @@ class TestEditTradePositionSize:
         assert create_response.get_json()["position_size"] == 0.1
 
         # Update position size
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"position_size": 0.5}),
             content_type="application/json",
@@ -236,10 +236,10 @@ class TestEditTradePositionSize:
         data = response.get_json()
         assert data["position_size"] == 0.5
 
-    def test_edit_position_size_null(self, client, sample_trade_data):
+    def test_edit_position_size_null(self, auth_client, sample_trade_data):
         """Test setting position_size to null."""
         # Create a trade with position_size
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -247,7 +247,7 @@ class TestEditTradePositionSize:
         trade_id = create_response.get_json()["id"]
 
         # Set position size to null
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"position_size": None}),
             content_type="application/json",
@@ -260,10 +260,10 @@ class TestEditTradePositionSize:
 class TestEditTradeValidation:
     """Tests for validation rules on trade edit."""
 
-    def test_edit_empty_symbol(self, client, sample_trade_data):
+    def test_edit_empty_symbol(self, auth_client, sample_trade_data):
         """Test that empty symbol string returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -271,7 +271,7 @@ class TestEditTradeValidation:
         trade_id = create_response.get_json()["id"]
 
         # Try empty symbol
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"symbol": ""}),
             content_type="application/json",
@@ -280,10 +280,10 @@ class TestEditTradeValidation:
         data = response.get_json()
         assert "error" in data
 
-    def test_edit_invalid_direction(self, client, sample_trade_data):
+    def test_edit_invalid_direction(self, auth_client, sample_trade_data):
         """Test that invalid direction value returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -291,7 +291,7 @@ class TestEditTradeValidation:
         trade_id = create_response.get_json()["id"]
 
         # Try invalid direction
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"direction": "invalid"}),
             content_type="application/json",
@@ -300,10 +300,10 @@ class TestEditTradeValidation:
         data = response.get_json()
         assert "error" in data
 
-    def test_edit_negative_entry_price(self, client, sample_trade_data):
+    def test_edit_negative_entry_price(self, auth_client, sample_trade_data):
         """Test that negative entry_price returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -311,7 +311,7 @@ class TestEditTradeValidation:
         trade_id = create_response.get_json()["id"]
 
         # Try negative entry price
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"entry_price": -50}),
             content_type="application/json",
@@ -320,10 +320,10 @@ class TestEditTradeValidation:
         data = response.get_json()
         assert "error" in data
 
-    def test_edit_negative_fees(self, client, sample_trade_data):
+    def test_edit_negative_fees(self, auth_client, sample_trade_data):
         """Test that negative fees returns 400."""
         # Create a trade
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_trade_data),
             content_type="application/json",
@@ -331,7 +331,7 @@ class TestEditTradeValidation:
         trade_id = create_response.get_json()["id"]
 
         # Try negative fees
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"fees": -10}),
             content_type="application/json",
@@ -345,11 +345,11 @@ class TestEditTradePnlRecalculation:
     """Tests for P&L recalculation after editing trade fields."""
 
     def test_pnl_recalculates_after_entry_price_change(
-        self, client, sample_closed_trade_data
+        self, auth_client, sample_closed_trade_data
     ):
         """Test that P&L updates when entry_price changes."""
         # Create a closed trade with take_profit
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_closed_trade_data),
             content_type="application/json",
@@ -360,7 +360,7 @@ class TestEditTradePnlRecalculation:
         assert original_pnl == pytest.approx(126.55, rel=1e-2)
 
         # Update entry price to a higher value
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"entry_price": 68000.00}),
             content_type="application/json",
@@ -372,14 +372,14 @@ class TestEditTradePnlRecalculation:
         assert data["pnl"] != original_pnl
 
     def test_pnl_recalculates_after_symbol_change(
-        self, client, sample_closed_trade_data
+        self, auth_client, sample_closed_trade_data
     ):
         """Test that P&L updates when symbol changes (different point_value)."""
         # Get user_id from sample data
         user_id = sample_closed_trade_data["user_id"]
 
         # Create a FavoriteProduct with custom point_value for ETHUSDT
-        client.post(
+        auth_client.post(
             "/api/favorites",
             data=json.dumps(
                 {"symbol": "ETHUSDT", "point_value": 0.1, "user_id": user_id}
@@ -388,7 +388,7 @@ class TestEditTradePnlRecalculation:
         )
 
         # Create a closed trade with take_profit
-        create_response = client.post(
+        create_response = auth_client.post(
             "/api/trades",
             data=json.dumps(sample_closed_trade_data),
             content_type="application/json",
@@ -399,7 +399,7 @@ class TestEditTradePnlRecalculation:
         assert original_pnl == pytest.approx(126.55, rel=1e-2)
 
         # Change symbol to ETHUSDT (point_value = 0.1)
-        response = client.put(
+        response = auth_client.put(
             f"/api/trades/{trade_id}",
             data=json.dumps({"symbol": "ETHUSDT"}),
             content_type="application/json",

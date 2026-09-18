@@ -50,6 +50,7 @@ def get_accounts():
                 "name": account.name,
                 "opening_balance": opening_balance,
                 "is_active": account.is_active,
+                "is_backtest": account.is_backtest,
                 "created_at": account.created_at.isoformat()
                 if account.created_at
                 else None,
@@ -80,6 +81,7 @@ def create_account():
         user_id=g.current_user_id,
         name=data["name"],
         opening_balance=opening_balance if opening_balance else Decimal("0"),
+        is_backtest=data.get("is_backtest", False),
     )
     db.session.add(account)
     db.session.commit()

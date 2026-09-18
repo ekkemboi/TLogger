@@ -413,6 +413,33 @@
                 <i data-lucide="wallet"></i>
                 <span>Accounts</span>
             </a>
+            <a href="/backtest"
+               hx-get="/backtest"
+               hx-target="main"
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/backtest' %}active{% endif %}">
+                <i data-lucide="play-circle"></i>
+                <span>Backtest</span>
+            </a>
+            <a href="/import"
+               hx-get="/import"
+               hx-target="main"
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/import' %}active{% endif %}">
+                <i data-lucide="upload"></i>
+                <span>Import</span>
+            </a>
+            <a href="/analytics"
+               hx-get="/analytics"
+               hx-target="main"
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="sidebar-link {% if request.path == '/analytics' %}active{% endif %}">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Analytics</span>
+            </a>
         </nav>
 
         <!-- Bottom Section -->

@@ -1,3 +1,4 @@
+{% if not htmx_request %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,6 +85,7 @@
 
         html,
         body {
+            margin: 0;
             height: 100%;
         }
 
@@ -344,42 +346,66 @@
             background: var(--text-tertiary);
         }
 
+        .app-layout {
+            display: flex;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
         /* Sidebar specific */
         .sidebar {
+            box-sizing: border-box;
+            flex: 0 0 260px;
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
             background-color: var(--bg-secondary);
             border-right: 1px solid var(--border-default);
+        }
+
+        .sidebar-logo {
+            padding: 24px;
+        }
+
+        .sidebar nav {
+            flex: 1 0 auto;
+            padding: 16px;
         }
 
         /* Main content area */
         .main-content {
             flex: 1;
+            min-width: 0;
             overflow: auto;
             padding: 24px 32px;
         }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     {% block head %}{% endblock %}
 </head>
 
 <body class="">
-    {% if not htmx_request %}
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <div class="app-layout">
     <!-- Sidebar - only for normal page loads -->
-    <div class="border-b border-border-default">
-        <a href="/" class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-            </div>
-            <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
-        </a>
-    </div>
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+        <button type="button" id="sidebar-toggle" class="sidebar-toggle" aria-controls="sidebar" aria-expanded="true" aria-label="Collapse sidebar" title="Collapse sidebar"><i data-lucide="panel-left-close" aria-hidden="true"></i></button>
         <!-- Logo -->
-
-
+        <div class="sidebar-logo border-b border-border-default">
+            <a href="/" class="flex items-center gap-3" aria-label="TradeLogger home" title="TradeLogger home">
+                <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
+            </a>
+        </div>
         <!-- Navigation -->
-        <nav class="overflow-y-auto">
+        <nav class="overflow-y-auto" aria-label="Main navigation" hx-sync="this:replace">
             <a href="/" hx-get="/" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
                 class="sidebar-link {% if request.path == '/' %}active{% endif %}">
                 <i data-lucide="layout-dashboard"></i>
@@ -418,19 +444,19 @@
         </nav>
 
         <!-- Bottom Section -->
-        <div class="p-4 border-t border-border-default space-y-3">
+        <div class="sidebar-footer p-4 border-t border-border-default space-y-3">
             <!-- Account Switcher -->
             <div class="account-switcher">
                 <i data-lucide="building-2" class="w-4 h-4 text-text-light"></i>
                 <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 text-text-light ml-auto"></i>
-                <select id="account-switcher">
+                <select id="account-switcher" aria-label="Trading account" title="Trading account">
                     <option value="">All Accounts</option>
                 </select>
             </div>
 
             <!-- Theme Toggle -->
-            <button id="theme-toggle" onclick="toggleTheme()"
+            <button id="theme-toggle" aria-label="Toggle theme" title="Toggle theme" onclick="toggleTheme()"
                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors">
                 <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -445,14 +471,15 @@
             </div>
         </div>
     </aside>
-    {% endif %}
-
+    <button class="sidebar-backdrop" aria-label="Close navigation" tabindex="-1"></button>
+    <div id="navigation-status" class="navigation-status" role="status" aria-live="polite"></div>
     <!-- Main Content -->
-    <main class="main-content bg-bg-primary">
+    <main id="main-content" class="main-content bg-bg-primary" tabindex="-1">
+    {% endif %}
         {% block content %}{% endblock %}
-    </main>
-
     {% if not htmx_request %}
+    </main>
+    </div>
     <script>
         // Theme Toggle
         function initTheme() {
@@ -590,8 +617,10 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
     {% endif %}
     {% block scripts %}{% endblock %}
+{% if not htmx_request %}
 </body>
-
 </html>
+{% endif %}

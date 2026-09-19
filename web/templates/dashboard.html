@@ -3,76 +3,74 @@
 {% block title %}TradeLogger - Dashboard{% endblock %}
 
 {% block content %}
-<div class="flex flex-col gap-6">
-    <div class="flex justify-between items-center">
+<div class="dashboard">
+    <div class="dashboard-header">
         <div>
             <h1 class="text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
             <p class="text-text-light text-sm mt-1">Monitor your trading performance and metrics</p>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="dashboard-filters">
             <div class="flex items-center gap-2">
-                <p class="label text-xs">FROM</p>
+                <label for="filter-start" class="label text-xs">FROM</label>
                 <input type="date" id="filter-start" class="input text-sm py-2 px-3 w-36">
             </div>
             <div class="flex items-center gap-2">
-                <p class="label text-xs">TO</p>
+                <label for="filter-end" class="label text-xs">TO</label>
                 <input type="date" id="filter-end" class="input text-sm py-2 px-3 w-36">
             </div>
         </div>
     </div>
 
-    <!-- Metrics Cards Row 1 -->
-    <div class="grid grid-cols-4 gap-5">
-        <div class="card p-6">
-            <p class="label text-xs">TOTAL TRADES</p>
-            <p id="total-trades" class="metric-value text-3xl mt-2">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">WIN RATE</p>
-            <p id="win-rate" class="metric-value text-3xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">TOTAL P&L</p>
-            <p id="total-pnl" class="metric-value text-3xl mt-2">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">PROFIT FACTOR</p>
-            <p id="profit-factor" class="metric-value text-3xl mt-2">--</p>
-        </div>
-    </div>
+    <div class="dashboard-panels">
+        <div class="dashboard-metrics">
+            <div class="card metric-card">
+                <p class="label text-xs">TOTAL TRADES</p>
+                <p id="total-trades" class="metric-value text-3xl mt-2">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">WIN RATE</p>
+                <p id="win-rate" class="metric-value text-3xl mt-2 pnl-positive">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">TOTAL P&L</p>
+                <p id="total-pnl" class="metric-value text-3xl mt-2">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">PROFIT FACTOR</p>
+                <p id="profit-factor" class="metric-value text-3xl mt-2">--</p>
+            </div>
 
-    <!-- Metrics Cards Row 2 -->
-    <div class="grid grid-cols-4 gap-5">
-        <div class="card p-5">
-            <p class="label text-xs">AVG WIN</p>
-            <p id="avg-win" class="metric-value text-2xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">AVG LOSS</p>
-            <p id="avg-loss" class="metric-value text-2xl mt-2 pnl-negative">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">BEST TRADE</p>
-            <p id="best-trade" class="metric-value text-2xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">WORST TRADE</p>
-            <p id="worst-trade" class="metric-value text-2xl mt-2 pnl-negative">--</p>
-        </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="grid grid-cols-2 gap-5 flex-1 min-h-0">
-        <div class="card p-6 flex flex-col">
-            <p class="label text-xs flex-shrink-0">EQUITY CURVE</p>
-            <div class="flex-1 mt-4 min-h-0">
-                <canvas id="equity-chart"></canvas>
+            <div class="card metric-card">
+                <p class="label text-xs">AVG WIN</p>
+                <p id="avg-win" class="metric-value text-2xl mt-2 pnl-positive">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">AVG LOSS</p>
+                <p id="avg-loss" class="metric-value text-2xl mt-2 pnl-negative">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">BEST TRADE</p>
+                <p id="best-trade" class="metric-value text-2xl mt-2 pnl-positive">--</p>
+            </div>
+            <div class="card metric-card">
+                <p class="label text-xs">WORST TRADE</p>
+                <p id="worst-trade" class="metric-value text-2xl mt-2 pnl-negative">--</p>
             </div>
         </div>
-        <div class="card p-6 flex flex-col">
-            <p class="label text-xs flex-shrink-0">RECENT P&L</p>
-            <div class="flex-1 mt-4 min-h-0">
-                <canvas id="pnl-chart"></canvas>
+
+        <!-- Charts Section -->
+        <div class="dashboard-charts">
+            <div class="card chart-card">
+                <p class="label text-xs flex-shrink-0">EQUITY CURVE</p>
+                <div class="chart-container">
+                    <canvas id="equity-chart" role="img" aria-label="Equity curve"></canvas>
+                </div>
+            </div>
+            <div class="card chart-card">
+                <p class="label text-xs flex-shrink-0">RECENT P&L</p>
+                <div class="chart-container">
+                    <canvas id="pnl-chart" role="img" aria-label="Recent profit and loss"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -81,6 +79,15 @@
 
 {% block scripts %}
 <script>
+(() => {
+    window.cleanupDashboard?.();
+    const controller = new AbortController();
+    const { signal } = controller;
+    window.cleanupDashboard = () => {
+        controller.abort();
+        equityChart?.destroy();
+        pnlChart?.destroy();
+    };
     let equityChart, pnlChart;
 
     async function loadMetrics() {
@@ -95,7 +102,7 @@
             if (endDate) params.push(`end_date=${endDate}`);
             const queryParams = params.length ? '?' + params.join('&') : '';
 
-            const metricsRes = await fetch(`/api/metrics${queryParams}`);
+            const metricsRes = await fetch(`/api/metrics${queryParams}`, { signal });
             const metrics = await metricsRes.json();
 
             document.getElementById('total-trades').textContent = metrics.total_trades;
@@ -115,7 +122,7 @@
             if (startDate) tradesParams.push(`start_date=${startDate}`);
             if (endDate) tradesParams.push(`end_date=${endDate}`);
             const tradesUrl = `/api/trades?${tradesParams.join('&')}`;
-            const tradesRes = await fetch(tradesUrl);
+            const tradesRes = await fetch(tradesUrl, { signal });
             const tradesData = await tradesRes.json();
             const trades = tradesData.trades || [];
 
@@ -138,6 +145,8 @@
             // Destroy existing charts
             if (equityChart) equityChart.destroy();
             if (pnlChart) pnlChart.destroy();
+
+            Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
 
             // Equity Curve Chart
             const equityCtx = document.getElementById('equity-chart').getContext('2d');
@@ -197,18 +206,19 @@
                 }
             });
         } catch (error) {
-            console.error('Failed to load metrics:', error);
+            if (error.name !== 'AbortError') console.error('Failed to load metrics:', error);
         }
     }
 
     loadMetrics();
 
     // Re-render charts when theme changes
-    window.addEventListener('themeChanged', () => loadMetrics());
+    window.addEventListener('themeChanged', () => loadMetrics(), { signal });
 
     // Listen for account changes from global switcher
-    window.addEventListener('accountChanged', () => loadMetrics());
-    document.getElementById('filter-start').addEventListener('change', () => loadMetrics());
-    document.getElementById('filter-end').addEventListener('change', () => loadMetrics());
+    window.addEventListener('accountChanged', () => loadMetrics(), { signal });
+    document.getElementById('filter-start').addEventListener('change', () => loadMetrics(), { signal });
+    document.getElementById('filter-end').addEventListener('change', () => loadMetrics(), { signal });
+})();
 </script>
 {% endblock %}

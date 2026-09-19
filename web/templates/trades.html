@@ -201,7 +201,8 @@
 
 {% block scripts %}
 <script>
-let currentPage = 1;
+// HTMX can execute this page script again when revisiting the page.
+var currentPage = 1;
 
 async function loadTrades(page = 1) {
     currentPage = page;

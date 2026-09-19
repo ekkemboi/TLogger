@@ -84,7 +84,8 @@
 
 {% block scripts %}
 <script>
-let editingId = null;
+// HTMX can execute this page script again when revisiting the page.
+var editingId = null;
 
 async function loadFavorites() {
     try {

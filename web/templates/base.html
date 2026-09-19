@@ -85,6 +85,7 @@
         html,
         body {
             height: 100%;
+            overflow: hidden;
         }
 
         body {
@@ -346,101 +347,204 @@
 
         /* Sidebar specific */
         .sidebar {
+            width: 260px;
+            min-width: 260px;
             background-color: var(--bg-secondary);
             border-right: 1px solid var(--border-default);
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Collapsed sidebar (icon-only mode) */
+        .sidebar.collapsed {
+            width: 72px;
+            min-width: 72px;
+        }
+
+        .sidebar.collapsed .sidebar-label {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 16px 8px;
+            position: relative;
+        }
+
+        .sidebar.collapsed .sidebar-toggle-btn {
+            position: absolute;
+            right: -10px;
+            top: 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+            z-index: 30;
+            border-radius: 9999px;
+            padding: 3px;
+        }
+
+        .sidebar.collapsed #sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .sidebar.collapsed .sidebar-link {
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed .account-switcher {
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .sidebar.collapsed .account-switcher-name,
+        .sidebar.collapsed .account-switcher-arrow {
+            display: none !important;
+        }
+
+        .sidebar.collapsed #theme-toggle {
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed #user-nav-section .flex {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed #user-nav-section span,
+        .sidebar.collapsed #user-nav-section button {
+            display: none !important;
+        }
+
+        /* Keyboard Accessibility - Focus styling */
+        :focus-visible {
+            outline: 2px solid var(--accent-primary) !important;
+            outline-offset: 2px !important;
+        }
+
+        .sidebar-link:focus-visible {
+            outline: 2px solid var(--accent-primary) !important;
+            outline-offset: -2px !important;
         }
 
         /* Main content area */
         .main-content {
             flex: 1;
             overflow: auto;
-            padding: 24px 32px;
+            padding: 16px 24px;
+            height: 100vh;
+            min-width: 0;
+            transition: opacity 0.2s ease-in-out;
         }
     </style>
     {% block head %}{% endblock %}
 </head>
 
-<body class="">
+<body class="flex">
     {% if not htmx_request %}
-    <!-- Sidebar - only for normal page loads -->
-    <div class="border-b border-border-default">
-        <a href="/" class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-            </div>
-            <span class="text-lg font-bold text-text-primary tracking-tight">TradeLogger</span>
-        </a>
-    </div>
-    <aside class="sidebar">
-        <!-- Logo -->
+    <!-- Skip link for keyboard accessibility -->
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white">
+        Skip to main content
+    </a>
 
+    <!-- Top Loading Bar for smooth page transitions -->
+    <div id="loading-bar" class="fixed top-0 left-0 right-0 h-1 bg-accent-primary z-50 transform origin-left transition-all duration-300 pointer-events-none opacity-0" style="transform: scaleX(0);"></div>
+
+    <!-- Sidebar - only for normal page loads -->
+    <aside id="app-sidebar" class="sidebar flex flex-col h-screen transition-all duration-200 ease-in-out relative flex-shrink-0" aria-label="Main Navigation">
+        <!-- Logo & Collapse Button -->
+        <div class="sidebar-header p-4 border-b border-border-default flex items-center justify-between min-h-[65px]">
+            <a href="/" hx-get="/" hx-target="main" hx-push-url="true" hx-swap="innerHTML" class="flex items-center gap-3 overflow-hidden rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary" title="TradeLogger Dashboard">
+                <div class="w-8 h-8 bg-accent-primary rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <span class="text-lg font-bold text-text-primary tracking-tight sidebar-label whitespace-nowrap">TradeLogger</span>
+            </a>
+            <button id="sidebar-toggle-btn"
+                onclick="toggleSidebar()"
+                type="button"
+                aria-label="Toggle sidebar collapse"
+                title="Toggle sidebar (Ctrl+B)"
+                class="sidebar-toggle-btn p-1.5 rounded-lg text-text-light hover:text-text-primary hover:bg-bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary">
+                <svg id="sidebar-toggle-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+            </button>
+        </div>
 
         <!-- Navigation -->
-        <nav class="overflow-y-auto">
+        <nav class="sidebar-nav flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden" role="navigation" aria-label="Sidebar Links">
             <a href="/" hx-get="/" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Dashboard"
                 class="sidebar-link {% if request.path == '/' %}active{% endif %}">
-                <i data-lucide="layout-dashboard"></i>
-                <span>Dashboard</span>
+                <i data-lucide="layout-dashboard" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Dashboard</span>
             </a>
             <a href="/trades" hx-get="/trades" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Trades"
                 class="sidebar-link {% if request.path == '/trades' %}active{% endif %}">
-                <i data-lucide="trending-up"></i>
-                <span>Trades</span>
+                <i data-lucide="trending-up" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Trades</span>
             </a>
             <a href="/favorites" hx-get="/favorites" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Favorites"
                 class="sidebar-link {% if request.path == '/favorites' %}active{% endif %}">
-                <i data-lucide="star"></i>
-                <span>Favorites</span>
+                <i data-lucide="star" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Favorites</span>
             </a>
             <a href="/accounts" hx-get="/accounts" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Accounts"
                 class="sidebar-link {% if request.path == '/accounts' %}active{% endif %}">
-                <i data-lucide="wallet"></i>
-                <span>Accounts</span>
+                <i data-lucide="wallet" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Accounts</span>
             </a>
             <a href="/backtest" hx-get="/backtest" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Backtest"
                 class="sidebar-link {% if request.path == '/backtest' %}active{% endif %}">
-                <i data-lucide="play-circle"></i>
-                <span>Backtest</span>
+                <i data-lucide="play-circle" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Backtest</span>
             </a>
             <a href="/import" hx-get="/import" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Import"
                 class="sidebar-link {% if request.path == '/import' %}active{% endif %}">
-                <i data-lucide="upload"></i>
-                <span>Import</span>
+                <i data-lucide="upload" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Import</span>
             </a>
             <a href="/analytics" hx-get="/analytics" hx-target="main" hx-push-url="true" hx-swap="innerHTML"
+                title="Analytics"
                 class="sidebar-link {% if request.path == '/analytics' %}active{% endif %}">
-                <i data-lucide="bar-chart-3"></i>
-                <span>Analytics</span>
+                <i data-lucide="bar-chart-3" class="flex-shrink-0"></i>
+                <span class="sidebar-label whitespace-nowrap">Analytics</span>
             </a>
         </nav>
 
         <!-- Bottom Section -->
-        <div class="p-4 border-t border-border-default space-y-3">
+        <div class="sidebar-footer p-3 border-t border-border-default space-y-2">
             <!-- Account Switcher -->
-            <div class="account-switcher">
-                <i data-lucide="building-2" class="w-4 h-4 text-text-light"></i>
-                <span class="account-switcher-name" id="account-switcher-label">All Accounts</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-text-light ml-auto"></i>
-                <select id="account-switcher">
+            <div class="account-switcher" title="Select Account">
+                <i data-lucide="building-2" class="w-4 h-4 text-text-light flex-shrink-0"></i>
+                <span class="account-switcher-name sidebar-label whitespace-nowrap overflow-hidden text-ellipsis" id="account-switcher-label">All Accounts</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-text-light ml-auto sidebar-label flex-shrink-0"></i>
+                <select id="account-switcher" aria-label="Select Trading Account">
                     <option value="">All Accounts</option>
                 </select>
             </div>
 
             <!-- Theme Toggle -->
-            <button id="theme-toggle" onclick="toggleTheme()"
-                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors">
-                <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="theme-toggle" onclick="toggleTheme()" type="button" aria-label="Toggle Theme" title="Toggle Theme"
+                class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:bg-bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary">
+                <svg id="theme-icon" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
-                <span class="text-sm font-medium">Toggle Theme</span>
+                <span class="text-sm font-medium sidebar-label whitespace-nowrap">Toggle Theme</span>
             </button>
 
             <!-- User Section -->
-            <div id="user-nav-section">
+            <div id="user-nav-section" class="overflow-hidden">
                 <!-- Will be populated by auth.js -->
             </div>
         </div>
@@ -448,12 +552,64 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main class="main-content bg-bg-primary">
+    <main id="main-content" class="main-content bg-bg-primary" role="main">
         {% block content %}{% endblock %}
     </main>
 
     {% if not htmx_request %}
     <script>
+        // Sidebar Expand / Collapse
+        function toggleSidebar() {
+            const sidebar = document.querySelector('aside.sidebar');
+            if (!sidebar) return;
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebar_collapsed', isCollapsed ? 'true' : 'false');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', (!isCollapsed).toString());
+            }
+        }
+
+        function initSidebar() {
+            const savedState = localStorage.getItem('sidebar_collapsed');
+            const sidebar = document.querySelector('aside.sidebar');
+            if (!sidebar) return;
+            // Responsive auto-collapse on small screens (< 768px) if no preference saved
+            const isMobile = window.innerWidth < 768;
+            if (savedState === 'true' || (savedState === null && isMobile)) {
+                sidebar.classList.add('collapsed');
+                const toggleBtn = document.getElementById('sidebar-toggle-btn');
+                if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', function(evt) {
+            // Ctrl+B or Cmd+B to toggle sidebar
+            if ((evt.ctrlKey || evt.metaKey) && (evt.key === 'b' || evt.key === 'B')) {
+                evt.preventDefault();
+                toggleSidebar();
+            }
+            // Alt+S as accessible alternative
+            if (evt.altKey && (evt.key === 's' || evt.key === 'S')) {
+                evt.preventDefault();
+                toggleSidebar();
+            }
+            // Arrow navigation within sidebar links
+            if (evt.key === 'ArrowDown' || evt.key === 'ArrowUp') {
+                const links = Array.from(document.querySelectorAll('.sidebar-nav .sidebar-link'));
+                const focused = document.activeElement;
+                const index = links.indexOf(focused);
+                if (index !== -1) {
+                    evt.preventDefault();
+                    const nextIndex = evt.key === 'ArrowDown'
+                        ? (index + 1) % links.length
+                        : (index - 1 + links.length) % links.length;
+                    links[nextIndex].focus();
+                }
+            }
+        });
+
         // Theme Toggle
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
@@ -535,17 +691,49 @@
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function () {
                 initTheme();
+                initSidebar();
                 initAccountSwitcher();
                 if (window.lucide) lucide.createIcons();
             });
         } else {
             initTheme();
+            initSidebar();
             initAccountSwitcher();
             if (window.lucide) lucide.createIcons();
         }
 
-        // HTMX Event Handlers
+        // HTMX Smooth Page Transitions and Event Handlers
+        document.addEventListener('htmx:beforeRequest', function (evt) {
+            const bar = document.getElementById('loading-bar');
+            if (bar) {
+                bar.style.transform = 'scaleX(0.7)';
+                bar.style.opacity = '1';
+            }
+            const main = document.querySelector('main.main-content');
+            if (main) {
+                main.style.opacity = '0.6';
+            }
+        });
+
         document.addEventListener('htmx:afterSwap', function (evt) {
+            // Finish top loading progress bar
+            const bar = document.getElementById('loading-bar');
+            if (bar) {
+                bar.style.transform = 'scaleX(1)';
+                setTimeout(() => {
+                    bar.style.opacity = '0';
+                    setTimeout(() => {
+                        bar.style.transform = 'scaleX(0)';
+                    }, 250);
+                }, 150);
+            }
+
+            // Restore main content opacity smoothly
+            const main = document.querySelector('main.main-content');
+            if (main) {
+                main.style.opacity = '1';
+            }
+
             // Re-initialize Lucide icons after content swap
             if (window.lucide) lucide.createIcons();
 
@@ -555,6 +743,18 @@
             // Re-initialize page-specific scripts
             if (window.initPageScripts) {
                 window.initPageScripts();
+            }
+        });
+
+        document.addEventListener('htmx:requestError', function(evt) {
+            const bar = document.getElementById('loading-bar');
+            if (bar) {
+                bar.style.opacity = '0';
+                bar.style.transform = 'scaleX(0)';
+            }
+            const main = document.querySelector('main.main-content');
+            if (main) {
+                main.style.opacity = '1';
             }
         });
 

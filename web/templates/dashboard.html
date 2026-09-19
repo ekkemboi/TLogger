@@ -3,76 +3,83 @@
 {% block title %}TradeLogger - Dashboard{% endblock %}
 
 {% block content %}
-<div class="flex flex-col gap-6">
-    <div class="flex justify-between items-center">
+<div class="h-full flex flex-col gap-3 lg:gap-4 overflow-hidden">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 flex-shrink-0">
         <div>
-            <h1 class="text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
-            <p class="text-text-light text-sm mt-1">Monitor your trading performance and metrics</p>
+            <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
+            <p class="text-text-light text-xs lg:text-sm mt-0.5">Monitor your trading performance and metrics</p>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 flex-wrap">
             <div class="flex items-center gap-2">
-                <p class="label text-xs">FROM</p>
-                <input type="date" id="filter-start" class="input text-sm py-2 px-3 w-36">
+                <label for="filter-start" class="label text-xs">FROM</label>
+                <input type="date" id="filter-start" aria-label="Start Date" class="input text-xs py-1.5 px-2.5 w-32 focus:ring-2 focus:ring-accent-primary">
             </div>
             <div class="flex items-center gap-2">
-                <p class="label text-xs">TO</p>
-                <input type="date" id="filter-end" class="input text-sm py-2 px-3 w-36">
+                <label for="filter-end" class="label text-xs">TO</label>
+                <input type="date" id="filter-end" aria-label="End Date" class="input text-xs py-1.5 px-2.5 w-32 focus:ring-2 focus:ring-accent-primary">
             </div>
         </div>
     </div>
 
-    <!-- Metrics Cards Row 1 -->
-    <div class="grid grid-cols-4 gap-5">
-        <div class="card p-6">
-            <p class="label text-xs">TOTAL TRADES</p>
-            <p id="total-trades" class="metric-value text-3xl mt-2">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">WIN RATE</p>
-            <p id="win-rate" class="metric-value text-3xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">TOTAL P&L</p>
-            <p id="total-pnl" class="metric-value text-3xl mt-2">--</p>
-        </div>
-        <div class="card p-6">
-            <p class="label text-xs">PROFIT FACTOR</p>
-            <p id="profit-factor" class="metric-value text-3xl mt-2">--</p>
-        </div>
-    </div>
+    <!-- Main Content Area split into 2 equal halves -->
+    <div class="flex-1 min-h-0 flex flex-col gap-3 lg:gap-4">
+        <!-- Top Half: First 2 Rows of Metric Cards (50% height) -->
+        <div class="flex-1 min-h-0 flex flex-col gap-2.5 lg:gap-3">
+            <!-- Metrics Cards Row 1 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 lg:gap-3 flex-1 min-h-0">
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">TOTAL TRADES</p>
+                    <p id="total-trades" class="metric-value text-2xl lg:text-3xl font-bold mt-1">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">WIN RATE</p>
+                    <p id="win-rate" class="metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-positive">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">TOTAL P&L</p>
+                    <p id="total-pnl" class="metric-value text-2xl lg:text-3xl font-bold mt-1">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">PROFIT FACTOR</p>
+                    <p id="profit-factor" class="metric-value text-2xl lg:text-3xl font-bold mt-1">--</p>
+                </div>
+            </div>
 
-    <!-- Metrics Cards Row 2 -->
-    <div class="grid grid-cols-4 gap-5">
-        <div class="card p-5">
-            <p class="label text-xs">AVG WIN</p>
-            <p id="avg-win" class="metric-value text-2xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">AVG LOSS</p>
-            <p id="avg-loss" class="metric-value text-2xl mt-2 pnl-negative">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">BEST TRADE</p>
-            <p id="best-trade" class="metric-value text-2xl mt-2 pnl-positive">--</p>
-        </div>
-        <div class="card p-5">
-            <p class="label text-xs">WORST TRADE</p>
-            <p id="worst-trade" class="metric-value text-2xl mt-2 pnl-negative">--</p>
-        </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="grid grid-cols-2 gap-5 flex-1 min-h-0">
-        <div class="card p-6 flex flex-col">
-            <p class="label text-xs flex-shrink-0">EQUITY CURVE</p>
-            <div class="flex-1 mt-4 min-h-0">
-                <canvas id="equity-chart"></canvas>
+            <!-- Metrics Cards Row 2 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 lg:gap-3 flex-1 min-h-0">
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">AVG WIN</p>
+                    <p id="avg-win" class="metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-positive">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">AVG LOSS</p>
+                    <p id="avg-loss" class="metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-negative">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">BEST TRADE</p>
+                    <p id="best-trade" class="metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-positive">--</p>
+                </div>
+                <div class="card p-3 lg:p-4 flex flex-col justify-between h-full">
+                    <p class="label text-xs font-semibold">WORST TRADE</p>
+                    <p id="worst-trade" class="metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-negative">--</p>
+                </div>
             </div>
         </div>
-        <div class="card p-6 flex flex-col">
-            <p class="label text-xs flex-shrink-0">RECENT P&L</p>
-            <div class="flex-1 mt-4 min-h-0">
-                <canvas id="pnl-chart"></canvas>
+
+        <!-- Bottom Half: Charts Section (50% height) -->
+        <div class="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-2.5 lg:gap-3">
+            <div class="card p-3 lg:p-4 flex flex-col h-full min-h-0">
+                <p class="label text-xs font-semibold flex-shrink-0">EQUITY CURVE</p>
+                <div class="flex-1 mt-1 min-h-0 relative w-full h-full">
+                    <canvas id="equity-chart"></canvas>
+                </div>
+            </div>
+            <div class="card p-3 lg:p-4 flex flex-col h-full min-h-0">
+                <p class="label text-xs font-semibold flex-shrink-0">RECENT P&L</p>
+                <div class="flex-1 mt-1 min-h-0 relative w-full h-full">
+                    <canvas id="pnl-chart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -101,7 +108,7 @@
             document.getElementById('total-trades').textContent = metrics.total_trades;
             document.getElementById('win-rate').textContent = (metrics.win_rate * 100).toFixed(1) + '%';
             document.getElementById('total-pnl').textContent = '$' + metrics.total_pnl.toFixed(2);
-            document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-3xl mt-2 pnl-positive' : 'metric-value text-3xl mt-2 pnl-negative';
+            document.getElementById('total-pnl').className = metrics.total_pnl >= 0 ? 'metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-positive' : 'metric-value text-2xl lg:text-3xl font-bold mt-1 pnl-negative';
             document.getElementById('profit-factor').textContent = metrics.profit_factor.toFixed(2);
 
             document.getElementById('avg-win').textContent = '$' + metrics.avg_win.toFixed(2);
